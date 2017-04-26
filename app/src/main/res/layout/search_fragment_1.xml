@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="热门搜索" />
+
+    <MyView.FlowLayout
+        android:id="@+id/flow_useful_keywords"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+
+    </MyView.FlowLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/divider_gray" />
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="历史搜索" />
+
+        <TextView
+            android:id="@+id/searching_clear"
+            android:padding="5dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginLeft="20dp"
+            android:text="清空"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <MyView.FlowLayout
+        android:id="@+id/flow_used_keywords"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+
+    </MyView.FlowLayout>
+
+</LinearLayout>

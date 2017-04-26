@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#1893fb"
+
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+
+            android:id="@+id/userInfo_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:padding="8dp"
+
+            android:src="@mipmap/toleft" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:layout_weight="1"
+            android:gravity="center"
+
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+
+            />
+
+        <ImageView
+
+            android:id="@+id/to_setup"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:padding="8dp"
+        />
+
+
+    </LinearLayout>
+
+    <MyView.MyScrollview
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="213dp"
+                android:background="@mipmap/minebg"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="66dp"
+
+                    android:layout_height="66dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/circle_stroke"
+                    android:gravity="center">
+
+                    <ImageView
+
+                        android:id="@+id/userInfo_icon"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:src="@drawable/hgportrait" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/userInfo_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="阿喂真的帅"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="195dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/fans_and_watch_bg"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/userInfo_fansNun"
+                        android:layout_width="wrap_content"
+
+
+                        android:layout_height="wrap_content"
+                        android:text="66" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+
+                        android:text="粉丝" />
+
+
+                    <TextView
+                        android:id="@+id/userInfo_watchNun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+
+                        android:layout_marginLeft="10dp"
+                        android:text="666" />
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+
+                        android:text="关注" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:id="@+id/userInfo_noBlogText"
+
+                android:visibility="gone"
+                android:text="嗯，是的 这家伙还没发布过动态"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/userInfo_blogs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+    </MyView.MyScrollview>
+
+</LinearLayout>

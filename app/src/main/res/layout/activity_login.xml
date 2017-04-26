@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/register_bg"
+    android:orientation="vertical">
+
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/system_bar_2"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+    </View>
+
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="100dp"
+        android:src="@mipmap/museum_3d" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/register_edittext_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_marginLeft="15dp"
+            android:src="@mipmap/user_name" />
+        <!-- textCursorDrawable="@null"是让光标颜色跟textColor一样  -->
+        <EditText
+
+            android:id="@+id/login_phone"
+            android:layout_width="match_parent"
+
+            android:inputType="phone"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@null"
+            android:hint="手机号码"
+            android:textColor="#dbdbdb"
+            android:textColorHint="#a7a7a7"
+            android:textCursorDrawable="@drawable/text_cursor_type"
+            android:textSize="15sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/register_edittext_bg"
+        android:gravity="center_vertical">
+
+        <ImageView
+
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_marginLeft="15dp"
+            android:src="@mipmap/pass_word" />
+
+        <EditText
+            android:id="@+id/login_passWord"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@null"
+            android:hint="输入密码"
+            android:textColor="#dbdbdb"
+            android:textColorHint="#a7a7a7"
+            android:textCursorDrawable="@drawable/text_cursor_type"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <TextView
+
+        android:id="@+id/forget_passWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="50dp"
+        android:gravity="right"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="忘记密码？"
+        android:textColor="#a7a7a7"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/blue_to_black"
+            android:text="注册"
+            android:textColor="#c6c6c6"
+            android:textSize="18sp"
+            android:id="@+id/login_to_register" />
+
+
+        <Button
+
+            android:id="@+id/login"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/blue_to_black"
+            android:text="登录"
+            android:textColor="#c6c6c6"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="第三方登录"
+        android:textColor="#c6c6c6"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="20dp"
+           android:src="@drawable/wechat_bg"
+            android:id="@+id/login_weChat" />
+
+        <ImageView
+            android:id="@+id/login_qq"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/qq_bg" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+
+    <View
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@color/divider_gray"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <View
+
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="Copyright@2017 GSEATTLE Powered By Version 1.0.0"
+        android:textColor="#c6c6c6"
+        android:textSize="10sp" />
+
+</LinearLayout>

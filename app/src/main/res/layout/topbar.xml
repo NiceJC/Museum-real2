@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myns="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="jintong.museum2.MainActivity">
+
+    <MyView.TopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+
+
+
+
+        myns:rightIcon="@mipmap/find"
+        myns:tittle="3D博物馆"
+        myns:tittleTextColor="#232323"
+        myns:tittleTextSize="10sp"
+
+
+
+        >
+
+    </MyView.TopBar>
+
+</RelativeLayout>

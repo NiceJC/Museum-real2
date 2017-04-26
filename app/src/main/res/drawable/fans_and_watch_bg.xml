@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--粉丝和关注框的背景和描边-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+ <solid android:color="#37ffffff"/>
+
+<corners android:radius="17dp"/>
+
+    <stroke android:color="#87ffffff"
+
+         android:width="1dp"
+
+
+
+        />
+
+</shape>

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Museum2</string>
+
+    <string name="tab_main">首页</string>
+    <string name="tab_eyesight">眼界</string>
+    <string name="tab_me">我</string>
+    <string name="tab_museums">博物馆</string>
+
+    <string name="action_leftmenu">左菜单</string>
+    <string name="main_tittle">3D数字博物馆</string>
+    <string name="action_search">查找</string>
+
+
+
+</resources>

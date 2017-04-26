@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contentView"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/system_bar"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+    </View>
+
+    <LinearLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#1893fb"
+
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+
+
+            android:id="@+id/comment_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:padding="8dp"
+
+            android:src="@mipmap/toleft" />
+
+        <TextView
+
+
+            android:id="@+id/museum_detail_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="评论详情"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+
+            />
+
+        <ImageView
+            android:layout_width="40dp"
+
+
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:padding="8dp" />
+
+
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+
+
+        android:id="@+id/comment_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/tab_bg">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <LinearLayout
+        android:id="@+id/comment_editText_bar"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_bg"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp"
+
+        android:paddingTop="4dp">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="评论"
+            android:textSize="16sp" />
+
+        <EditText
+
+
+            android:id="@+id/new_comment_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:background="@drawable/register_edittext_bg"
+
+            android:padding="5dp"
+            android:textCursorDrawable="@drawable/text_cursor_black"
+            android:textSize="14sp" />
+
+        <ImageView
+
+            android:id="@+id/new_comment_commit"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/send" />
+    </LinearLayout>
+</LinearLayout>
+
+
+
+
+
+
+

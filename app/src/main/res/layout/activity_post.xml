@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/system_bar"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+    </View>
+
+    <LinearLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#1893fb"
+
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+
+            android:id="@+id/post_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:padding="8dp"
+
+            android:src="@mipmap/toleft" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="发状态"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+
+            />
+
+        <TextView
+            android:layout_width="50dp"
+
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/selector_text_bg"
+            android:gravity="center"
+            android:text="发送"
+            android:textColor="#c8c8c8"
+            android:textSize="14sp"
+            android:id="@+id/post_send" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <EditText
+
+            android:layout_margin="20dp"
+            android:id="@+id/post_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+
+
+
+
+
+            android:background="@null"
+            android:hint="分享新鲜事..."
+
+            android:textColorHint="#858484"
+            android:textCursorDrawable="@drawable/text_cursor_black"
+            android:textSize="16sp"
+
+            />
+
+        <GridView
+            android:scrollbars="none"
+            android:numColumns="3"
+            android:layout_margin="20dp"
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:id="@+id/post_gridView"
+            android:stretchMode="columnWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </GridView>
+
+
+    </LinearLayout>
+
+</LinearLayout>

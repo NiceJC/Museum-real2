@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/register_bg"
+    android:orientation="vertical">
+
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/system_bar_2"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+    </View>
+
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="100dp"
+        android:src="@mipmap/museum_3d" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/register_edittext_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+    <EditText
+
+        android:id="@+id/register_phone"
+            android:layout_width="match_parent"
+
+            android:inputType="phone"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@null"
+            android:hint="手机号码"
+            android:textColor="#dbdbdb"
+            android:textColorHint="#a7a7a7"
+            android:textCursorDrawable="@drawable/text_cursor_type"
+            android:textSize="15sp" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/register_edittext_bg"
+        android:gravity="center_vertical">
+
+
+        <EditText
+
+            android:id="@+id/register_checkNum"
+            android:inputType="number"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@null"
+            android:hint="输入验证码"
+            android:textColor="#dbdbdb"
+            android:textColorHint="#a7a7a7"
+            android:textCursorDrawable="@drawable/text_cursor_type"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/get_check_num"
+            android:layout_margin="5dp"
+            android:textColor="#dbdbdb"
+            android:layout_marginLeft="10dp"
+            android:textSize="12sp"
+            android:text="获取验证码"
+           android:background="@drawable/blue_to_black"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/register_edittext_bg"
+        android:gravity="center_vertical">
+
+
+        <EditText
+            android:id="@+id/register_passWord"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:background="@null"
+            android:hint="输入密码"
+            android:textColor="#dbdbdb"
+            android:textColorHint="#a7a7a7"
+            android:textCursorDrawable="@drawable/text_cursor_type"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/register_commit"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+
+        android:textColor="#dbdbdb"
+        android:text="完成注册并登录"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/blue_to_black"
+        android:gravity="center">
+
+
+    </Button>
+
+
+</LinearLayout>

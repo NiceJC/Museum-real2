@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/tab_bg"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+
+
+        <ImageView
+
+
+            android:id="@+id/museumRoom_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop" />
+
+
+
+        <LinearLayout
+
+            android:id="@+id/likeClick_museumRoom_item"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+
+
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/like_bg"
+            android:gravity="center_vertical"
+
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+
+            <ImageView
+
+
+                android:id="@+id/likeIcon_museumRoom_item"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/heart" />
+
+
+            <TextView
+
+                android:id="@+id/coltLikeNum_museumRoom_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:gravity="center"
+                android:text="666"
+                android:textSize="14sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/commentClick_museumRoom_item"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_toLeftOf="@id/likeClick_museumRoom_item"
+            android:layout_alignParentBottom="true"
+
+
+
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/like_bg"
+            android:gravity="center_vertical"
+
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+
+            <ImageView
+
+
+
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/comment" />
+
+
+            <TextView
+
+                android:id="@+id/coltCommentNum_museumRoom_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:gravity="center"
+                android:text="666"
+                android:textSize="14sp" />
+
+
+        </LinearLayout>
+
+        <ImageView
+
+
+            android:id="@+id/move_like"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="34dp"
+            android:background="@drawable/heart2" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+
+        <TextView
+            android:id="@+id/museumRoom_item_name"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:text="鸟纹抱月瓶"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/museumRoom_item_dynasty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="年代不详"
+            android:textSize="14sp" />
+
+        <TextView
+
+            android:id="@+id/museumRoom_item_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="尺寸不详"
+            android:textSize="14sp" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/museumRoom_item_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清末民国时期使用的称量粮食的工具，一面书“鸿羽丰”，一面书“第五号校准锦斗”。"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

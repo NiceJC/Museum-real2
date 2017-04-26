@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myns="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+    tools:context="jintong.museum2.MainActivity">
+
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/system_bar"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+    </View>
+
+
+    <MyView.NoScrollViewPager
+
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+
+
+        >
+
+
+    </MyView.NoScrollViewPager>
+
+    <LinearLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/tab_bg"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/indicator_one"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+
+                android:id="@+id/indicator_one_image"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/selector_main" />
+
+            <TextView
+                android:id="@+id/indicator_one_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="主页"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/indicator_two"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/indicator_two_image"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/selector_museum" />
+
+            <TextView
+                android:id="@+id/indicator_two_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="宝库"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/indicator_three"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+
+                android:id="@+id/indicator_three_image"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/selector_community" />
+
+            <TextView
+                android:id="@+id/indicator_three_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="社区"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/indicator_four"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/indicator_four_image"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/selector_mine" />
+
+            <TextView
+                android:id="@+id/indicator_four_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="我的"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

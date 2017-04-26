@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--底部tab的 自定义属性 -->
+    <declare-styleable name="ChangeColorView">
+
+        <attr name="icon_" format="reference|color" />
+        <attr name="color_" format="color" />
+        <attr name="text" format="string" />
+        <attr name="text_size" format="dimension" />
+
+    </declare-styleable>
+    <declare-styleable name="SlidingMenu1">
+
+        <attr name="rightPadding" format="dimension"></attr>
+
+
+    </declare-styleable>
+
+
+    <!--顶部TopBar的自定义属性   -->
+    <declare-styleable name="TopBar">
+
+        <attr name="tittle" format="string" />
+        <attr name="tittleTextSize" format="dimension" />
+        <attr name="tittleTextColor" format="color" />
+
+
+        <attr name="leftIcon" format="reference|color" />
+
+
+        <attr name="rightIcon" format="reference|color" />
+
+    </declare-styleable>
+
+
+</resources>

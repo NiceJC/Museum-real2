@@ -1,0 +1,59 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+       //分隔线
+        <item name="android:listDivider">@drawable/divider_vertical</item>
+        <item name="android:horizontalDivider">@drawable/divider_horizontal</item>
+   
+    </style>
+    
+    <!--设置顶部tab的text字体大小-->
+    <style name="TabTextStyle" >
+
+        <item name="android:textSize">@dimen/top_tab_text_size</item>
+
+    </style>
+
+    <!--设置启动页的主题的 背景图片-->
+    <style name="FirstTheme" parent="Theme.AppCompat.NoActionBar">
+
+        <item name="android:windowBackground">@drawable/first</item>
+
+    </style>
+
+
+    <!-- popupWindow animation 样式 -->
+    <style name="popupAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_out</item>
+    </style>
+
+    <style name="Dialog_Transparent_Theme" parent="android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景透明 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- activity变暗 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- 除去背景色 -->
+    </style>
+
+
+
+
+
+
+
+</resources>

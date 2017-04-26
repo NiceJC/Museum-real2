@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/colt_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/tab_bg_color"
+
+    android:orientation="vertical"
+
+    android:padding="5dp">
+
+
+    <FrameLayout
+        android:id="@+id/coltFrame_coltGrid_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <ImageView
+
+            android:id="@+id/coltImage_coltGrid_item"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:scaleType="centerCrop"
+
+
+            />
+
+        <LinearLayout
+            android:id="@+id/coltLike_coltGrid_item"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/like_bg_1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <ImageView
+
+
+                android:id="@+id/likeIcon_coltGrid_item"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/heart" />
+
+            <TextView
+
+                android:id="@+id/coltLikeNum_coltGrid_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:gravity="center"
+                android:text="666"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/coltName_coltGrid_item"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:gravity="center_vertical"
+        android:text="西周  与盘龙"
+        android:textSize="16sp"
+
+
+        />
+
+    <TextView
+        android:id="@+id/museumName_coltGrid_item"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:gravity="center_vertical"
+        android:text="山西博物馆"
+        android:textSize="13sp" />
+
+
+</LinearLayout>

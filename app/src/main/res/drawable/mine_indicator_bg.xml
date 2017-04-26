@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- normal   的放在后面  傻叼-->
+    <item android:state_selected="true" android:drawable="@color/choose_gray"/>
+    <item android:drawable="@color/tab_bg_color"/>
+
+</selector>
