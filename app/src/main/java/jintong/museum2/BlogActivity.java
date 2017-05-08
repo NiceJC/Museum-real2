@@ -172,6 +172,41 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initData() {
+        /**
+         * data 数据源说明
+         * 一个blog，以及对应的若干条 comments
+         *
+         blog.setIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
+         blog.setCommentNums(66);
+         blog.setContentText("hahhah哈哈哈  好开心呀 嘿嘿嘿嘿嘿 ");
+         blog.setPraised(false);
+         blog.setWatched(true);
+         blog.setPraiseNums(99);
+         blog.setUserName("阿超");
+         blog.setTime("60年前");
+         blog.setImageURLs(usrls);
+         *
+         *
+         *
+         for (int i = 0; i < 5; i++) {
+         Comments comment = new Comments();
+         comment.setAuthorIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
+
+         comment.setCommentID(666);
+         comment.setAuthorName("阿喂大帅比");
+         comment.setCommentText("嗯，这个宝贝很漂脸阿  年代嗨非常救援，一看就很之前阿 ，很值钱  哈哈哈哈哈");
+
+         comment.setCommentTime(9080);
+         mComments.add(comment);
+
+
+         }
+         *
+         *
+         */
+
+
+
 
         List<String> usrls=new ArrayList<String>();
         String imgs1 = "http://bmob-cdn-4183.b0.upaiyun.com/2016/11/29/118ec3614022872d80d04add7d795346.jpg";
@@ -191,15 +226,7 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
 
 
 
-        blog.setIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
-        blog.setCommentNums(66);
-        blog.setContentText("hahhah哈哈哈  好开心呀 嘿嘿嘿嘿嘿 ");
-        blog.setPraised(false);
-        blog.setWatched(true);
-        blog.setPraiseNums(99);
-        blog.setUserName("阿超");
-        blog.setTime("60年前");
-        blog.setImageURLs(usrls);
+
 
 
 
@@ -208,19 +235,6 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
 
         mComments = new ArrayList<Comments>();
 
-        for (int i = 0; i < 5; i++) {
-            Comments comment = new Comments();
-            comment.setAuthorIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
-
-            comment.setCommentID(666);
-            comment.setAuthorName("阿喂大帅比");
-            comment.setCommentText("嗯，这个宝贝很漂脸阿  年代嗨非常救援，一看就很之前阿 ，很值钱  哈哈哈哈哈");
-
-            comment.setCommentTime(9080);
-            mComments.add(comment);
-
-
-        }
 
 
 

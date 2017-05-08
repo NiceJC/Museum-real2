@@ -129,6 +129,7 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
+    //获取Glide自动保存的图片的path
     private void getImagePath() {
 
         FutureTarget<File> future = Glide.with(this)

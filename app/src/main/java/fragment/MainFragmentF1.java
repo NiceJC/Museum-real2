@@ -18,8 +18,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobExhibition;
 import adapter.ExhibitionListRecyclerAdapter;
 import entity.Exhibition;
+import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
 import jintong.museum2.ExhibitionActivity;
 import jintong.museum2.R;
@@ -27,8 +29,6 @@ import jintong.museum2.R;
 /**
  * 热门展览
  * Created by wjc on 2017/2/14.
- *
- *
  */
 public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -36,7 +36,7 @@ public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRef
 
     private RecyclerView recyclerView;
 
-    private List<Exhibition> datas=new ArrayList<Exhibition>();
+    private List<Exhibition> datas = new ArrayList<Exhibition>();
 
     private LinearLayoutManager manager;
 
@@ -45,6 +45,8 @@ public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRef
     private int lastVisibleItem;
 
     private ExhibitionListRecyclerAdapter adapter;
+
+    private int curPage=0;//当前的页数
 
     private boolean isLoadingMore = false;
     private boolean noMoreToLoad = false;
@@ -55,23 +57,60 @@ public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRef
         view = inflater.inflate(R.layout.main_fragment_1, container, false);
 
 
-        Log.e("*****","oncreateView");
+
         initViews();
         initDatas();
         initEvents();
 
 
-        adapter = new ExhibitionListRecyclerAdapter(getContext(), datas);
 
+        return view;
+
+
+    }
+
+
+    private void initViews() {
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh_main_f1);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recylerview_main_f1);
+
+
+
+
+        adapter = new ExhibitionListRecyclerAdapter(getContext(), datas);
         recyclerView.setAdapter(adapter);
         manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+    }
+
+    //获取初始数据
+    private void initDatas() {
+
+
+        if (datas.size() != 0) {
+            return;
+        }
+
+
+
+        //检测data为空后，从服务端拉取数据并刷新
+        pullDataFromServer();
+
+
+    }
+
+    private void initEvents() {
+
+        //上拉加载更多
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
+                //加载中就返回，防止重复加载
                 if (isLoadingMore) {
 
                     return;
@@ -81,39 +120,13 @@ public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRef
                     return;
                 }
 
+                //判断滑动到了底部，从服务器拉取数据进行加载
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == adapter.getItemCount()) {
                     adapter.changeMoreStatus(ExhibitionListRecyclerAdapter.LOADING_MORE);
                     isLoadingMore = true;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<Exhibition> exhibitions = new ArrayList<Exhibition>();
-                            for (int i = 0; i < 4; i++) {
-                                List<String> urls = new ArrayList<String>();
-                                urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
-                                Exhibition exhibition = new Exhibition();
-                                exhibition.setExhibitName("吕时之艺术陈列  主题展");
-                                exhibition.setImageURLs(urls);
-                                exhibition.setLocateCity("浙江省杭州市");
-                                exhibition.setMuseumName("杭州市博物馆");
 
+                    pullMoreFromServer(curPage);
 
-                                exhibitions.add(exhibition);
-                            }
-                            if (exhibitions.size() < 6) {
-                                adapter.addMoreItem(exhibitions, ExhibitionListRecyclerAdapter.NO_MORE_TO_LOAD);
-
-                                noMoreToLoad = true;
-
-                            } else {
-                                adapter.addMoreItem(exhibitions, ExhibitionListRecyclerAdapter.PULLUP_LOAD_MORE);
-                            }
-
-                            isLoadingMore = false;
-                            Toast.makeText(getActivity(), "加载完成...", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }, 1000);
                 }
             }
 
@@ -136,29 +149,6 @@ public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRef
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources()
                         .getDisplayMetrics()));
 
-//        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//
-//
-//                if (newState == RecyclerView.SCROLL_STATE_IDLE
-//                        && lastVisibleItem + 1 == adapter.getItemCount()) {
-//                    swipeRefreshLayout.setRefreshing(true);
-//                    // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                lastVisibleItem = manager.findLastVisibleItemPosition();
-//
-//            }
-//        });
-
         adapter.setmOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -177,80 +167,74 @@ public class MainFragmentF1 extends Fragment implements SwipeRefreshLayout.OnRef
         });
 
 
-        return view;
-
-
-    }
-
-
-    private void initViews() {
-
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh_main_f1);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recylerview_main_f1);
-
-
-    }
-
-    private void initDatas() {
-
-        if(datas.size()!=0){
-            return;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            List<String> urls = new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/a220dd564081640d809bf930eef6f732.jpg");
-            Exhibition exhibition = new Exhibition();
-            exhibition.setExhibitName("吕时之艺术陈列  主题展");
-            exhibition.setImageURLs(urls);
-            exhibition.setLocateCity("浙江省杭州市");
-            exhibition.setMuseumName("杭州市博物馆");
-
-
-            datas.add(exhibition);
-        }
-
-
-    }
-
-    private void initEvents() {
-
-
     }
 
     @Override
     public void onRefresh() {
 
-        Log.e("*****","onRefresh");
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                List<Exhibition> exhibitions = new ArrayList<Exhibition>();
-                for (int i = 0; i < 4; i++) {
-                    List<String> urls = new ArrayList<String>();
-                    urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
-                    Exhibition exhibition = new Exhibition();
-                    exhibition.setExhibitName("吕时之艺术陈列  主题展");
-                    exhibition.setImageURLs(urls);
-                    exhibition.setLocateCity("浙江省杭州市");
-                    exhibition.setMuseumName("杭州市博物馆");
 
-
-                    exhibitions.add(exhibition);
-                }
-                adapter.refreshItem(exhibitions, ExhibitionListRecyclerAdapter.PULLUP_LOAD_MORE);
-
-                swipeRefreshLayout.setRefreshing(false);
-                noMoreToLoad=false;
-
-
-                Toast.makeText(getActivity(), "刷新完成...", Toast.LENGTH_SHORT).show();
-
-
-
-            }
-        }, 1000);
+        pullDataFromServer();
 
 
     }
+
+    //从服务器拉取数据，并在拉取成功后刷新页面
+    public void pullDataFromServer(){
+        BmobExhibition bmobExhibition=BmobExhibition.getInstance(getActivity());
+
+        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Exhibition> exhibitionList= (List<Exhibition>) Obj;
+
+
+                adapter.refreshItem(exhibitionList, ExhibitionListRecyclerAdapter.PULLUP_LOAD_MORE);
+                swipeRefreshLayout.setRefreshing(false);//结束刷新状态
+                noMoreToLoad = false;
+
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobExhibition.refreshExhibition();
+
+    }
+
+    //上拉加载更多
+    public void pullMoreFromServer(int curPage){
+
+        BmobExhibition bmobExhibition=BmobExhibition.getInstance(getActivity());
+
+        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Exhibition> exhibitionList= (List<Exhibition>) Obj;
+
+                            if (exhibitionList.size() < 5) {
+                                adapter.addMoreItem(exhibitionList, ExhibitionListRecyclerAdapter.NO_MORE_TO_LOAD);
+
+                                noMoreToLoad = true;
+
+                            } else {
+                                adapter.addMoreItem(exhibitionList, ExhibitionListRecyclerAdapter.PULLUP_LOAD_MORE);
+                            }
+
+                            isLoadingMore = false;
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobExhibition.getMoreExhibition(curPage);
+
+    }
+
+
 }

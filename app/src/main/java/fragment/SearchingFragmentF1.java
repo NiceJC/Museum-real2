@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import MyView.FlowLayout;
+import interfaces.OnSearchingJump;
 import interfaces.OnclickFinish;
 import jintong.museum2.R;
 import jintong.museum2.SearchingActivity;
@@ -40,9 +41,14 @@ public class SearchingFragmentF1 extends Fragment {
     private FlowLayout usedKeyWords; //保存历史搜索关键字
     private FlowLayout hotKeyWords; //保存热门搜索关键字
 
-    private OnclickFinish onclickFinish;
-    View view;
+    private View view;
 
+
+    private OnSearchingJump onSearchingJump;
+
+    public void setOnSearchingJump(OnSearchingJump onSearchingJump) {
+        this.onSearchingJump = onSearchingJump;
+    }
 
     @Nullable
     @Override
@@ -203,20 +209,16 @@ public class SearchingFragmentF1 extends Fragment {
     /**
      * 在SP文件中存档并执行搜索
      *
-     * @param keyword
      */
     private void searching(String keyword) {
         Toast.makeText(getActivity(), "searching", Toast.LENGTH_SHORT).show();
         saveWordsToSP(keyword);
 
-        onclickFinish.onClickFinish();
+        onSearchingJump.onSearching(keyword);
 
 
 
     }
 
-    public void setOnclickFinish(OnclickFinish onclickFinish){
-        this.onclickFinish=onclickFinish;
 
-    }
 }

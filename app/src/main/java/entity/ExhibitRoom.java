@@ -16,9 +16,9 @@ import cn.bmob.v3.BmobObject;
 
 public class ExhibitRoom extends BmobObject {
 
-    private int exhibitRoomID;//展厅ID
+//    private int exhibitRoomID;//展厅ID
 
-    private int museumID;//所属博物馆ID
+    private Museum toMuseum;//所属博物馆
 
     private String name;//展厅名称
 
@@ -26,9 +26,9 @@ public class ExhibitRoom extends BmobObject {
 
     private String imageURL;//展厅图片
 
-    private int collectionNum;//展出藏品数量
+    private Integer collectionNum;//展出藏品数量
 
-    private List<Integer> coltIDs;//展出藏品ID
+
 
 
 
@@ -36,41 +36,12 @@ public class ExhibitRoom extends BmobObject {
     public ExhibitRoom() {
     }
 
-    public ExhibitRoom(int exhibitRoomID, int museumID, String name, String introduction, int collectionNum, List<Integer> coltIDs) {
-        this.exhibitRoomID = exhibitRoomID;
-        this.museumID = museumID;
-        this.name = name;
-        this.introduction = introduction;
+    public Integer getCollectionNum() {
+        return collectionNum;
+    }
+
+    public void setCollectionNum(Integer collectionNum) {
         this.collectionNum = collectionNum;
-        this.coltIDs = coltIDs;
-    }
-
-    @Override
-    public String toString() {
-        return "ExhibitRoom{" +
-                "exhibitRoomID=" + exhibitRoomID +
-                ", museumID=" + museumID +
-                ", name='" + name + '\'' +
-                ", introduction='" + introduction + '\'' +
-                ", collectionNum=" + collectionNum +
-                ", coltIDs=" + coltIDs +
-                '}';
-    }
-
-    public int getExhibitRoomID() {
-        return exhibitRoomID;
-    }
-
-    public void setExhibitRoomID(int exhibitRoomID) {
-        this.exhibitRoomID = exhibitRoomID;
-    }
-
-    public int getMuseumID() {
-        return museumID;
-    }
-
-    public void setMuseumID(int museumID) {
-        this.museumID = museumID;
     }
 
     public String getName() {
@@ -89,27 +60,19 @@ public class ExhibitRoom extends BmobObject {
         this.introduction = introduction;
     }
 
-    public int getCollectionNum() {
-        return collectionNum;
-    }
-
-    public void setCollectionNum(int collectionNum) {
-        this.collectionNum = collectionNum;
-    }
-
-    public List<Integer> getColtIDs() {
-        return coltIDs;
-    }
-
-    public void setColtIDs(List<Integer> coltIDs) {
-        this.coltIDs = coltIDs;
-    }
-
     public String getImageURL() {
         return imageURL;
     }
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public Museum getToMuseum() {
+        return toMuseum;
+    }
+
+    public void setToMuseum(Museum toMuseum) {
+        this.toMuseum = toMuseum;
     }
 }

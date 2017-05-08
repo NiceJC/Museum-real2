@@ -88,7 +88,7 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
                 .transform(new GlideCircleTransform(this))
                 .into(museumIcon);
 
-        museumWatch.setSelected(museum.isWatched());
+        museumWatch.setSelected(museum.getWatched());
         museumWatchNum.setText(museum.getWatchNums()+"");
 
 

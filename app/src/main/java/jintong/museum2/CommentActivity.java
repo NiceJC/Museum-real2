@@ -23,8 +23,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobComment;
 import adapter.CommentRecyclerAdapter;
 import entity.Comments;
+import interfaces.OnBmobReturnWithObj;
+
+import static entity.Comments.COMMENT_TO_BLOG;
+import static entity.Comments.COMMENT_TO_COLLECTION;
+import static entity.Comments.COMMENT_TO_EXHIBITION;
+import static entity.Comments.COMMENT_TO_MUSEUM;
 
 /**
  * 展示评论
@@ -38,20 +45,21 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
     private EditText newCommentText;
     private ImageView newCommentSend;
 
-    private int coltID; //从Intent中读取到的博物馆的ID
+    private String belongToID; //从Intent中读取到的博物馆的ID
     private int commentType; //从Intent中读取到的评论主体的类型
 
 
     private int height; //保存测量得到的软键盘高度
-    private boolean haveChanged=false;
+    private boolean haveChanged = false;
 
+
+    private CommentRecyclerAdapter adapter;
 
     private LinearLayout editBar;
 
     private LinearLayout contentView;
 
-    private List<Comments> mComments;
-
+    private List<Comments> mComments = new ArrayList<Comments>();
 
 
     private void setListenerToRootView() {
@@ -62,13 +70,13 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
                 boolean isOpen = isKeyboardShown(back.getRootView());
 
 
-                if(isOpen){
+                if (isOpen) {
 
-                    ObjectAnimator.ofFloat(editBar,"translationY",0,-height).setDuration(100).start();
-                    haveChanged=true;
+                    ObjectAnimator.ofFloat(editBar, "translationY", 0, -height).setDuration(100).start();
+                    haveChanged = true;
 
-                }else{
-                    if(haveChanged) {
+                } else {
+                    if (haveChanged) {
                         ObjectAnimator.ofFloat(editBar, "translationY", -height, 0).setDuration(100).start();
                     }
                 }
@@ -98,10 +106,6 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
         setData();
         initEvents();
 
-        recyclerView.setAdapter(new CommentRecyclerAdapter(this, mComments));
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-
 
     }
 
@@ -116,8 +120,14 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
 
         newCommentSend = (ImageView) findViewById(R.id.new_comment_commit);
         editBar = (LinearLayout) findViewById(R.id.comment_editText_bar);
-        coltID = getIntent().getIntExtra("coltID", 0);
-        commentType = getIntent().getIntExtra("commentType", 0);
+        //从Intent中获取参数信息
+        belongToID = getIntent().getStringExtra(Comments.COMMENT_BELONG_ID);
+        commentType = getIntent().getIntExtra(Comments.COMMENT_TYPE, 0);
+
+        adapter=new CommentRecyclerAdapter(this, mComments);
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
 
     }
 
@@ -125,22 +135,45 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
      * 通过评论主体的ID 以及评论主体的类型查询得到
      */
     private void initData() {
-        mComments = new ArrayList<Comments>();
-        Log.e("comment  type=", commentType + "");
+        BmobComment bmobComment=BmobComment.getInstance(this);
+        bmobComment.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                mComments= (List<Comments>) Obj;
 
-        for (int i = 0; i < 5; i++) {
-            Comments comment = new Comments();
-            comment.setAuthorIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
+                adapter.notifyDataSetChanged();
+            }
 
-            comment.setCommentID(666);
-            comment.setAuthorName("阿喂大帅比");
-            comment.setCommentText("嗯，这个宝贝很漂脸阿  年代嗨非常救援，一看就很之前阿 ，很值钱  哈哈哈哈哈");
+            @Override
+            public void onFail(Object Obj) {
 
-            comment.setCommentTime(9080);
-            mComments.add(comment);
+            }
+        });
+        switch (commentType) {
 
+            case COMMENT_TO_MUSEUM:
+
+                bmobComment.getCommentToMuseum(belongToID);
+
+                break;
+            case COMMENT_TO_EXHIBITION:
+
+                bmobComment.getCommentToExhibition(belongToID);
+                break;
+            case COMMENT_TO_COLLECTION:
+                bmobComment.getCommentToColt(belongToID);
+                break;
+
+            case COMMENT_TO_BLOG:
+                bmobComment.getCommentToBlog(belongToID);
+                break;
+            default:
+                break;
 
         }
+
+
+
 
 
     }
@@ -213,12 +246,11 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
         Rect r = new Rect();
         rootView.getWindowVisibleDisplayFrame(r);
         int heightDiff = rootView.getBottom() - r.bottom;
-        height=heightDiff;
+        height = heightDiff;
 
         DisplayMetrics dm = rootView.getResources().getDisplayMetrics();
         return heightDiff > softKeyboardHeight * dm.density;
     }
-
 
 
 

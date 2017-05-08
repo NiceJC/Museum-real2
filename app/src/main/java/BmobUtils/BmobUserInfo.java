@@ -22,6 +22,10 @@ public class BmobUserInfo {
     private static BmobUserInfo instance=null;
     private OnBmobReturnSuccess onBmobReturnSuccess;
 
+    public BmobUserInfo() {
+
+    }
+
     public void setOnBmobReturnSuccess(OnBmobReturnSuccess onBmobReturnSuccess) {
         this.onBmobReturnSuccess = onBmobReturnSuccess;
     }

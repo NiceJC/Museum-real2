@@ -57,9 +57,9 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
     public void onBindViewHolder(CommentRecyclerViewHolder holder, int position) {
         Comments comment=mComments.get(position);
 
-        requestManager.load(comment.getAuthorIconURL()).bitmapTransform(new GlideCircleTransform(context)).into(holder.icon);
-        holder.userName.setText(comment.getAuthorName());
-        holder.time.setText(comment.getCommentTime()+"");
+//        requestManager.load(comment.getAuthorIconURL()).bitmapTransform(new GlideCircleTransform(context)).into(holder.icon);
+//        holder.userName.setText(comment.getAuthorName());
+//        holder.time.setText(comment.getCommentTime()+"");
         holder.contentText.setText(comment.getCommentText());
 
 

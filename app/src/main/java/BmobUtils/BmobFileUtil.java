@@ -8,14 +8,17 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.bmob.v3.listener.UploadBatchListener;
 import cn.bmob.v3.listener.UploadFileListener;
 import entity.User;
 import interfaces.OnBmobReturnSuccess;
+import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
 /**
@@ -34,6 +37,12 @@ public class BmobFileUtil  {
 
     public void setOnBmobReturnSuccess(OnBmobReturnSuccess onBmobReturnSuccess) {
         this.onBmobReturnSuccess = onBmobReturnSuccess;
+    }
+
+    private OnBmobReturnWithObj onBmobReturnWithObj;
+
+    public void setOnBmobReturnWithObj(OnBmobReturnWithObj onBmobReturnWithObj) {
+        this.onBmobReturnWithObj = onBmobReturnWithObj;
     }
 
     private Handler handler=new Handler(){
@@ -69,6 +78,46 @@ public class BmobFileUtil  {
         return instance;
 
     }
+
+    //批量上传文件
+    public void uploadBatch(final String[] paths){
+        BmobFile.uploadBatch(paths, new UploadBatchListener() {
+            @Override
+            public void onSuccess(List<BmobFile> files, List<String> urls) {
+                if(paths.length==urls.size()){
+                    //数量相等，表示全部上传成功
+
+
+                    onBmobReturnWithObj.onSuccess(urls);
+
+                }
+            }
+
+            @Override
+            public void onProgress(int i, int i1, int i2, int i3) {
+
+
+                //1、curIndex--表示当前第几个文件正在上传
+                //2、curPercent--表示当前上传文件的进度值（百分比）
+                //3、total--表示总的上传文件数
+                //4、totalPercent--表示总的上传进度（百分比）
+            }
+
+            @Override
+            public void onError(int i, String s) {
+
+                ToastUtils.toast(context,"错误码"+i +",错误描述："+s);
+            }
+        });
+
+
+
+
+        }
+
+
+
+
 
     //上传本地文件到服务器,并更新数据表  成功后返回一个URL
     public void uploadFile(String path){

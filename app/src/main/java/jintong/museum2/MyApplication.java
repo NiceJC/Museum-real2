@@ -15,7 +15,7 @@ public class MyApplication extends Application {
 
 
     //Bmob的初始化appID
-    public static String APPID="0f1dcb2068225a70641d061d23e3c747";
+    public static String APPID="5d3ed91c22b8a36cf7f36d35bed95428";
 
 
     //ShareSDK的appkey和APPSecret

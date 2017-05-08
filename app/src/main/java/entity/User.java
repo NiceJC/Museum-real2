@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  *
@@ -14,22 +15,22 @@ import cn.bmob.v3.BmobUser;
 
 public class User extends BmobUser {
 
+//
+//    public static Integer REGISTERTYPE_PHONE=1;
+//    public static Integer REGISTERTYPE_EMAIL=2;
+//    public static Integer REGISTERTYPE_WECHAT=3;
+//    public static Integer REGISTERTYPE_QQ=4;
 
-    public static Integer REGISTERTYPE_PHONE=1;
-    public static Integer REGISTERTYPE_EMAIL=2;
-    public static Integer REGISTERTYPE_WECHAT=3;
-    public static Integer REGISTERTYPE_QQ=4;
 
+    private BmobRelation likeCollections; //喜欢的藏品
 
-    private List<Integer> likeCollections; //喜欢的藏品的ID
+    private BmobRelation watchMuseums; //关注的博物馆
 
-    private List<Integer> watchMuseums; //关注的博物馆的ID
+//    private BmobRelation postBlogs; //发表的状态
 
-    private List<Integer> postBlogs; //发表的状态的ID
+    private BmobRelation watchUsers; //关注的其他用户
 
-    private List<Integer> watchUsers; //关注的其他用户
-
-    private List<Integer> fans; //粉丝
+    private BmobRelation fans; //粉丝（被关注）
 
 
 
@@ -50,70 +51,36 @@ public class User extends BmobUser {
     }
 
 
-    public User(List<Integer> likeCollections, List<Integer> watchMuseums, List<Integer> postBlogs, List<Integer> watchUsers, List<Integer> fans, String nickName, boolean isMan, String phoneNum) {
-        this.likeCollections = likeCollections;
-        this.watchMuseums = watchMuseums;
-        this.postBlogs = postBlogs;
-        this.watchUsers = watchUsers;
-        this.fans = fans;
-        this.nickName = nickName;
-        this.isMan = isMan;
 
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "likeCollections=" + likeCollections +
-                ", watchMuseums=" + watchMuseums +
-                ", postBlogs=" + postBlogs +
-                ", watchUsers=" + watchUsers +
-                ", fans=" + fans +
-                ", nickName='" + nickName + '\'' +
-                ", registerType=" + registerType +
-                ", isMan=" + isMan +
-
-                ", portraitURL='" + portraitURL + '\'' +
-                '}';
-    }
-
-    public List<Integer> getLikeCollections() {
+    public BmobRelation getLikeCollections() {
         return likeCollections;
     }
 
-    public void setLikeCollections(List<Integer> likeCollections) {
+    public void setLikeCollections(BmobRelation likeCollections) {
         this.likeCollections = likeCollections;
     }
 
-    public List<Integer> getWatchMuseums() {
+    public BmobRelation getWatchMuseums() {
         return watchMuseums;
     }
 
-    public void setWatchMuseums(List<Integer> watchMuseums) {
+    public void setWatchMuseums(BmobRelation watchMuseums) {
         this.watchMuseums = watchMuseums;
     }
 
-    public List<Integer> getPostBlogs() {
-        return postBlogs;
-    }
-
-    public void setPostBlogs(List<Integer> postBlogs) {
-        this.postBlogs = postBlogs;
-    }
-
-    public List<Integer> getWatchUsers() {
+    public BmobRelation getWatchUsers() {
         return watchUsers;
     }
 
-    public void setWatchUsers(List<Integer> watchUsers) {
+    public void setWatchUsers(BmobRelation watchUsers) {
         this.watchUsers = watchUsers;
     }
 
-    public List<Integer> getFans() {
+    public BmobRelation getFans() {
         return fans;
     }
 
-    public void setFans(List<Integer> fans) {
+    public void setFans(BmobRelation fans) {
         this.fans = fans;
     }
 
@@ -125,21 +92,12 @@ public class User extends BmobUser {
         this.nickName = nickName;
     }
 
-
     public Integer getRegisterType() {
         return registerType;
     }
 
     public void setRegisterType(Integer registerType) {
         this.registerType = registerType;
-    }
-
-    public String getPortraitURL() {
-        return portraitURL;
-    }
-
-    public void setPortraitURL(String portraitURL) {
-        this.portraitURL = portraitURL;
     }
 
     public Boolean getMan() {
@@ -150,13 +108,19 @@ public class User extends BmobUser {
         isMan = man;
     }
 
-
-
     public String getAge() {
         return age;
     }
 
     public void setAge(String age) {
         this.age = age;
+    }
+
+    public String getPortraitURL() {
+        return portraitURL;
+    }
+
+    public void setPortraitURL(String portraitURL) {
+        this.portraitURL = portraitURL;
     }
 }

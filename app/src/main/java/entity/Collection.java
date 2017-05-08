@@ -4,23 +4,23 @@ import java.io.Serializable;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobPointer;
 
 /**
- *
  * 藏品的实体类
  * Created by wjc on 2017/2/21.
  */
 
 public class Collection extends BmobObject implements Serializable {
 
-    public static final int TYPE_BRONSE=1; //青铜器
-    public static final int TYPE_CHINA=2; //瓷器
-    public static final int TYPE_JADE=3; //玉石器
-    public static final int TYPE_LACQUER=4; //漆器
-    public static final int TYPE_PAINT=5; //书画类
-    public static final int TYPE_OTHERS=6; //其他类
-    
-    private int coltID; //藏品Id
+    public static final int TYPE_BRONSE = 1; //青铜器
+    public static final int TYPE_CHINA = 2; //瓷器
+    public static final int TYPE_JADE = 3; //玉石器
+    public static final int TYPE_LACQUER = 4; //漆器
+    public static final int TYPE_PAINT = 5; //书画类
+    public static final int TYPE_OTHERS = 6; //其他类
+
+//    private int coltID; //藏品Id
 
     private String coltName;  //藏品名称
 
@@ -30,65 +30,33 @@ public class Collection extends BmobObject implements Serializable {
 
     private String coltIntru; //藏品介绍
 
-    private  int coltSort; // 藏品分类
+    private Integer coltSort; // 藏品分类
 
-    private int coltToMuseumId; // 藏品所在博物馆ID
+//    private String coltToMuseumName; //藏品所在博物馆名称
 
-    private String coltToMuseumName; //藏品所在博物馆名称
+    private Integer coltLikeNum; //藏品的点赞数量   new
 
-    private String coltShowRoom; // 藏品展厅
+//    private int coltCommentBolongID; //评论的ID
 
-    private int coltLikeNum; //藏品的点赞数量   new
+    private Integer coltCommentNum; //评论的数量
 
-    private int coltCommentBolongID; //评论的ID
+    private List<String> coltImageURLs; //藏品图片URL
 
-    private int coltCommentNum; //评论的数量
 
-    private List<String> coltImageURLs; //藏品图片
 
+
+    private ExhibitRoom coltShowRoom; // 藏品所在展厅
+
+    private Museum coltToMuseum; // 藏品所在博物馆
+
+    private Exhibition toExhibition; //参加的主体展览
+
+
+    private Integer hotValue; //热力值
 
 
 
     public Collection() {
-    }
-
-    public Collection(int coltID, String coltName, String coltSize, String coltDynasty, String coltIntru, int coltSort, int coltToMuseumId, String coltToMuseumName, String coltShowRoom, int coltLikeNum, List<String> coltImageURLs) {
-        this.coltID = coltID;
-        this.coltName = coltName;
-        this.coltSize = coltSize;
-        this.coltDynasty = coltDynasty;
-        this.coltIntru = coltIntru;
-        this.coltSort = coltSort;
-        this.coltToMuseumId = coltToMuseumId;
-        this.coltToMuseumName = coltToMuseumName;
-        this.coltShowRoom = coltShowRoom;
-        this.coltLikeNum = coltLikeNum;
-        this.coltImageURLs = coltImageURLs;
-    }
-
-    @Override
-    public String toString() {
-        return "Collection{" +
-                "coltID=" + coltID +
-                ", coltName='" + coltName + '\'' +
-                ", coltSize='" + coltSize + '\'' +
-                ", coltDynasty='" + coltDynasty + '\'' +
-                ", coltIntru='" + coltIntru + '\'' +
-                ", coltSort=" + coltSort +
-                ", coltToMuseumId=" + coltToMuseumId +
-                ", coltToMuseumName='" + coltToMuseumName + '\'' +
-                ", coltShowRoom='" + coltShowRoom + '\'' +
-                ", coltLikeNum=" + coltLikeNum +
-                ", coltImageURLs=" + coltImageURLs +
-                '}';
-    }
-
-    public int getColtID() {
-        return coltID;
-    }
-
-    public void setColtID(int coltID) {
-        this.coltID = coltID;
     }
 
     public String getColtName() {
@@ -123,44 +91,28 @@ public class Collection extends BmobObject implements Serializable {
         this.coltIntru = coltIntru;
     }
 
-    public int getColtSort() {
+    public Integer getColtSort() {
         return coltSort;
     }
 
-    public void setColtSort(int coltSort) {
+    public void setColtSort(Integer coltSort) {
         this.coltSort = coltSort;
     }
 
-    public int getColtToMuseumId() {
-        return coltToMuseumId;
-    }
-
-    public void setColtToMuseumId(int coltToMuseumId) {
-        this.coltToMuseumId = coltToMuseumId;
-    }
-
-    public String getColtToMuseumName() {
-        return coltToMuseumName;
-    }
-
-    public void setColtToMuseumName(String coltToMuseumName) {
-        this.coltToMuseumName = coltToMuseumName;
-    }
-
-    public String getColtShowRoom() {
-        return coltShowRoom;
-    }
-
-    public void setColtShowRoom(String coltShowRoom) {
-        this.coltShowRoom = coltShowRoom;
-    }
-
-    public int getColtLikeNum() {
+    public Integer getColtLikeNum() {
         return coltLikeNum;
     }
 
-    public void setColtLikeNum(int coltLikeNum) {
+    public void setColtLikeNum(Integer coltLikeNum) {
         this.coltLikeNum = coltLikeNum;
+    }
+
+    public Integer getColtCommentNum() {
+        return coltCommentNum;
+    }
+
+    public void setColtCommentNum(Integer coltCommentNum) {
+        this.coltCommentNum = coltCommentNum;
     }
 
     public List<String> getColtImageURLs() {
@@ -171,19 +123,35 @@ public class Collection extends BmobObject implements Serializable {
         this.coltImageURLs = coltImageURLs;
     }
 
-    public int getColtCommentBolongID() {
-        return coltCommentBolongID;
+    public ExhibitRoom getColtShowRoom() {
+        return coltShowRoom;
     }
 
-    public void setColtCommentBolongID(int coltCommentBolongID) {
-        this.coltCommentBolongID = coltCommentBolongID;
+    public void setColtShowRoom(ExhibitRoom coltShowRoom) {
+        this.coltShowRoom = coltShowRoom;
     }
 
-    public int getColtCommentNum() {
-        return coltCommentNum;
+    public Museum getColtToMuseum() {
+        return coltToMuseum;
     }
 
-    public void setColtCommentNum(int coltCommentNum) {
-        this.coltCommentNum = coltCommentNum;
+    public void setColtToMuseum(Museum coltToMuseum) {
+        this.coltToMuseum = coltToMuseum;
+    }
+
+    public Exhibition getToExhibition() {
+        return toExhibition;
+    }
+
+    public void setToExhibition(Exhibition toExhibition) {
+        this.toExhibition = toExhibition;
+    }
+
+    public Integer getHotValue() {
+        return hotValue;
+    }
+
+    public void setHotValue(Integer hotValue) {
+        this.hotValue = hotValue;
     }
 }

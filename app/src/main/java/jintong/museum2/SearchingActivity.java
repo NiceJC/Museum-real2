@@ -34,6 +34,7 @@ import MyView.FlowLayout;
 import MyView.NoScrollViewPager;
 import fragment.SearchingFragmentF1;
 import fragment.SearchingFragmentF2;
+import interfaces.OnSearchingJump;
 import interfaces.OnclickFinish;
 
 import static android.R.attr.breadCrumbShortTitle;
@@ -87,6 +88,7 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
         back = (ImageView) findViewById(R.id.searching_back);
 
         search = (ImageView) findViewById(R.id.searching_button);
+
         clearEditText = (ImageView) findViewById(R.id.searching_cancel);
 
         editText = (EditText) findViewById(R.id.searching_text);
@@ -129,12 +131,16 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
     private void initEvents() {
 
 
-        fragment1.setOnclickFinish(new OnclickFinish() {
+        fragment1.setOnSearchingJump(new OnSearchingJump() {
             @Override
-            public void onClickFinish() {
+            public void onSearching(String keyWord) {
+                Bundle bundle=new Bundle();
+                bundle.putString("keyWord",keyWord);
+                fragment2.setArguments(bundle);
                 viewPager.setCurrentItem(1);
             }
         });
+
         back.setOnClickListener(this);
         search.setOnClickListener(this);
         clearEditText.setOnClickListener(this);
@@ -226,6 +232,9 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
         Toast.makeText(SearchingActivity.this, "searching", Toast.LENGTH_SHORT).show();
         saveWordsToSP(keyword);
 
+        Bundle bundle=new Bundle();
+        bundle.putString("keyWord",keyword);
+        fragment2.setArguments(bundle);
         viewPager.setCurrentItem(1);
 
 

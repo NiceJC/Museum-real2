@@ -116,7 +116,7 @@ public class CommunityFragmentF1 extends Fragment {
 
             blog.setIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
             blog.setCommentNums(i);
-            blog.setContentText("hahhah哈哈哈  好开心呀 " + (char) i + " 嘿嘿嘿嘿嘿  " + (char) i);
+            blog.setContentText("哈哈哈 今天游览了杭州博物馆， 好开心呀 " );
             blog.setPraised(i > 3);
             blog.setWatched(i <= 3);
             blog.setPraiseNums(i * i);

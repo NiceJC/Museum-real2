@@ -190,8 +190,8 @@ public class CollectionActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent=new Intent(CollectionActivity.this, CommentActivity.class);
 
-                intent.putExtra("coltID",collection.getColtID());
-                intent.putExtra("commentType", Comments.COMMENT_TO_COLLECTION);
+                intent.putExtra("coltID",collection.getObjectId());
+//                intent.putExtra("commentType", Comments.COMMENT_TO_COLLECTION);
                 startActivity(intent);
 
                 overridePendingTransition(R.anim.in_from_right, R.anim.none);

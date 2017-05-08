@@ -83,7 +83,7 @@ public class CollectionGridAdapter extends RecyclerView.Adapter<CollectionGridVi
         Collection collection = mDatas.get(position);
         holder.coltName.setText(collection.getColtName());
         holder.likeNum.setText(collection.getColtLikeNum() + "");
-        holder.coltToMuseumName.setText(collection.getColtToMuseumName());
+        holder.coltToMuseumName.setText(collection.getColtToMuseum().getMuseumName());
 
         holder.likeClick.setOnClickListener(this);
 

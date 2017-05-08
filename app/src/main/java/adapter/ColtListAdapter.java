@@ -111,8 +111,8 @@ public class ColtListAdapter extends RecyclerView.Adapter<ColtListViewHolder> {
             public void onClick(View v) {
                 Intent intent=new Intent(context, CommentActivity.class);
 
-                intent.putExtra("coltID",collection.getColtID());
-                intent.putExtra("commentType", Comments.COMMENT_TO_COLLECTION);
+                intent.putExtra("coltID",collection.getObjectId());
+
                 context.startActivity(intent);
 
                 context.overridePendingTransition(R.anim.in_from_right, R.anim.none);

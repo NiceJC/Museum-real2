@@ -1,5 +1,7 @@
 package entity;
 
+import android.content.Intent;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +11,26 @@ import cn.bmob.v3.BmobObject;
 /**
  *
  *
- * 社区状态的基本信息类
+ * 社区Blog的基本信息类
+ * 一般来说，在社区主页展示
+ * 排序的关键词是 创建时间
+ * 在关注列表的，经过关注用户Author属性筛选后按照时间排序
  * Created by wjc on 2017/2/20.
  */
 
 public class Blog extends BmobObject implements Serializable  {
 
-   private int userID; //所属用户的ID
+
+     //关联关系  这一部分是与Bmob解不开了。。
+
+    private User Author; //作者
+//    private List<Comments> commentsList; //下方的评论
+
+
+
+
+
+//    private Intent userID; //所属用户的ID
     private int blogID; //博客的ID
     private int commentsID;//所拥有的评论的 belongId
 
@@ -23,10 +38,10 @@ public class Blog extends BmobObject implements Serializable  {
     private String userName; //用户昵称
     private String time; //发布时间
     private String contentText;//内容文本
-    private boolean isWatched;//是否当前用户已经关注
-    private boolean isPraised;//是否已经点赞
-    private int commentNums;//评论的数量
-    private int praiseNums;//点赞的数量
+    private Boolean isWatched;//是否当前用户已经关注
+    private Boolean isPraised;//是否已经点赞
+    private Integer commentNums;//评论的数量
+    private Integer praiseNums;//点赞的数量
     private List<String> imageURLs;//发表的图片
 
 
@@ -126,12 +141,12 @@ public class Blog extends BmobObject implements Serializable  {
         this.praiseNums = praiseNums;
     }
 
-    public int getUserID() {
-        return userID;
+    public User getAuthor() {
+        return Author;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setAuthor(User author) {
+        Author = author;
     }
 
     public int getBlogID() {

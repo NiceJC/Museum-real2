@@ -88,9 +88,9 @@ public class ExhibitionListRecyclerAdapter extends RecyclerView.Adapter<Recycler
             Exhibition exhibition = datas.get(position);
             ((ExhibitionViewHolder) holder).exhibitName.setText(exhibition.getExhibitName());
             requestManager.load(exhibition.getImageURLs().get(0)).into(((ExhibitionViewHolder) holder).exhibitImage);
-            ((ExhibitionViewHolder) holder).exhibitMuseumName.setText(exhibition.getMuseumName());
+            ((ExhibitionViewHolder) holder).exhibitMuseumName.setText(exhibition.getToMuseum().getMuseumName());
 
-            ((ExhibitionViewHolder) holder).exhibitMuseumLocation.setText(exhibition.getLocateCity());
+            ((ExhibitionViewHolder) holder).exhibitMuseumLocation.setText(exhibition.getToMuseum().getLocateCity());
             ((ExhibitionViewHolder) holder).exhibitMuseumDistance.setText("99KM"); //这里是需要根据经纬度实时计算的
 
             if (mOnItemClickListener != null) {

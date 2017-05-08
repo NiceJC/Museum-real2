@@ -101,7 +101,7 @@ public class TypeColtActivity extends BaseActivity {
             List<String> imageURLs=new ArrayList<String>();
             imageURLs.add(URLs.get(i));
             Collection collection=new Collection();
-            collection.setColtID(i);
+
             collection.setColtImageURLs(imageURLs);
             collection.setColtName("藏品 "+i+" 号");
 

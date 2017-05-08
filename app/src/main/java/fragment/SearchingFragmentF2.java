@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobColt;
+import BmobUtils.BmobExhibition;
+import BmobUtils.BmobMuseum;
 import adapter.SearchingResultAdapter;
 import entity.Collection;
 import entity.Exhibition;
 import entity.Museum;
+import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.R;
+import util.ToastUtils;
 
 /**
  * Created by wjc on 2017/3/22.
@@ -39,42 +45,46 @@ public class SearchingFragmentF2 extends Fragment {
     private RecyclerView coltRecyclerView;
 
 
-    private List<Museum> museumList;
-    private List<Exhibition> exhibitionList;
-    private List<Collection> collectionList;
+    private List<Museum> museumList = new ArrayList<Museum>();
+    private List<Exhibition> exhibitionList = new ArrayList<Exhibition>();
+    private List<Collection> collectionList = new ArrayList<Collection>();
+
     private TextView noResultText;
     private RecyclerView recyclerView;
+    private SearchingResultAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_fragment_2, container, false);
 
+
         initView();
-        initData();
-        setData();
+
+
         initEvents();
 
 
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
+        setData();
+
+    }
+
     private void setData() {
 
-        //没有结果 直接返回
-        if (museumList.size() == 0 && exhibitionList.size() == 0 && collectionList.size() == 0) {
-            noResultText.setVisibility(View.VISIBLE);
-            return;
-        }
-
-
-        SearchingResultAdapter adapter = new SearchingResultAdapter
-                (getActivity(), museumList, exhibitionList, collectionList);
-
-        recyclerView.setAdapter(adapter);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-
+//
+//
+//        //没有结果 设置无结果提示
+//        if (museumList.size() == 0 && exhibitionList.size() == 0 && collectionList.size() == 0) {
+//            noResultText.setVisibility(View.VISIBLE);
+//
+//        }
 
     }
 
@@ -83,57 +93,110 @@ public class SearchingFragmentF2 extends Fragment {
         noResultText = (TextView) view.findViewById(R.id.noResultText);
         recyclerView = (RecyclerView) view.findViewById(R.id.search_2_recyclerView);
 
+
+        adapter = new SearchingResultAdapter
+                (getActivity(), museumList, exhibitionList, collectionList);
+
+        recyclerView.setAdapter(adapter);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+
     }
 
     private void initData() {
-        museumList = new ArrayList<Museum>();
-        exhibitionList = new ArrayList<Exhibition>();
-        collectionList = new ArrayList<Collection>();
 
-        for (int i = 0; i < 1; i++) {
-            List<String> urls = new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
-            Museum museum = new Museum();
-            museum.setMuseumName("杭州市博物馆");
-            museum.setImageURLs(urls);
-            museum.setLocateCity("浙江省杭州市");
-
-
-            museumList.add(museum);
-        }
-
-
-        for (int i = 0; i < 2; i++) {
-            List<String> urls = new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
-            Exhibition exhibition = new Exhibition();
-            exhibition.setExhibitName("吕时之艺术陈列  主题展");
-            exhibition.setImageURLs(urls);
-            exhibition.setLocateCity("浙江省杭州市");
-            exhibition.setMuseumName("杭州市博物馆");
-            exhibitionList.add(exhibition);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            Collection collection = new Collection();
-            List<String> urls = new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/38ef58db401620a38093b48211c1a027.jpg");
-            collection.setColtLikeNum(9955);
-            collection.setColtImageURLs(urls);
-            collection.setColtName("鸟纹包月瓶");
-            collection.setColtDynasty("清朝");
-            collection.setColtSize("高十米，宽十米");
-            collection.setColtIntru("清末民国时期使用的称量粮食的工具，一面书“㕠聚号记”，一面书“校准市斗”。");
-
-            collection.setColtCommentNum(996);
-            collectionList.add(collection);
-
+        //从Bundle中获取关键词，不为空就进行搜索
+        Bundle bundle = getArguments();
+        String keyWord = bundle.getString("keyWord");
+        if (keyWord != null && !keyWord.equals("")) {
+            Log.e("keyword", keyWord);
+            searchMuseum(keyWord);
+            searchExhibition(keyWord);
+            searchColt(keyWord);
         }
 
 
     }
+
+
+    //根据关键词，从服务断端获取数据
+    private void searchMuseum(String keyWord) {
+
+        BmobMuseum bmobMuseum = BmobMuseum.getInstance(getContext());
+        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                List<Museum> museums = (List<Museum>) Obj;
+                museumList.clear();
+                for (int i = 0; i < museums.size(); i++) {
+                    museumList.add(museums.get(i));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobMuseum.getBykeyWord(keyWord);
+
+    }
+
+    private void searchExhibition(String keyWord) {
+        BmobExhibition bmobExhibition = BmobExhibition.getInstance(getActivity());
+        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                List<Exhibition> exhibitions = (List<Exhibition>) Obj;
+                exhibitionList.clear();
+                for (int i = 0; i < exhibitions.size(); i++) {
+                    exhibitionList.add(exhibitions.get(i));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobExhibition.getBykeyWord(keyWord);
+
+    }
+
+    private void searchColt(String keyWord) {
+
+        BmobColt bmobColt = BmobColt.getInstance(getActivity());
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                List<Collection> collections = (List<Collection>) Obj;
+                collectionList.clear();
+                for (int i = 0; i < collections.size(); i++) {
+                    collectionList.add(collections.get(i));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+
+
+        bmobColt.getBykeyWord(keyWord);
+
+    }
+
 
     private void initEvents() {
 
     }
+
+
 }

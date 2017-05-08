@@ -35,7 +35,7 @@ public class MainFragmentF2 extends Fragment {
     private List<Museum> datas;
 
 
-
+    private MuseumListAdapter adapter;
 
 
     @Nullable
@@ -48,26 +48,19 @@ public class MainFragmentF2 extends Fragment {
         initDatas();
         initEvents();
 
-
-        MuseumListAdapter adapter = new MuseumListAdapter(getContext(), datas);
-
-        recyclerView.setAdapter(adapter);
-
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
         adapter.setmOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent=new Intent(getActivity(),MuseumActivity.class);
+                Intent intent = new Intent(getActivity(), MuseumActivity.class);
                 startActivity(intent);
 
-               getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
 
             }
 
             @Override
             public void OnItemLongClick(View view, int position) {
-                Toast.makeText(getActivity(),"long click "+position,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "long click " + position, Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -83,22 +76,37 @@ public class MainFragmentF2 extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recylerview_main_f2);
 
 
+
+        adapter = new MuseumListAdapter(getContext(), datas);
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+
+
     }
 
     private void initDatas() {
         datas = new ArrayList<Museum>();
-        for (int i = 0; i < 6; i++) {
-            List<String> urls = new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
-            Museum museum = new Museum();
-            museum.setMuseumName("杭州市博物馆");
-            museum.setImageURLs(urls);
-            museum.setLocateCity("浙江省杭州市");
+
+        List<String> urls = new ArrayList<String>();
+        urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
+        Museum museum = new Museum();
+        museum.setMuseumName("杭州市博物馆");
+        museum.setImageURLs(urls);
+        museum.setLocateCity("浙江省杭州市");
 
 
-            datas.add(museum);
-        }
+        datas.add(museum);
 
+        List<String> urls2 = new ArrayList<String>();
+        urls2.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/847036a14042e435806f897b60908134.jpg");
+        Museum museum2 = new Museum();
+        museum2.setMuseumName("杭州市自然博物馆");
+        museum2.setImageURLs(urls2);
+        museum2.setLocateCity("浙江省杭州市");
+
+
+        datas.add(museum2);
 
     }
 
@@ -106,4 +114,8 @@ public class MainFragmentF2 extends Fragment {
 
 
     }
+
+
+
+
 }
