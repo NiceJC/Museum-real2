@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import jintong.museum2.R;
 
 /**
+ *
+ * 消息列表
  * Created by wjc on 2017/2/23.
  */
 

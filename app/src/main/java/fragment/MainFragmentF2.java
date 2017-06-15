@@ -5,38 +5,45 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobMuseum;
+import MyView.PullBaseView;
+import MyView.PullRecyclerView;
 import adapter.MuseumListAdapter;
-import entity.Exhibition;
 import entity.Museum;
-import interfaces.OnItemClickListener;
+import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.MuseumActivity;
 import jintong.museum2.R;
+import util.ToastUtils;
+
+import static util.ParameterBase.LIMIT;
+import static util.ParameterBase.MUSEUM_ID;
 
 /**
  * 展馆列表
  * Created by wjc on 2017/2/14.
  */
-public class MainFragmentF2 extends Fragment {
+public class MainFragmentF2 extends Fragment implements adapter.BaseAdapter.OnItemClickListener,
+        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
+        PullBaseView.OnRefreshListener{
 
     private View view;
 
-    private RecyclerView recyclerView;
+    private PullRecyclerView recyclerView;
 
-    private List<Museum> datas;
+    private List<Object> datas= new ArrayList<>();
 
+    private LinearLayoutManager manager;
 
     private MuseumListAdapter adapter;
 
+    private int currentPage=0;
 
     @Nullable
     @Override
@@ -47,24 +54,6 @@ public class MainFragmentF2 extends Fragment {
         initViews();
         initDatas();
         initEvents();
-
-        adapter.setmOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), MuseumActivity.class);
-                startActivity(intent);
-
-                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
-
-            }
-
-            @Override
-            public void OnItemLongClick(View view, int position) {
-                Toast.makeText(getActivity(), "long click " + position, Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
         return view;
 
 
@@ -73,40 +62,32 @@ public class MainFragmentF2 extends Fragment {
 
     private void initViews() {
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recylerview_main_f2);
+        recyclerView = (PullRecyclerView) view.findViewById(R.id.recylerview_main_f2);
 
 
-
-        adapter = new MuseumListAdapter(getContext(), datas);
-        recyclerView.setAdapter(adapter);
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
+
+//        recyclerView.setCanPullUp(false);
+//        recyclerView.setCanPullDown(false);
+
+        recyclerView.setOnRefreshListener(this);
+
+        recyclerView.setCanPullUp(false);
+        adapter = new MuseumListAdapter(getActivity(), datas, this);
+        adapter.setOnItemClickListener(this);
+        adapter.setOnItemLongClickListener(this);
+        recyclerView.setAdapter(adapter);
 
 
     }
 
     private void initDatas() {
-        datas = new ArrayList<Museum>();
 
-        List<String> urls = new ArrayList<String>();
-        urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg");
-        Museum museum = new Museum();
-        museum.setMuseumName("杭州市博物馆");
-        museum.setImageURLs(urls);
-        museum.setLocateCity("浙江省杭州市");
-
-
-        datas.add(museum);
-
-        List<String> urls2 = new ArrayList<String>();
-        urls2.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/847036a14042e435806f897b60908134.jpg");
-        Museum museum2 = new Museum();
-        museum2.setMuseumName("杭州市自然博物馆");
-        museum2.setImageURLs(urls2);
-        museum2.setLocateCity("浙江省杭州市");
-
-
-        datas.add(museum2);
+        if (datas.size() != 0) {
+            return;
+        }
+        pullDataFromServer();
 
     }
 
@@ -116,6 +97,96 @@ public class MainFragmentF2 extends Fragment {
     }
 
 
+    @Override
+    public void onHeaderRefresh(PullBaseView view) {
+        pullDataFromServer();
+    }
+
+    @Override
+    public void onFooterRefresh(PullBaseView view) {
+        pullMoreFromServer(currentPage);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Museum museum= (Museum) datas.get(position);
+        Intent intent = new Intent(getActivity(), MuseumActivity.class);
+        intent.putExtra(MUSEUM_ID,museum.getObjectId());
+        startActivity(intent);
+
+        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
+
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+
+    }
+
+    @Override
+    public void onViewClick(int position, int viewtype) {
+
+    }
 
 
+    //从服务器拉取数据，拉取成功后刷新页面
+    public void pullDataFromServer() {
+        BmobMuseum bmobMuseum = BmobMuseum.getInstance(getActivity());
+
+        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Museum> museumList = (List<Museum>) Obj;
+
+                datas.clear();
+                for (Museum museum:museumList){
+                    datas.add(museum);
+                }
+                adapter.notifyDataSetChanged();
+                recyclerView.onHeaderRefreshComplete();
+
+                if(museumList.size()<LIMIT){
+                    recyclerView.onNoMoreData();
+                }
+                currentPage=1;
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {}
+        });
+        bmobMuseum.refreshExhibition();
+
+    }
+
+    //从服务器拉取数据，拉取成功后刷新页面
+    public void pullMoreFromServer(final int curPage) {
+        BmobMuseum bmobMuseum = BmobMuseum.getInstance(getActivity());
+
+        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Museum> museumList = (List<Museum>) Obj;
+
+                //已无更多返回数据
+                if(museumList==null|| museumList.size()==0){
+                    ToastUtils.toast(getActivity(),"没有更多数据啦");
+                }else {
+                    for (Museum museum : museumList) {
+                        datas.add(museum);
+                    }
+                    adapter.notifyDataSetChanged();
+
+                    currentPage++;
+                }
+                recyclerView.onFooterRefreshComplete();
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {}
+        });
+        bmobMuseum.getMoreMuseum(curPage);
+
+    }
 }

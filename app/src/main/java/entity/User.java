@@ -26,9 +26,11 @@ public class User extends BmobUser {
 
     private BmobRelation watchMuseums; //关注的博物馆
 
-//    private BmobRelation postBlogs; //发表的状态
+    private BmobRelation watchExhibitions; //关注的主题展览
 
     private BmobRelation watchUsers; //关注的其他用户
+
+    private BmobRelation likeBlogs; //点赞的Blog
 
     private BmobRelation fans; //粉丝（被关注）
 
@@ -122,5 +124,21 @@ public class User extends BmobUser {
 
     public void setPortraitURL(String portraitURL) {
         this.portraitURL = portraitURL;
+    }
+
+    public BmobRelation getLikeBlogs() {
+        return likeBlogs;
+    }
+
+    public void setLikeBlogs(BmobRelation likeBlogs) {
+        this.likeBlogs = likeBlogs;
+    }
+
+    public BmobRelation getWatchExhibitions() {
+        return watchExhibitions;
+    }
+
+    public void setWatchExhibitions(BmobRelation watchExhibitions) {
+        this.watchExhibitions = watchExhibitions;
     }
 }

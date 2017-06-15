@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  *
@@ -26,79 +27,42 @@ public class Blog extends BmobObject implements Serializable  {
     private User Author; //作者
 //    private List<Comments> commentsList; //下方的评论
 
-
-
-
-
 //    private Intent userID; //所属用户的ID
-    private int blogID; //博客的ID
-    private int commentsID;//所拥有的评论的 belongId
+//    private int blogID; //博客的ID
+//    private Integer commentsID;//所拥有的评论的 belongId
 
-    private String iconURL; //  用户头像
-    private String userName; //用户昵称
-    private String time; //发布时间
+//    private String  iconURL; //  用户头像
+//    private String userName; //用户昵称
+//    private String time; //发布时间
+
+
+
+
     private String contentText;//内容文本
-    private Boolean isWatched;//是否当前用户已经关注
-    private Boolean isPraised;//是否已经点赞
+//    private Boolean isWatched;//是否当前用户已经关注
+//    private Boolean isPraised;//是否已经点赞
     private Integer commentNums;//评论的数量
     private Integer praiseNums;//点赞的数量
+
+    private BmobRelation likedUsers; //点赞过的用户
+
+
+
     private List<String> imageURLs;//发表的图片
 
+    private Boolean isLiked;
+    private Integer likeNum;
 
     public Blog() {
     }
 
 
-
-    public Blog(String iconURL, String userName, String time, String contentText, boolean isWatched, boolean isPraised, int commentNums, int praiseNums, ArrayList<String> imageURLs) {
-        this.iconURL = iconURL;
-        this.userName = userName;
-        this.time = time;
-        this.contentText = contentText;
-        this.isWatched = isWatched;
-        this.isPraised = isPraised;
-        this.commentNums = commentNums;
-        this.praiseNums = praiseNums;
-        this.imageURLs = imageURLs;
+    public User getAuthor() {
+        return Author;
     }
 
-    @Override
-    public String toString() {
-        return "Blog{" +
-                "iconURL='" + iconURL + '\'' +
-                ", userName='" + userName + '\'' +
-                ", time='" + time + '\'' +
-                ", contentText='" + contentText + '\'' +
-                ", isWatched=" + isWatched +
-                ", isPraised=" + isPraised +
-                ", commentNums=" + commentNums +
-                ", praiseNums=" + praiseNums +
-                ", imageURLs=" + imageURLs +
-                '}';
-    }
-
-    public String getIconURL() {
-        return iconURL;
-    }
-
-    public void setIconURL(String iconURL) {
-        this.iconURL = iconURL;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
+    public void setAuthor(User author) {
+        Author = author;
     }
 
     public String getContentText() {
@@ -109,60 +73,20 @@ public class Blog extends BmobObject implements Serializable  {
         this.contentText = contentText;
     }
 
-    public boolean isWatched() {
-        return isWatched;
-    }
-
-    public void setWatched(boolean watched) {
-        isWatched = watched;
-    }
-
-    public boolean isPraised() {
-        return isPraised;
-    }
-
-    public void setPraised(boolean praised) {
-        isPraised = praised;
-    }
-
-    public int getCommentNums() {
+    public Integer getCommentNums() {
         return commentNums;
     }
 
-    public void setCommentNums(int commentNums) {
+    public void setCommentNums(Integer commentNums) {
         this.commentNums = commentNums;
     }
 
-    public int getPraiseNums() {
+    public Integer getPraiseNums() {
         return praiseNums;
     }
 
-    public void setPraiseNums(int praiseNums) {
+    public void setPraiseNums(Integer praiseNums) {
         this.praiseNums = praiseNums;
-    }
-
-    public User getAuthor() {
-        return Author;
-    }
-
-    public void setAuthor(User author) {
-        Author = author;
-    }
-
-    public int getBlogID() {
-        return blogID;
-    }
-
-    public void setBlogID(int blogID) {
-        this.blogID = blogID;
-    }
-
-    public int getCommentsID() {
-        return commentsID;
-    }
-
-    public void setCommentsID(int commentsID) {
-        this.commentsID = commentsID;
     }
 
     public List<String> getImageURLs() {
@@ -171,6 +95,30 @@ public class Blog extends BmobObject implements Serializable  {
 
     public void setImageURLs(List<String> imageURLs) {
         this.imageURLs = imageURLs;
+    }
+
+    public BmobRelation getLikedUsers() {
+        return likedUsers;
+    }
+
+    public void setLikedUsers(BmobRelation likedUsers) {
+        this.likedUsers = likedUsers;
+    }
+
+    public Boolean getLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(Boolean liked) {
+        isLiked = liked;
+    }
+
+    public Integer getLikeNum() {
+        return likeNum;
+    }
+
+    public void setLikeNum(Integer likeNum) {
+        this.likeNum = likeNum;
     }
 }
 

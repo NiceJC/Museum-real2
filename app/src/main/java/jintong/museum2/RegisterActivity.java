@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import BmobUtils.BmobRegisterAndLogin;
 import entity.User;
 import interfaces.OnBmobReturnSuccess;
+import interfaces.OnBmobReturnWithObj;
 import util.MD5;
 import util.ToastUtils;
 
@@ -156,18 +157,20 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 /**
                  * 验证号码是否已经被注册
                  */
-                BmobRegisterAndLogin.getInstance(this).setOnBmobReturnSuccess(new OnBmobReturnSuccess() {
+                BmobRegisterAndLogin.getInstance(this).setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                     @Override
-                    public void onSuccess() {
+                    public void onSuccess(Object Obj) {
                         afterClick(phoneNum);
 
                     }
 
                     @Override
-                    public void onFail() {
+                    public void onFail(Object Obj) {
                         ToastUtils.toast(RegisterActivity.this,"该号码已经被注册");
 
                     }
+
+
 
                 });
 
@@ -206,9 +209,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                              * 成功后跳转登录界面
                              *
                              */
-                            BmobRegisterAndLogin.getInstance(this).setOnBmobReturnSuccess(new OnBmobReturnSuccess() {
+                            BmobRegisterAndLogin.getInstance(this).setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                                 @Override
-                                public void onSuccess() {
+                                public void onSuccess(Object Obj) {
                                     Intent intent2 = new Intent(RegisterActivity.this, LoginActivity.class);
                                     intent2.putExtra("phoneNum",phoneNum2);
 
@@ -218,9 +221,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                                 }
 
                                 @Override
-                                public void onFail() {
+                                public void onFail(Object Obj) {
 
                                 }
+
+
 
                             });
 
@@ -243,9 +248,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                          */
 
 
-                        BmobRegisterAndLogin.getInstance(this).setOnBmobReturnSuccess(new OnBmobReturnSuccess() {
+                        BmobRegisterAndLogin.getInstance(this).setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                             @Override
-                            public void onSuccess() {
+                            public void onSuccess(Object Obj) {
                                 Intent intent2 = new Intent(RegisterActivity.this, MainActivity.class);
 
 
@@ -255,9 +260,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             }
 
                             @Override
-                            public void onFail() {
+                            public void onFail(Object Obj) {
 
                             }
+
 
                         });
 

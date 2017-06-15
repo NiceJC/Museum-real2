@@ -3,6 +3,7 @@ package entity;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobFile;
 
 /**
  *
@@ -24,13 +25,13 @@ public class ExhibitRoom extends BmobObject {
 
     private String introduction;//展厅介绍
 
-    private String imageURL;//展厅图片
+    private BmobFile image1;//展厅图片
+//    private String imageURL2;//展厅图片
+//    private String imageURL3;//展厅图片
+//    private String imageURL4;//展厅图片
+
 
     private Integer collectionNum;//展出藏品数量
-
-
-
-
 
 
     public ExhibitRoom() {
@@ -60,13 +61,6 @@ public class ExhibitRoom extends BmobObject {
         this.introduction = introduction;
     }
 
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
 
     public Museum getToMuseum() {
         return toMuseum;
@@ -75,4 +69,13 @@ public class ExhibitRoom extends BmobObject {
     public void setToMuseum(Museum toMuseum) {
         this.toMuseum = toMuseum;
     }
+
+    public BmobFile getImage1() {
+        return image1;
+    }
+
+    public void setImage1(BmobFile image1) {
+        this.image1 = image1;
+    }
 }
+

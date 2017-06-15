@@ -29,12 +29,6 @@ public class Comments extends BmobObject {
     private Exhibition exhibition;
     private Collection collection;
     private Blog blog;
-
-
-//    private int commentID; //评论的ID
-//    private int belongID; //所属 博物馆 or 展览 or 藏品 or Blog 的ID
-//    private int belongType; //所属的类型
-
     private String commentText; //评论正文
     private User author;//评论的作者
 

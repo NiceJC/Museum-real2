@@ -183,7 +183,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
 
             hasPic = true;
             sendPost.setSelected(true);
-            sendPost.setClickable(true);
+            sendPost.setClickable(true); 
 
             cursor.close();
 
@@ -218,36 +218,74 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
 
                 final String text = editText.getText().toString();
 
-                String[] paths = new String[datas.size()];
-                for (int i = 0; i < datas.size(); i++) {
-                    paths[i] = datas.get(i);
+                final BmobSocialUtil bmobSocialUtil=BmobSocialUtil.getInstance(PostActivity.this);
 
-                }
+                //先判断图片数量，如果为0，只需上传文字内容
+                if(datas.size()==0){
 
-                BmobFileUtil.getInstance(this).setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-                    @Override
-                    public void onSuccess(Object Obj) {
-                        //上传图片成功，将返回的url和文字再次上传
-                        List<String> urls = (List<String>) Obj;
-                        BmobSocialUtil.getInstance(PostActivity.this).postBlog(text,datas);
+                    bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                        @Override
+                        public void onSuccess(Object Obj) {
+                            ToastUtils.toast(PostActivity.this,"发表成功");
+                            finish();
+                            overridePendingTransition(R.anim.none,R.anim.out_to_right);
+                        }
+
+                        @Override
+                        public void onFail(Object Obj) {
+
+                        }
+                    });
+                    bmobSocialUtil.postBlog(text,null);
+
+                }else {
 
 
-
+                    String[] paths = new String[datas.size()];
+                    for (int i = 0; i < datas.size(); i++) {
+                        paths[i] = datas.get(i);
 
                     }
 
-                    @Override
-                    public void onFail(Object Obj) {
+                    BmobFileUtil.getInstance(this).setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                        @Override
+                        public void onSuccess(Object Obj) {
+                            bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                                @Override
+                                public void onSuccess(Object Obj) {
+                                    ToastUtils.toast(PostActivity.this,"发表成功");
 
-                    }
-                });
-                BmobFileUtil.getInstance(this).uploadBatch(paths);
+                                    finish();
+                                    overridePendingTransition(R.anim.none,R.anim.out_to_right);
+                                }
+
+                                @Override
+                                public void onFail(Object Obj) {
+
+                                }
+                            });
 
 
-                Log.e("TAG", text);
-                for (int i = 0; i < datas.size(); i++) {
-                    Log.e("TAG", datas.get(i));
+                            //上传图片成功，将返回的url和文字再次上传
+                            List<String> urls = (List<String>) Obj;
+
+                            bmobSocialUtil.postBlog(text, urls);
+
+
+                        }
+
+                        @Override
+                        public void onFail(Object Obj) {
+
+                        }
+                    });
+                    BmobFileUtil.getInstance(this).uploadBatch(paths);
+
                 }
+//                Log.e("TAG", text);
+//                for (int i = 0; i < datas.size(); i++) {
+//                    Log.e("TAG", datas.get(i));
+//                }
 
 
                 break;

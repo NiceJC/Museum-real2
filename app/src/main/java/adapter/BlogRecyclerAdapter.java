@@ -121,17 +121,19 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerViewHo
 
 
         requestManager
-                .load(blog.getIconURL())
+                .load(blog.getAuthor().getPortraitURL())
                 .transform(new GlideCircleTransform(context))
                 .into(holder.userIcon);
 
-        holder.time.setText(blog.getTime());
+        holder.time.setText(blog.getCreatedAt());
 
-        holder.userName.setText(blog.getUserName());
+        holder.userName.setText(blog.getAuthor().getNickName());
         holder.content.setText(blog.getContentText());
-
-        holder.watchIcon.setSelected(blog.isWatched());
-        holder.praiseIcon.setSelected(blog.isPraised());
+/**
+ * 待改******88
+ */
+        holder.watchIcon.setSelected(true);
+        holder.praiseIcon.setSelected(false);
         holder.commentNum.setText(blog.getCommentNums()+"");
         holder.praiseNum.setText(blog.getPraiseNums()+"");
 
@@ -139,7 +141,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerViewHo
         holder.userIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,mDatas.get(position).getUserName(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,mDatas.get(position).getAuthor().getNickName(),Toast.LENGTH_SHORT).show();
             }
         });
         holder.watchIcon.setOnClickListener(new View.OnClickListener() {

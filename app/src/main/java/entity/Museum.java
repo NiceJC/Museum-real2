@@ -1,9 +1,13 @@
 package entity;
 
+import android.content.Intent;
+
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobGeoPoint;
+import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  *
@@ -35,6 +39,8 @@ public class Museum extends BmobObject {
 
     private Integer watchNums; //关注人数
 
+    private BmobRelation watchedUsers; //关注该博物馆的人
+
     private Boolean isWatched; //是否已经关注
 
     private List<String> imageURLs;  //图片URL  注：博物馆的第一张大图必须是裁成正方形的，不然适配效果很差
@@ -42,6 +48,8 @@ public class Museum extends BmobObject {
     private String iconURL; //头像小图标的URL
 
     private Integer hotValue; //热力值
+
+    private Integer commentNum; //评论数量
 
 
 
@@ -146,5 +154,21 @@ public class Museum extends BmobObject {
 
     public void setHotValue(Integer hotValue) {
         this.hotValue = hotValue;
+    }
+
+    public BmobRelation getWatchedUsers() {
+        return watchedUsers;
+    }
+
+    public void setWatchedUsers(BmobRelation watchedUsers) {
+        this.watchedUsers = watchedUsers;
+    }
+
+    public Integer getCommentNum() {
+        return commentNum;
+    }
+
+    public void setCommentNum(Integer commentNum) {
+        this.commentNum = commentNum;
     }
 }

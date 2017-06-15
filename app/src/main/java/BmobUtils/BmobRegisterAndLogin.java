@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
@@ -18,6 +19,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import entity.User;
 import interfaces.OnBmobReturnSuccess;
+import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
 /**
@@ -32,40 +34,12 @@ public class BmobRegisterAndLogin {
     private String TAG ;
     private Context context;
 
-    private OnBmobReturnSuccess onBmobReturnSuccess;
+    private OnBmobReturnWithObj onBmobReturnWithObj;
 
 
-    private Handler handler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 1:
-
-
-                    //返回成功，结果1
-
-                    onBmobReturnSuccess.onSuccess();
-
-                    break;
-                case 2:
-
-                    //返回成功，结果2
-                    onBmobReturnSuccess.onFail();
-                    break;
-
-                default:
-                    break;
-
-
-            }
-        }
-    };
-
-
-    public void setOnBmobReturnSuccess(OnBmobReturnSuccess onBmobReturnSuccess){
-        this.onBmobReturnSuccess = onBmobReturnSuccess;
+    public void setOnBmobReturnWithObj(OnBmobReturnWithObj onBmobReturnWithObj) {
+        this.onBmobReturnWithObj = onBmobReturnWithObj;
     }
-
 
     private BmobRegisterAndLogin(Context context) {
 
@@ -136,11 +110,11 @@ public class BmobRegisterAndLogin {
                     Log.d(TAG, "done: 查询用户成功");
                     if(list.size()==0){
                         //size为0，表示该号码未被注册
-                        handler.sendEmptyMessage(1);
+                        onBmobReturnWithObj.onSuccess(null);
 
                     }else{
                         //size为1，表示已经被注册
-                        handler.sendEmptyMessage(2);
+                        onBmobReturnWithObj.onSuccess(null);
 
                     }
 
@@ -167,12 +141,9 @@ public class BmobRegisterAndLogin {
                 if (user != null) {
 
                     Log.i(TAG, "登录成功");
-                    ToastUtils.toast(context,"用户登录成功");
+                    ToastUtils.toast(context,"登录成功");
 
-                    Message message=new Message();
-                    message.what=1;
-                    message.obj=user;
-                    handler.sendMessage(message);
+                    onBmobReturnWithObj.onSuccess(null);
 
                 }else{
 
@@ -246,7 +217,7 @@ public class BmobRegisterAndLogin {
     }
 
     //使用手机号和验证码 一键注册并登录，包括提交用户自定义密码等
-    public void signOrLoginByPhone(String num, String passWord, String code) {
+    public void signOrLoginByPhone(final String num, final String passWord, String code) {
 
         User user = new User();
         user.setMobilePhoneNumber(num);
@@ -255,12 +226,13 @@ public class BmobRegisterAndLogin {
             @Override
             public void done(User user, BmobException e) {
                 if(e==null){
-                    ToastUtils.toast(context,"注册登录成功");
-                    Log.i(TAG,"注册登录成功");
-                    Message message=new Message();
-                    message.what=1;
-                    message.obj=user;
-                    handler.sendMessage(message);
+                    ToastUtils.toast(context,"注册成功");
+                    Log.i(TAG,"注册成功");
+
+
+                    loginByUserName(num,passWord);
+
+
 
 
                 }else{
@@ -282,7 +254,7 @@ public class BmobRegisterAndLogin {
                 if(e==null){
                     Log.i(TAG, "密码重置成功");
                     ToastUtils.toast(context,"重置密码成功");
-                    handler.sendEmptyMessage(1);
+                    onBmobReturnWithObj.onSuccess(null);
 
                 }else{
                     Log.i(TAG, "重置失败：code ="+e.getErrorCode()+",msg = "+e.getLocalizedMessage());

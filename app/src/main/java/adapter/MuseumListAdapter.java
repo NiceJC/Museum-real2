@@ -20,106 +20,85 @@ import interfaces.OnItemClickListener;
 import jintong.museum2.R;
 
 /**
- *
  * 首页展馆列表RecyclerView的Adapter
- *
+ * <p>
  * Created by wjc on 2017/3/3.
  */
 
-public class MuseumListAdapter extends RecyclerView.Adapter<MuseumListViewHolder> {
-
-    private Context context;
-    private List<Museum> datas;
-    private RequestManager requestManager;
+public class MuseumListAdapter extends BaseAdapter<MuseumListAdapter.MuseumListViewHolder> {
 
 
-    private OnItemClickListener mOnItemClickListener;
-    public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
-        this.mOnItemClickListener = mOnItemClickListener;
-    }
-
-
-    public MuseumListAdapter(Context context, List<Museum> datas) {
-        this.context = context;
-        this.datas = datas;
-        requestManager = Glide.with(context);
-
-
+    public MuseumListAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
+        super(context, listDatas, onViewClickListener);
     }
 
     @Override
     public MuseumListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.main_fragment_2_item, parent, false);
-        MuseumListViewHolder viewHolder = new MuseumListViewHolder(view);
-
-
-        return viewHolder;
+        return new MuseumListViewHolder(mInflater.inflate(R.layout.main_fragment_2_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(final MuseumListViewHolder holder, final int position) {
+    public void onBindViewHolder(MuseumListViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
 
-        final Museum museum = datas.get(position);
+        Museum museum = (Museum) listDatas.get(position);
 
-        requestManager.load(museum.getImageURLs().get(0)).into(holder.museumImage);
+        requestManager.load(museum.getImageURLs().get(0)+ "!/fxfn/1080x1080").into(holder.museumImage);
         holder.museumName.setText(museum.getMuseumName());
 
         holder.museumLocation.setText(museum.getLocateCity());
         holder.museumDistance.setText("99KM"); //这里是需要根据经纬度实时计算的
 
+    }
 
-        if(mOnItemClickListener!=null) {
+    @Override
+    public int getItemCount() {
+        return listDatas.size();
+    }
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+    class MuseumListViewHolder extends RecyclerView.ViewHolder {
 
-                    mOnItemClickListener.onItemClick(holder.itemView,position);
-                }
-            });
+        ImageView museumImage; //博物馆图片
 
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-                    mOnItemClickListener.onItemClick(holder.itemView,position);
+        TextView museumName; //博物馆名称
+        TextView museumLocation; //博物馆地址
+        TextView museumDistance; //博物馆距离
 
 
-                    return false;
-                }
-            });
+        public MuseumListViewHolder(View itemView) {
+            super(itemView);
+
+            museumImage = (ImageView) itemView.findViewById(R.id.museum_image);
+
+            museumName = (TextView) itemView.findViewById(R.id.museum_name);
+            museumLocation = (TextView) itemView.findViewById(R.id.museum_location);
+            museumDistance = (TextView) itemView.findViewById(R.id.museum_distance);
 
 
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return datas.size();
+    class ViewClickListener implements View.OnClickListener {
+
+        OnViewClickListener onViewClickListener;
+        int position;
+        int viewType;
+
+        public ViewClickListener(OnViewClickListener onViewClickListener, int position, int viewType) {
+            this.onViewClickListener = onViewClickListener;
+            this.position = position;
+            this.viewType = viewType;
+        }
+
+        @Override
+        public void onClick(View v) {
+            onViewClickListener.onViewClick(position, viewType);
+
+        }
     }
+
+
 }
 
 
 
-
-class MuseumListViewHolder extends RecyclerView.ViewHolder {
-
-    ImageView museumImage; //博物馆图片
-
-    TextView museumName; //博物馆名称
-    TextView museumLocation; //博物馆地址
-    TextView museumDistance; //博物馆距离
-
-
-    public MuseumListViewHolder(View itemView) {
-        super(itemView);
-
-        museumImage = (ImageView) itemView.findViewById(R.id.museum_image);
-
-        museumName = (TextView) itemView.findViewById(R.id.museum_name);
-        museumLocation = (TextView) itemView.findViewById(R.id.museum_location);
-        museumDistance = (TextView) itemView.findViewById(R.id.museum_distance);
-
-
-    }
-}

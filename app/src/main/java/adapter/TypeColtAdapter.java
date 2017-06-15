@@ -22,50 +22,37 @@ import jintong.museum2.R;
 
 /**
  *
+ * 分类藏品的瀑布流图片展示
+ *
  * Created by wjc on 2017/3/24.
  */
 
-public class TypeColtAdapter extends RecyclerView.Adapter<TypeColtAdapter.TypeColtViewHolder>{
+public class TypeColtAdapter extends BaseAdapter<TypeColtAdapter.TypeColtViewHolder>{
 
 
-    private LayoutInflater inflater;
-    private Context context;
-    private List<Collection> datas;
-    private RequestManager requestManager;
-
-
-    public TypeColtAdapter(Context context, List<Collection> datas) {
-        this.context = context;
-        this.datas = datas;
-        inflater=LayoutInflater.from(context);
-        requestManager=Glide.with(context);
-
-
+    public TypeColtAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
+        super(context, listDatas, onViewClickListener);
     }
 
     @Override
-    public TypeColtAdapter.TypeColtViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       View view=inflater.inflate(R.layout.colt_by_type_item,parent,false);
-        TypeColtViewHolder viewHolder=new TypeColtViewHolder(view);
-
-        return viewHolder;
+    public TypeColtViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new TypeColtViewHolder(mInflater.inflate(R.layout.colt_by_type_item,parent,false));
     }
-
 
     @Override
     public void onBindViewHolder(TypeColtAdapter.TypeColtViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
 
-        Collection collection=datas.get(position);
-        requestManager.load(collection.getColtImageURLs().get(0))
 
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+        Collection collection= (Collection) listDatas.get(position);
+        collection.getImage1().getFileUrl();
+        requestManager.load(collection.getImage1().getFileUrl()+ "!/fxfn/500x500"
+        )
+
+                .animate(R.anim.image_animate)
                 .crossFade()
+                .placeholder(R.drawable.loadingimage)
                 .into(holder.imageView);
-//       requestManager.load(collection.getColtImageURLs().get(0))
-//               .asBitmap()
-//               .fitCenter()
-//               .override(holder.imageView.getWidth(), BitmapImageViewTarget.SIZE_ORIGINAL)
-//               .into(new DriverViewTarget((ImageView) holder.itemView));
 
 
         holder.textView.setText(collection.getColtName());
@@ -73,7 +60,7 @@ public class TypeColtAdapter extends RecyclerView.Adapter<TypeColtAdapter.TypeCo
 
     @Override
     public int getItemCount() {
-        return datas.size();
+        return listDatas.size();
     }
 
 
@@ -106,5 +93,8 @@ public class TypeColtAdapter extends RecyclerView.Adapter<TypeColtAdapter.TypeCo
 //            super.onResourceReady(resource, glideAnimation);
 //        }
 //    }
+
+
+
 
 }

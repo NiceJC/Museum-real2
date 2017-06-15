@@ -19,6 +19,7 @@ import javax.security.auth.login.LoginException;
 import BmobUtils.BmobRegisterAndLogin;
 import entity.User;
 import interfaces.OnBmobReturnSuccess;
+import interfaces.OnBmobReturnWithObj;
 import util.MD5;
 import util.ToastUtils;
 
@@ -118,9 +119,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
 
-                        BmobRegisterAndLogin.getInstance(this).setOnBmobReturnSuccess(new OnBmobReturnSuccess() {
+                        BmobRegisterAndLogin.getInstance(this).setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                             @Override
-                            public void onSuccess() {
+                            public void onSuccess(Object Obj) {
                                 //登录返回结果真确，登录成功并跳转主界面
                                 Intent intent2 = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent2);
@@ -129,9 +130,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             }
 
                             @Override
-                            public void onFail() {
+                            public void onFail(Object Obj) {
 
                             }
+
 
                         });
 

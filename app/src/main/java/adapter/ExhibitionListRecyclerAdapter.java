@@ -33,7 +33,7 @@ public class ExhibitionListRecyclerAdapter extends RecyclerView.Adapter<Recycler
     private OnItemClickListener mOnItemClickListener;
 
     private static final int TYPE_ITEM = 0;  //普通Item View
-    private static final int TYPE_FOOTER = 1;  //顶部FootView
+    private static final int TYPE_FOOTER = 1;  //底部FootView
 
     //上拉加载更多
     public static final int PULLUP_LOAD_MORE = 0;
@@ -87,7 +87,7 @@ public class ExhibitionListRecyclerAdapter extends RecyclerView.Adapter<Recycler
         if (holder instanceof ExhibitionViewHolder) {
             Exhibition exhibition = datas.get(position);
             ((ExhibitionViewHolder) holder).exhibitName.setText(exhibition.getExhibitName());
-            requestManager.load(exhibition.getImageURLs().get(0)).into(((ExhibitionViewHolder) holder).exhibitImage);
+            requestManager.load(exhibition.getImage1().getFileUrl()).into(((ExhibitionViewHolder) holder).exhibitImage);
             ((ExhibitionViewHolder) holder).exhibitMuseumName.setText(exhibition.getToMuseum().getMuseumName());
 
             ((ExhibitionViewHolder) holder).exhibitMuseumLocation.setText(exhibition.getToMuseum().getLocateCity());
@@ -123,7 +123,8 @@ public class ExhibitionListRecyclerAdapter extends RecyclerView.Adapter<Recycler
 
                 case NO_MORE_TO_LOAD:
                     footViewHolder.progressBar.setVisibility(View.GONE);
-                    footViewHolder.textView.setText("哎呀...到底了");
+                    footViewHolder.textView.setText("----我是有底线的----");
+                    break;
                 default:
                     break;
             }

@@ -99,15 +99,16 @@
                 android:background="@color/divider_gray" />
 
 
-            <android.support.v7.widget.RecyclerView
+            <MyView.PullRecyclerView
 
                 android:id="@+id/exhibitRoom_recyclerView"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp">
 
 
-            </android.support.v7.widget.RecyclerView>
+            </MyView.PullRecyclerView>
 
 
         </LinearLayout>

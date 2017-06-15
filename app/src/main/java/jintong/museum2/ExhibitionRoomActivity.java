@@ -14,30 +14,49 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobColt;
+import BmobUtils.BmobExhibitRoom;
+import BmobUtils.BmobExhibition;
+import MyView.PullBaseView;
+import MyView.PullRecyclerView;
 import adapter.ColtListAdapter;
 import entity.Collection;
 import entity.ExhibitRoom;
+import entity.Exhibition;
+import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
+import util.ToastUtils;
+
+import static util.ParameterBase.EXHIBIROOM_ID;
+import static util.ParameterBase.EXHIBITION_ID;
 
 /**
  * 展厅展示页面
  * Created by wjc on 2017/3/7.
  */
 
-public class ExhibitionRoomActivity extends BaseActivity implements View.OnClickListener{
+public class ExhibitionRoomActivity extends BaseActivity implements adapter.BaseAdapter.OnItemClickListener,
+        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
+        PullBaseView.OnRefreshListener{
 
 
-    private RecyclerView recyclerView;
+    private PullRecyclerView recyclerView;
 
     private ImageView back;
 
     private TextView roomName;
 
-    private List<Collection> datas;
+    private List<Object> datas=new ArrayList<>();
 
-    private ExhibitRoom exhibitRoomData;
+    private ExhibitRoom exhibitRoom;
 
     private TextView introduction;
+
+    private ColtListAdapter adapter;
+
+    private int currentPage=0;
+
+    private String exhitiRoomID;
 
 
 
@@ -60,11 +79,108 @@ public class ExhibitionRoomActivity extends BaseActivity implements View.OnClick
         initEvents();
 
 
-        ColtListAdapter adapter = new ColtListAdapter(this, datas);
 
-        adapter.setmOnItemClickListener(new OnItemClickListener() {
+
+
+    }
+
+    private void setData() {
+
+        roomName.setText(exhibitRoom.getName());
+        introduction.setText(exhibitRoom.getIntroduction());
+
+
+    }
+
+    private void initView() {
+
+        back= (ImageView) findViewById(R.id.museum_room_back);
+        roomName= (TextView) findViewById(R.id.museum_room_name);
+        recyclerView = (PullRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
+        recyclerView.setFocusable(false);
+
+        adapter=new ColtListAdapter(ExhibitionRoomActivity.this,datas,this);
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+
+        introduction= (TextView) findViewById(R.id.room_introduction);
+
+
+    }
+
+
+    private void initData() {
+
+        exhitiRoomID=getIntent().getStringExtra(EXHIBIROOM_ID);
+
+        if(datas.size()!=0){
+            return;
+        }
+
+        getExhibitRoomInfo(exhitiRoomID);
+        pullMoreFromServer(exhitiRoomID,0);
+
+
+    }
+
+    private void initEvents() {
+
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.none,R.anim.out_to_right);
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.none,R.anim.out_to_right);
+
+    }
+
+    @Override
+    public void onHeaderRefresh(PullBaseView view) {
+
+    }
+
+    @Override
+    public void onFooterRefresh(PullBaseView view) {
+
+        pullMoreFromServer(exhitiRoomID,currentPage);
+
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+
+    }
+
+    @Override
+    public void onViewClick(int position, int viewtype) {
+
+        switch (viewtype){
+            //评论
+            case 1:
+                break;
+
+            //点赞
+            case 2:
+                break;
+
+            //图片
+            case 3:
 
                 Intent intent=new Intent(ExhibitionRoomActivity.this,ZoomImageActivity.class);
 
@@ -79,96 +195,75 @@ public class ExhibitionRoomActivity extends BaseActivity implements View.OnClick
                 startActivity(intent);
                 overridePendingTransition(R.anim.in_zoom,R.anim.none);
 
-
-
-            }
-
-            @Override
-            public void OnItemLongClick(View view, int position) {
-
-            }
-        });
-
-
-        recyclerView.setAdapter(adapter);
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-
-
-    }
-
-    private void setData() {
-
-        roomName.setText(exhibitRoomData.getName());
-        introduction.setText(exhibitRoomData.getIntroduction());
-
-
-    }
-
-    private void initView() {
-
-        back= (ImageView) findViewById(R.id.museum_room_back);
-        roomName= (TextView) findViewById(R.id.museum_room_name);
-        recyclerView = (RecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
-
-        introduction= (TextView) findViewById(R.id.room_introduction);
-
-
-    }
-
-
-    private void initData() {
-
-        exhibitRoomData=new ExhibitRoom();
-        exhibitRoomData.setName("于志学展厅");
-        exhibitRoomData.setIntroduction("于志学，笔名问津、干城，1935年生于黑龙江肇东市。系冰雪山水画创始人，现任黑龙江省画院名誉院长、第九届全国政协委员、中国美协理事、中国艺术研究院美术创作院创作研究员、中国国际书画艺术研究会副会长，美国国际传记研究院传记协会副理事长，英国剑桥大学国际传记中心研究员，第九届全国政协委员，第五届中国美协理事，一级美术师.");
-
-
-        datas=new ArrayList<Collection>();
-        for (int i=0;i<4;i++){
-            Collection collection=new Collection();
-            List<String> urls=new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/38ef58db401620a38093b48211c1a027.jpg");
-            collection.setColtLikeNum(9955);
-            collection.setColtImageURLs(urls);
-            collection.setColtName("鸟纹包月瓶");
-            collection.setColtDynasty("清朝");
-            collection.setColtSize("高十米，宽十米");
-            collection.setColtIntru("清末民国时期使用的称量粮食的工具，一面书“㕠聚号记”，一面书“校准市斗”。");
-
-            collection.setColtCommentNum(996);
-            datas.add(collection);
-
-
-
-        }
-
-
-
-    }
-
-    private void initEvents() {
-
-        back.setOnClickListener(this);
-
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()){
-            case R.id.museum_room_back:
-                finish();
-                overridePendingTransition(R.anim.none,R.anim.out_to_right);
                 break;
             default:
                 break;
 
 
-
-
         }
 
 
+
     }
+
+
+    //获取当前的展厅信息
+    public void getExhibitRoomInfo(String exhitiRoomID){
+        BmobExhibitRoom bmobExhibitRoom=BmobExhibitRoom.getInstance(this);
+        bmobExhibitRoom.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                exhibitRoom= (ExhibitRoom) Obj;
+                setData();
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+
+        bmobExhibitRoom.getExhibitRoomByID(exhitiRoomID);
+
+
+
+    }
+
+
+    //上拉加载更多
+    public void pullMoreFromServer(String exhitiRoomID, int curPage) {
+
+        BmobColt bmobColt = BmobColt.getInstance(this);
+
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Collection> collectionList = (List<Collection>) Obj;
+
+                if (collectionList == null || collectionList.size() == 0) {
+                    ToastUtils.toast(ExhibitionRoomActivity.this, "没有更多内容啦");
+
+                } else {
+                    for (Collection collection : collectionList) {
+                        datas.add(collection);
+                    }
+                    adapter.notifyDataSetChanged();
+                    currentPage++;
+                }
+                recyclerView.onFooterRefreshComplete();
+
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.getByBelongID(exhitiRoomID, EXHIBIROOM_ID, curPage);
+
+    }
+
 }

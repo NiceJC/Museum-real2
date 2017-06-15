@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import jintong.museum2.R;
 
 /**
+ * 显示关注的展览
  * Created by wjc on 2017/2/23.
  */
 

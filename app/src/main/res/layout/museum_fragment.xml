@@ -50,6 +50,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:descendantFocusability="blocksDescendants"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -178,17 +179,18 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <MyView.PullRecyclerView
 
 
 
                 android:id="@+id/colt_recyclerView"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
            >
 
 
-            </android.support.v7.widget.RecyclerView>
+            </MyView.PullRecyclerView>
 
 
         </LinearLayout>

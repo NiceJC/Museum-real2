@@ -16,29 +16,38 @@ import android.widget.ImageView;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import BmobUtils.BmobColt;
 import MyView.GridItemDecoration;
+import MyView.PullBaseView;
+import MyView.PullRecyclerView;
 import adapter.CollectionGridAdapter;
 import entity.Collection;
 import interfaces.OnBmobReturnWithObj;
+import jintong.museum2.CollectionActivity;
 import jintong.museum2.R;
 import jintong.museum2.TypeColtActivity;
+import util.ToastUtils;
+
+import static util.ParameterBase.COLT_ID;
+import static util.ParameterBase.COLT_TYPE;
 
 /**
- *
  * 宝库页面
  * Created by wjc on 2017/2/9.
  */
-public class MuseumFragment extends Fragment implements View.OnClickListener {
+public class MuseumFragment extends Fragment implements View.OnClickListener, adapter.BaseAdapter.OnItemClickListener,
+        PullBaseView.OnRefreshListener, adapter.BaseAdapter.OnViewClickListener {
     private View view;
-    private RecyclerView recyclerView;
-    private List<Collection> collections=new ArrayList<Collection>();
+    private PullRecyclerView recyclerView;
+    private List<Object> datas = new ArrayList<Object>();
     private CollectionGridAdapter adapter;
 
 
     private int theType;
 
+    private int currentPage = 0;
     private ImageView typeBronze; //青铜器
     private ImageView typeChina;//瓷器
     private ImageView typeJade;//玉石器
@@ -59,12 +68,6 @@ public class MuseumFragment extends Fragment implements View.OnClickListener {
         setData();
         setEvents();
 
-
-        //设置RecycerView的Item间分割线
-//        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST));
-
-
-//        recyclerView.addItemDecoration(new GridItemDecoration(10,getActivity()));
         return view;
 
     }
@@ -83,77 +86,21 @@ public class MuseumFragment extends Fragment implements View.OnClickListener {
     private void setData() {
 
 
-
     }
 
     private void initDatas() {
 
-        if(collections.size()!=0){
+        if (datas.size() != 0) {
             return;
         }
-        BmobColt bmobColt=BmobColt.getInstance(getActivity());
-        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-            @Override
-            public void onSuccess(Object Obj) {
-                List<Collection> list= (List<Collection>) Obj;
-                collections=list;
-                adapter.notifyDataSetChanged();
 
-
-            }
-
-            @Override
-            public void onFail(Object Obj) {
-
-            }
-        });
-        bmobColt.getHotColt();
-
-
-//        collections=new ArrayList<Collection>();
-//
-//            Collection colt = new Collection();
-//            colt.setColtLikeNum(100);
-//            colt.setColtName("青花粉彩梅瓶");
-//            List<String> urls = new ArrayList<>();
-//            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/c4f89b0540d7cf3d80a77d13ca4e04b2.jpg");
-//            colt.setColtImageURLs(urls);
-//            colt.setColtToMuseumName("A博物馆");
-//            collections.add(colt);
-//
-//        Collection colt2 = new Collection();
-//        colt2.setColtLikeNum(100);
-//        colt2.setColtName("青花月印梅纹碗");
-//        List<String> urls2 = new ArrayList<>();
-//        urls2.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/a220dd564081640d809bf930eef6f732.jpg");
-//        colt2.setColtImageURLs(urls2);
-//        colt2.setColtToMuseumName("B博物馆");
-//        collections.add(colt2);
-//
-//
-//        Collection colt3 = new Collection();
-//        colt3.setColtLikeNum(100);
-//        colt3.setColtName("粉彩山水纹盘");
-//        List<String> urls3 = new ArrayList<>();
-//        urls3.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/cd37af4740e17a4580f1d00cc919a639.jpg");
-//        colt3.setColtImageURLs(urls3);
-//        colt3.setColtToMuseumName("C博物馆");
-//        collections.add(colt3);
-//
-//        Collection colt4 = new Collection();
-//        colt4.setColtLikeNum(100);
-//        colt4.setColtName("青花果树纹双管瓶");
-//        List<String> urls4 = new ArrayList<>();
-//        urls4.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/50ffdf4140281d96809f8eefdc2a47f6.jpg");
-//        colt4.setColtImageURLs(urls4);
-//        colt4.setColtToMuseumName("D博物馆");
-//        collections.add(colt4);
-
+        pullDataFromServer(0);
 
     }
 
     private void initViews() {
-        recyclerView = (RecyclerView) view.findViewById(R.id.colt_recyclerView);
+        recyclerView = (PullRecyclerView) view.findViewById(R.id.colt_recyclerView);
+        recyclerView.setFocusable(false);
 
         typeBronze = (ImageView) view.findViewById(R.id.museum_fragment_bronze);
         typeChina = (ImageView) view.findViewById(R.id.museum_fragment_china);
@@ -163,45 +110,109 @@ public class MuseumFragment extends Fragment implements View.OnClickListener {
         typeOthers = (ImageView) view.findViewById(R.id.museum_fragment_others);
 
 
-
-        adapter = new CollectionGridAdapter(getActivity(), collections);
+        adapter = new CollectionGridAdapter(getActivity(), datas, this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setFocusable(false);
+
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
+        recyclerView.setCanPullDown(false);
+        recyclerView.setCanPullUp(false);
     }
 
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.museum_fragment_bronze:
-                theType=Collection.TYPE_BRONSE;
+                theType = Collection.TYPE_BRONSE;
                 break;
-            case  R.id.museum_fragment_china:
-                theType=Collection.TYPE_CHINA;
+            case R.id.museum_fragment_china:
+                theType = Collection.TYPE_CHINA;
                 break;
             case R.id.museum_fragment_jade:
-                theType=Collection.TYPE_JADE;
-                break;
-            case R.id.museum_fragment_paint:
-                theType=Collection.TYPE_PAINT;
+                theType = Collection.TYPE_JADE;
                 break;
             case R.id.museum_fragment_lacquer:
-                theType=Collection.TYPE_LACQUER;
+                theType = Collection.TYPE_LACQUER;
+                break;
+            case R.id.museum_fragment_paint:
+                theType = Collection.TYPE_PAINT;
                 break;
             case R.id.museum_fragment_others:
-                theType=Collection.TYPE_OTHERS;
+                theType = Collection.TYPE_OTHERS;
                 break;
             default:
                 break;
 
         }
 
-        Intent intent=new Intent(getActivity(), TypeColtActivity.class);
-        intent.putExtra("type",theType);
+        Intent intent = new Intent(getActivity(), TypeColtActivity.class);
+        intent.putExtra(COLT_TYPE, theType);
         startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
+
+    }
+
+    public void pullDataFromServer(final int curPage) {
+        BmobColt bmobColt = BmobColt.getInstance(getActivity());
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Collection> list = (List<Collection>) Obj;
+
+                if (list == null || list.size() == 0) {
+                    ToastUtils.toast(getActivity(), "没有更多数据啦");
+
+                } else {
+
+                    if (curPage == 0) {
+                        datas.clear();
+                    }
+
+                    for (Collection collection : list) {
+                        datas.add(collection);
+                    }
+                    adapter.notifyDataSetChanged();
+
+                    currentPage++;
+                }
+                recyclerView.onFooterRefreshComplete();
+
+            }
+
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.getHotColt(curPage);
+
+    }
+
+    @Override
+    public void onHeaderRefresh(PullBaseView view) {
+
+    }
+
+    @Override
+    public void onFooterRefresh(PullBaseView view) {
+        pullDataFromServer(currentPage);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+
+        Collection collection = (Collection) datas.get(position);
+        Intent intent = new Intent(getActivity(), CollectionActivity.class);
+        intent.putExtra(COLT_ID, collection.getObjectId());
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
+    }
+
+    @Override
+    public void onViewClick(int position, int viewtype) {
 
     }
 }

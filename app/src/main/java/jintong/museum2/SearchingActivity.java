@@ -104,6 +104,9 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
         }
         if(fragment2==null){
             fragment2=new SearchingFragmentF2();
+            Bundle bundle=new Bundle();
+            bundle.putString("keyWord",null);
+            fragment2.setArguments(bundle);
             fragments.add(fragment2);
         }
 

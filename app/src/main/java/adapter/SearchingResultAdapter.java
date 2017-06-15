@@ -129,7 +129,7 @@ public class SearchingResultAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         } else if (holder instanceof ResultExhibitViewHolder) {
             Exhibition exhibition = exhibitionList.get(position - museumList.size());
             ((ResultExhibitViewHolder) holder).typeName.setText("类型：展览");
-            requestManager.load(exhibition.getImageURLs().get(0)).into(((ResultExhibitViewHolder) holder).itemImage);
+            requestManager.load(exhibition.getImage1().getFileUrl()).into(((ResultExhibitViewHolder) holder).itemImage);
             ((ResultExhibitViewHolder) holder).itemName.setText(exhibition.getExhibitName());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,7 +146,7 @@ public class SearchingResultAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             Collection collection = collectionList.get(position - museumList.size()-exhibitionList.size());
             ((ResultColtViewHolder) holder).typeName.setText("类型：展品");
-            requestManager.load(collection.getColtImageURLs().get(0)).into(((ResultColtViewHolder) holder).itemImage);
+            requestManager.load(collection.getImage1().getFileUrl()).into(((ResultColtViewHolder) holder).itemImage);
             ((ResultColtViewHolder) holder).itemName.setText(collection.getColtName());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

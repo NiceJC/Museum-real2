@@ -21,6 +21,8 @@ import java.util.List;
 import MyView.ZoomImageView;
 import interfaces.OnclickFinish;
 
+import static util.ParameterBase.IMAGE_URLS;
+
 /**
  * 点击图片之后 切换到本Activity进行图片的缩放处理
  * Created by wjc on 2017/3/9.
@@ -31,7 +33,7 @@ public class ZoomImageActivity extends BaseActivity implements View.OnClickListe
 
     private ViewPager viewPager;
 
-    private List<String> mImageURLS;
+    private List<String> mImageURLS=new ArrayList<String>();
 
     private ImageView[] mImageViews;
 
@@ -139,7 +141,7 @@ public class ZoomImageActivity extends BaseActivity implements View.OnClickListe
 
     private void initData() {
 
-        mImageURLS = getIntent().getStringArrayListExtra("imageURLs");
+        mImageURLS = getIntent().getStringArrayListExtra(IMAGE_URLS);
         firstPosition = getIntent().getIntExtra("position", 0);
 
     }

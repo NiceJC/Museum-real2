@@ -16,27 +16,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import BmobUtils.BmobExhibition;
+import BmobUtils.BmobSocialUtil;
 import MyView.DividerItemDecoration;
+import MyView.PullBaseView;
+import MyView.PullRecyclerView;
+import adapter.BlogListAdapter;
 import adapter.BlogRecyclerAdapter;
+import cn.bmob.v3.BmobUser;
 import entity.Blog;
+import entity.Exhibition;
+import entity.User;
+import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
 import jintong.museum2.BlogActivity;
 import jintong.museum2.R;
+import util.ToastUtils;
+
+import static util.ParameterBase.BLOG_ID;
 
 /**
  * Created by wjc on 2017/2/14.
  */
-public class CommunityFragmentF1 extends Fragment {
+public class CommunityFragmentF1 extends Fragment implements adapter.BaseAdapter.OnItemClickListener,
+        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
+        PullBaseView.OnRefreshListener {
 
     private View view;
 
+    private LinearLayoutManager manager;
+    private PullRecyclerView mRecyclerView;
+    private List<Object> mDatas = new ArrayList<Object>();
+    private BlogListAdapter mAdapter;
 
-    private RecyclerView mRecyclerView;
-    private List<Blog> mDatas;
-    private BlogRecyclerAdapter mAdapter;
 
-//    http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg
+    private int currentPage=0;
 
     @Nullable
     @Override
@@ -48,35 +64,6 @@ public class CommunityFragmentF1 extends Fragment {
         initDatas();
 
 
-        mAdapter = new BlogRecyclerAdapter(getActivity(), mDatas);
-
-        mRecyclerView.setAdapter(mAdapter);
-
-        //设置RecyclerView的布局管理
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(manager);
-
-        //设置RecycerView的Item间分割线
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-
-        mAdapter.setmOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-
-                Intent intent=new Intent(getActivity(), BlogActivity.class);
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
-
-            }
-
-            @Override
-            public void OnItemLongClick(View view, int position) {
-//                Toast.makeText(getActivity(), "longClick  " + position, Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-
         return view;
 
 
@@ -84,65 +71,168 @@ public class CommunityFragmentF1 extends Fragment {
 
     private void initViews() {
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recylerview_community_f1);
+        mRecyclerView = (PullRecyclerView) view.findViewById(R.id.recylerview_community_f1);
 
+
+        //设置RecyclerView的布局管理
+        manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setOnRefreshListener(this);
+
+        mAdapter = new BlogListAdapter(getActivity(), mDatas, this);
+        mAdapter.setOnItemClickListener(this);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    //获取最新的一组Blog
+    private void initDatas() {
+
+        if(mDatas.size()!=0){
+            return;
+        }
+        refreshFromServer();
 
     }
 
-    //    ("icon")
-//    ("time"));
-//    ("username"));
-//    ("textcontent"));
-    private void initDatas() {
-        List<String> imgs = new ArrayList<String>();
-        String imgs1 = "http://bmob-cdn-4183.b0.upaiyun.com/2016/11/29/118ec3614022872d80d04add7d795346.jpg";
-        String imgs2 = "http://t10.baidu.com/it/u=2565424359,3856609610&fm=58#http://t10.baidu.com/it/u=374721516,1427740298&fm=58";
-        String imgs3 = "http://t10.baidu.com/it/u=2565424359,3856609610&fm=58#http://t10.baidu.com/it/u=374721516,1427740298&fm=58#http://t11.baidu.com/it/u=3158457091,3429860559&fm=58";
-        String imgs4 = "http://t10.baidu.com/it/u=2565424359,3856609610&fm=58#http://t10.baidu.com/it/u=374721516,1427740298&fm=58#http://t11.baidu.com/it/u=3158457091,3429860559&fm=58#http://t12.baidu.com/it/u=732128477,3149312025&fm=58";
-        String imgs5 = "http://t10.baidu.com/it/u=2565424359,3856609610&fm=58#http://t10.baidu.com/it/u=374721516,1427740298&fm=58#http://t11.baidu.com/it/u=3158457091,3429860559&fm=58#http://t12.baidu.com/it/u=732128477,3149312025&fm=58#http://t11.baidu.com/it/u=2722915642,3232472693&fm=58";
-        String imgs6 = "http://t10.baidu.com/it/u=2565424359,3856609610&fm=58#http://t10.baidu.com/it/u=374721516,1427740298&fm=58#http://t11.baidu.com/it/u=3158457091,3429860559&fm=58#http://t12.baidu.com/it/u=732128477,3149312025&fm=58#http://t11.baidu.com/it/u=2722915642,3232472693&fm=58#http://t12.baidu.com/it/u=1313963321,225077119&fm=58";
+    @Override
+    public void onHeaderRefresh(PullBaseView view) {
 
-        imgs.add(imgs1);
-        imgs.add(imgs2);
-        imgs.add(imgs3);
-        imgs.add(imgs4);
-        imgs.add(imgs5);
-        imgs.add(imgs6);
+        refreshFromServer();
+    }
 
-        mDatas = new ArrayList<Blog>();
-        for (int i = 0; i <= 6; i++) {
-            Blog blog = new Blog();
+    @Override
+    public void onFooterRefresh(PullBaseView view) {
 
+        getMoreFromServer(currentPage);
+    }
 
-            blog.setIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
-            blog.setCommentNums(i);
-            blog.setContentText("哈哈哈 今天游览了杭州博物馆， 好开心呀 " );
-            blog.setPraised(i > 3);
-            blog.setWatched(i <= 3);
-            blog.setPraiseNums(i * i);
-            blog.setUserName("阿超" + i);
-            blog.setTime("60年前");
+    @Override
+    public void onItemClick(int position) {
 
-            ArrayList<String> list = new ArrayList<String>();
+        Blog blog= (Blog) mDatas.get(position);
+        String blogID=blog.getObjectId();
+        Intent intent = new Intent(getActivity(), BlogActivity.class);
+        intent.putExtra(BLOG_ID,blogID);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
 
-            if (i == 0) {
-                list = null;
-            } else {
-                String[] imgss = imgs.get(i - 1).split("#");
+    }
 
-                for (int j = 0; j < imgss.length; j++) {
-                    list.add(imgss[j]);
-                }
-            }
+    @Override
+    public void onItemLongClick(int position) {
 
-            blog.setImageURLs(list);
+    }
 
+    @Override
+    public void onViewClick(int position, int viewtype) {
 
-            mDatas.add(blog);
+        Blog blog= (Blog) mDatas.get(position);
+        String blogID=blog.getObjectId();
+        switch (viewtype) {
+            case 1: //点击头像 进入个人详情页
+                ToastUtils.toast(getActivity(), "touxiang");
+                break;
+            case 2: //评论  进入Blog详情页，并直接拉起输入框
 
+                Intent intent=new Intent(getActivity(),BlogActivity.class);
+                intent.putExtra(BLOG_ID,blogID);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+                break;
+
+            default:
+                break;
 
         }
 
     }
+
+
+
+
+    //点赞Blog
+    public void likeBlog(){
+
+    }
+
+
+    //取消点赞Blog
+    public void cancelLikeBlog(){
+
+    }
+
+
+
+    //从服务器拉取数据
+    public void refreshFromServer() {
+
+        BmobSocialUtil bmobSocialUtil = BmobSocialUtil.getInstance(getActivity());
+
+        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Blog> blogList = (List<Blog>) Obj;
+
+                if (blogList == null || blogList.size() == 0) {
+
+
+                } else {
+
+                    mDatas.clear();
+                    mDatas.addAll(blogList);
+                    mAdapter.notifyDataSetChanged();
+                    currentPage=1;
+                }
+                mRecyclerView.onHeaderRefreshComplete();
+
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobSocialUtil.getRecentBlog(0);
+
+
+    }
+
+    public void getMoreFromServer(int curPage){
+
+
+
+
+        BmobSocialUtil bmobSocialUtil = BmobSocialUtil.getInstance(getActivity());
+
+        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Blog> blogList = (List<Blog>) Obj;
+
+                if (blogList == null || blogList.size() == 0) {
+
+
+                } else {
+
+                    for (Blog blog : blogList) {
+                        mDatas.add(blog);
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    currentPage++;
+                }
+                mRecyclerView.onFooterRefreshComplete();
+
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobSocialUtil.getRecentBlog(curPage);
+    }
+
 
 }

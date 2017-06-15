@@ -28,14 +28,25 @@ import com.bumptech.glide.RequestManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobComment;
+import BmobUtils.BmobSocialUtil;
 import MyView.GlideCircleTransform;
 import MyView.GridImageView;
 import adapter.CommentRecyclerAdapter;
 import adapter.ImageGridViewAdapter;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
 import entity.Blog;
 import entity.Comments;
+import entity.User;
+import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
 import util.SysUtils;
+import util.ToastUtils;
+
+import static entity.Comments.COMMENT_TO_BLOG;
+import static util.ParameterBase.BLOG_ID;
 
 /**
  * 发布状态的详情页
@@ -43,15 +54,6 @@ import util.SysUtils;
  */
 
 public class BlogActivity extends BaseActivity implements View.OnClickListener {
-
-    private Blog blog;
-
-    private List<Comments> mComments;
-
-
-    private LayoutInflater mInflater;
-
-
     private RequestManager requestManager;
 
     private int everyImageWidth;
@@ -86,6 +88,11 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
     private ImageView commentIcon; // 评论图标
     private TextView commentNum; // 评论数
 
+    private ImageGridViewAdapter adapter;
+    private CommentRecyclerAdapter commentListAdapter;
+    private Blog blog;
+    private String blog_ID;
+    private List<Comments> commentList = new ArrayList<Comments>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,8 +107,6 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
 
         initView();
         initData();
-
-        setData();
         initEvents();
 
 
@@ -169,101 +174,77 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
         editBar = (LinearLayout) findViewById(R.id.blog_a_editText_bar);
 
 
+        commentListAdapter = new CommentRecyclerAdapter(this, commentList);
+        recyclerView.setAdapter(commentListAdapter);
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+
     }
 
     private void initData() {
-        /**
-         * data 数据源说明
-         * 一个blog，以及对应的若干条 comments
-         *
-         blog.setIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
-         blog.setCommentNums(66);
-         blog.setContentText("hahhah哈哈哈  好开心呀 嘿嘿嘿嘿嘿 ");
-         blog.setPraised(false);
-         blog.setWatched(true);
-         blog.setPraiseNums(99);
-         blog.setUserName("阿超");
-         blog.setTime("60年前");
-         blog.setImageURLs(usrls);
-         *
-         *
-         *
-         for (int i = 0; i < 5; i++) {
-         Comments comment = new Comments();
-         comment.setAuthorIconURL("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg");
 
-         comment.setCommentID(666);
-         comment.setAuthorName("阿喂大帅比");
-         comment.setCommentText("嗯，这个宝贝很漂脸阿  年代嗨非常救援，一看就很之前阿 ，很值钱  哈哈哈哈哈");
+        blog_ID = getIntent().getStringExtra(BLOG_ID);
+        requestManager = Glide.with(this);
 
-         comment.setCommentTime(9080);
-         mComments.add(comment);
-
-
-         }
-         *
-         *
-         */
-
-
-
-
-        List<String> usrls=new ArrayList<String>();
-        String imgs1 = "http://bmob-cdn-4183.b0.upaiyun.com/2016/11/29/118ec3614022872d80d04add7d795346.jpg";
-        String imgs2 = "http://t10.baidu.com/it/u=2565424359,3856609610&fm=58";
-        String imgs3 = "http://t10.baidu.com/it/u=374721516,1427740298&fm=58";
-        String imgs4 = "http://t11.baidu.com/it/u=3158457091,3429860559&fm=58";
-        String imgs5 = "http://t12.baidu.com/it/u=732128477,3149312025&fm=58";
-        String imgs6 = "http://t11.baidu.com/it/u=2722915642,3232472693&fm=58";
-        usrls.add(imgs1);
-        usrls.add(imgs2);
-        usrls.add(imgs3);
-        usrls.add(imgs4);
-        usrls.add(imgs5);
-        usrls.add(imgs6);
-
-        blog = new Blog();
-
-
-
-
-
-
-
-
-
-
-        mComments = new ArrayList<Comments>();
-
-
-
-
-        requestManager=Glide.with(this);
+        getBlogFromServer(blog_ID);
+        getCommentsFromServer(blog_ID);
     }
 
     private void setData() {
 
 
         requestManager
-                .load(blog.getIconURL())
+                .load(blog.getAuthor().getPortraitURL())
                 .transform(new GlideCircleTransform(this))
                 .bitmapTransform(new GlideCircleTransform(this))
                 .into(userIcon);
 
-        time.setText(blog.getTime());
+        time.setText(blog.getCreatedAt());
 
-        userName.setText(blog.getUserName());
+        userName.setText(blog.getAuthor().getNickName());
         content.setText(blog.getContentText());
 
-        watchIcon.setSelected(blog.isWatched());
-        praiseIcon.setSelected(blog.isPraised());
+
+
+        BmobSocialUtil bmobSocialUtil=BmobSocialUtil.getInstance(BlogActivity.this);
+        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                List<User> userList= (List<User>) Obj;
+               if(userList!=null&&userList.size()!=0){
+
+                   boolean isLiked=false;
+                   for (User user :userList) {
+                       if(user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())){
+                           isLiked=true;
+                           break;
+                       }
+                   }
+
+                   praiseIcon.setSelected(isLiked);
+
+                   praiseNum.setText( userList.size()+ "");
+
+               }else{
+                   praiseIcon.setSelected(false);
+
+                   praiseNum.setText(0);
+               }
+            }
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobSocialUtil.getBlogLikesByID(blog_ID);
+
+
+
+        watchIcon.setSelected(true);
+//        praiseIcon.setSelected(false);
         commentNum.setText(blog.getCommentNums() + "");
-        praiseNum.setText(blog.getPraiseNums() + "");
-
-
-        recyclerView.setAdapter(new CommentRecyclerAdapter(this, mComments));
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
+//        praiseNum.setText(blog.getPraiseNums() + "");
 
 
         //当无图片需要显示时  直接返回
@@ -280,7 +261,8 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
 
         gridImageView.setLayoutParams(new LinearLayout.LayoutParams(gridViewWidth, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        gridImageView.setAdapter(new ImageGridViewAdapter(this, blog.getImageURLs()));
+        adapter = new ImageGridViewAdapter(this, blog.getImageURLs());
+        gridImageView.setAdapter(adapter);
 
 
     }
@@ -291,6 +273,7 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
         back.setOnClickListener(this);
         userIcon.setOnClickListener(this);
         watchIcon.setOnClickListener(this);
+        newCommentSend.setOnClickListener(this);
         setListenerToRootView();
         gridImageView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -322,6 +305,26 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
             case R.id.blog_user_icon:
                 break;
 
+            case R.id.blog_a_comment_commit:
+                String content = newCommentText.getText().toString();
+                BmobComment bmobComment = BmobComment.getInstance(BlogActivity.this);
+                bmobComment.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                    @Override
+                    public void onSuccess(Object Obj) {
+
+                        ToastUtils.toast(BlogActivity.this, "评论成功");
+                        finish();
+                        overridePendingTransition(R.anim.none, R.anim.out_to_right);
+                    }
+
+                    @Override
+                    public void onFail(Object Obj) {
+
+                    }
+                });
+                bmobComment.postComment(COMMENT_TO_BLOG, blog_ID, content);
+
+                break;
 
             default:
                 break;
@@ -376,4 +379,50 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
         overridePendingTransition(R.anim.none, R.anim.out_to_right);
 
     }
+
+    //获取Blog的详细信息
+    public void getBlogFromServer(String blogID) {
+
+        BmobSocialUtil bmobSocialUtil = BmobSocialUtil.getInstance(BlogActivity.this);
+        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                blog = (Blog) Obj;
+                setData();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobSocialUtil.getBlogByID(blogID);
+
+
+    }
+
+    //获取Blog下的所有评论
+    public void getCommentsFromServer(String blogID) {
+
+        BmobComment bmobComment = BmobComment.getInstance(BlogActivity.this);
+        bmobComment.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Comments> commentses = (List<Comments>) Obj;
+                commentList.clear();
+                commentList.addAll(commentses);
+                commentListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+
+        bmobComment.getCommentToBlog(blogID);
+    }
+
+
 }

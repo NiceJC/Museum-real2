@@ -9,11 +9,17 @@
     >
 
 
-    <ImageView
-        android:id="@+id/exhibit_room_image"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/exhibit_room_image_1"
+
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+           />
+
+
+
 
 
     <LinearLayout

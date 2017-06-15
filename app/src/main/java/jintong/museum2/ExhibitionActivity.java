@@ -13,33 +13,40 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobColt;
+import BmobUtils.BmobExhibition;
+import MyView.PullBaseView;
+import MyView.PullRecyclerView;
 import adapter.ColtListAdapter;
+import cn.bmob.v3.Bmob;
 import entity.Collection;
 import entity.Exhibition;
+import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
+import util.ToastUtils;
+
+import static util.ParameterBase.EXHIBITION_ID;
 
 /**
- *
- *
  * 展览 详情页
  * Created by wjc on 2017/3/23.
  */
 
-public class ExhibitionActivity extends BaseActivity implements View.OnClickListener{
-
-    private RecyclerView recyclerView;
-
+public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdapter.OnItemClickListener,
+        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
+        PullBaseView.OnRefreshListener {
+    private PullRecyclerView recyclerView;
     private ImageView back;
-
     private TextView roomName;
-
-    private List<Collection> datas;
-
+    private List<Object> datas = new ArrayList<>();
+    private LinearLayoutManager manager;
     private Exhibition exhibition;
+    private ColtListAdapter adapter;
+    private int currentPage = 0;
+    private TextView introduction;
 
-    private  TextView introduction;
 
-
+    private String exhibitID;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,49 +61,9 @@ public class ExhibitionActivity extends BaseActivity implements View.OnClickList
 
         initView();
         initData();
-        setData();
+
         initEvents();
 
-
-        ColtListAdapter adapter = new ColtListAdapter(this, datas);
-
-        adapter.setmOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-
-                Intent intent=new Intent(ExhibitionActivity.this,ZoomImageActivity.class);
-
-                List<String> URLs=new ArrayList<String>();
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/303ec10a40273f38802f9cf04fd03203.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/50ffdf4140281d96809f8eefdc2a47f6.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/98eec22c406f692780ca9bf7da9a8cf5.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/4e49f0f2400e93608052ba97a9928b3c.jpg");
-
-                intent.putStringArrayListExtra("imageURLs", (ArrayList<String>) URLs);
-                intent.putExtra("position",0);
-                startActivity(intent);
-                overridePendingTransition(R.anim.in_zoom,R.anim.none);
-
-            }
-
-            @Override
-            public void OnItemLongClick(View view, int position) {
-
-            }
-        });
-
-
-        recyclerView.setAdapter(adapter);
-
-        recyclerView.setFocusable(false);
-        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false){
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-
-        recyclerView.setLayoutManager(manager);
 
 
 
@@ -113,10 +80,31 @@ public class ExhibitionActivity extends BaseActivity implements View.OnClickList
 
     private void initView() {
 
-        introduction= (TextView) findViewById(R.id.room_introduction);
-        back= (ImageView) findViewById(R.id.museum_room_back);
-        roomName= (TextView) findViewById(R.id.museum_room_name);
-        recyclerView = (RecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
+        introduction = (TextView) findViewById(R.id.room_introduction);
+        back = (ImageView) findViewById(R.id.museum_room_back);
+        roomName = (TextView) findViewById(R.id.museum_room_name);
+        recyclerView = (PullRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
+
+
+        recyclerView.setFocusable(false);
+        manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        recyclerView.setLayoutManager(manager);
+
+        recyclerView.setOnRefreshListener(this);
+
+        adapter = new ColtListAdapter(ExhibitionActivity.this, datas, this);
+        adapter.setOnItemClickListener(this);
+        adapter.setOnItemLongClickListener(this);
+
+
+        recyclerView.setCanPullDown(false); //不用下拉
+        recyclerView.setAdapter(adapter);
+
 
 
 
@@ -125,56 +113,122 @@ public class ExhibitionActivity extends BaseActivity implements View.OnClickList
 
     private void initData() {
 
-        exhibition =new Exhibition();
-        exhibition.setExhibitName("文艺复兴主题展览");
-        exhibition.setExhibitIntru("文艺复兴最先在意大利各城市兴起，以后扩展到西欧各国，于16世纪达到顶峰，带来一段科学与艺术革命时期，揭开了近代欧洲历史的序幕，被认为是中古时代和近代的分界。文艺复兴是西欧近代三大思想解放运动（文艺复兴、宗教改革与启蒙运动）之一。");
+        exhibitID = getIntent().getStringExtra(EXHIBITION_ID);
+         if(datas.size()!=0){
+             return;
+         }
 
-
-        datas=new ArrayList<Collection>();
-        for (int i=0;i<4;i++){
-            Collection collection=new Collection();
-            List<String> urls=new ArrayList<String>();
-            urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/38ef58db401620a38093b48211c1a027.jpg");
-            collection.setColtLikeNum(9955);
-            collection.setColtImageURLs(urls);
-            collection.setColtName("鸟纹包月瓶");
-            collection.setColtDynasty("清朝");
-            collection.setColtSize("高十米，宽十米");
-            collection.setColtIntru("清末民国时期使用的称量粮食的工具，一面书“㕠聚号记”，一面书“校准市斗”。");
-
-            collection.setColtCommentNum(996);
-            datas.add(collection);
-
-
-
-        }
-
+        getExhibitionInfo(exhibitID);
+        pullMoreFromServer(exhibitID,0);
 
 
     }
 
     private void initEvents() {
 
-        back.setOnClickListener(this);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.none,R.anim.out_to_right);
+
+            }
+        });
 
     }
 
     @Override
-    public void onClick(View v) {
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.none,R.anim.out_to_right);
 
-        switch (v.getId()){
-            case R.id.museum_room_back:
-                finish();
-                overridePendingTransition(R.anim.none,R.anim.out_to_right);
-                break;
-            default:
-                break;
+    }
+
+    @Override
+    public void onHeaderRefresh(PullBaseView view) {
+
+    }
+
+    @Override
+    public void onFooterRefresh(PullBaseView view) {
+
+        pullMoreFromServer(exhibitID,currentPage);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+
+    }
+
+    @Override
+    public void onViewClick(int position, int viewtype) {
+
+    }
 
 
+    public void getExhibitionInfo(String exhibitID){
+        BmobExhibition bmobExhibition=BmobExhibition.getInstance(this);
+        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
 
+                 exhibition= (Exhibition) Obj;
+                setData();
 
-        }
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+
+        bmobExhibition.getExhibitionByID(exhibitID);
+
 
 
     }
+
+
+    //上拉加载更多
+    public void pullMoreFromServer(String exhibitionID, int curPage) {
+
+        BmobColt bmobColt = BmobColt.getInstance(this);
+
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Collection> collectionList = (List<Collection>) Obj;
+
+                if (collectionList == null || collectionList.size() == 0) {
+                    ToastUtils.toast(ExhibitionActivity.this, "没有更多内容啦");
+
+                } else {
+                    for (Collection collection : collectionList) {
+                        datas.add(collection);
+                    }
+                    adapter.notifyDataSetChanged();
+                    currentPage++;
+                }
+                recyclerView.onFooterRefreshComplete();
+
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.getByBelongID(exhibitionID, EXHIBITION_ID, curPage);
+
+    }
+
+
 }

@@ -26,18 +26,13 @@ import util.SysUtils;
 /**
  * 宝库页推荐藏品的RecyclerView的Adapter，
  * 动态测量屏幕宽度，再设置每个Item的宽度
- *
- *
+ * <p>
+ * <p>
  * Created by wjc on 2017/2/21.
  */
 
-public class CollectionGridAdapter extends RecyclerView.Adapter<CollectionGridViewHolder> implements View.OnClickListener {
+public class CollectionGridAdapter extends BaseAdapter<CollectionGridAdapter.CollectionGridViewHolder> {
 
-
-    private Context context;
-    private LayoutInflater mInflater;
-    private List<Collection> mDatas;
-    private RequestManager requestManager;
 
     private int mImageViewWidth;
 
@@ -45,96 +40,94 @@ public class CollectionGridAdapter extends RecyclerView.Adapter<CollectionGridVi
     private int mItemHeight;
 
 
-    public CollectionGridAdapter(Activity context, List<Collection> datas) {
+    public CollectionGridAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
 
-
-        this.context = context;
-
-        this.mDatas = datas;
-        this.requestManager = Glide.with(context);
-        mInflater = LayoutInflater.from(context);
-
-        //根据屏幕宽度确定ImageView的宽度
-        mImageViewWidth = (SysUtils.getScreenWidth(context) - SysUtils.DpToPx(context, 8 + 8 + 10)) / 2;
-
-
+        super(context, listDatas, onViewClickListener);
+        mImageViewWidth = (SysUtils.getScreenWidth((Activity) context) - SysUtils.DpToPx(context, 8 + 8 + 10)) / 2;
 
     }
 
+
     @Override
     public CollectionGridViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.grid_colt_item, parent, false);
-
-
-        CollectionGridViewHolder viewHolder = new CollectionGridViewHolder(view);
-
-
-        return viewHolder;
+        return new CollectionGridViewHolder(mInflater.inflate(R.layout.grid_colt_item, parent, false));
     }
 
     @Override
     public int getItemCount() {
-        return mDatas.size();
+        return listDatas.size();
     }
 
     @Override
     public void onBindViewHolder(CollectionGridViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
 
-        Collection collection = mDatas.get(position);
+        Collection collection = (Collection) listDatas.get(position);
         holder.coltName.setText(collection.getColtName());
         holder.likeNum.setText(collection.getColtLikeNum() + "");
-        holder.coltToMuseumName.setText(collection.getColtToMuseum().getMuseumName());
+        if (collection.getColtToMuseum() != null) {
+            holder.coltToMuseumName.setText(collection.getColtToMuseum().getMuseumName());
 
-        holder.likeClick.setOnClickListener(this);
+
+        }
+
+        holder.likeClick.setOnClickListener(new ViewClickListener(onViewClickListener, position, 1));
 
 
         holder.coltImage.setLayoutParams(new FrameLayout.LayoutParams(mImageViewWidth, mImageViewWidth));
 
 
-        requestManager.load(collection.getColtImageURLs().get(0)).into(holder.coltImage);
+        requestManager.load(collection.getImage1().getFileUrl() + "!/fxfn/500x500").into(holder.coltImage);
 
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.likeIcon_coltGrid_item:
-                Toast.makeText(context, "I like it", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
+
+    class CollectionGridViewHolder extends RecyclerView.ViewHolder {
+        ImageView coltImage; //藏品图片
+        LinearLayout likeClick; //喜欢的点击控件
+
+        TextView likeNum; //喜欢的数量
+        ImageView likeIcon; //喜欢的图标
+
+
+        TextView coltName; //藏品名称
+        TextView coltToMuseumName; //所属博物馆名称
+
+        LinearLayout linearLayout;
+
+        public CollectionGridViewHolder(View itemView) {
+            super(itemView);
+
+            coltImage = (ImageView) itemView.findViewById(R.id.coltImage_coltGrid_item);
+            likeClick = (LinearLayout) itemView.findViewById(R.id.coltLike_coltGrid_item);
+            likeNum = (TextView) itemView.findViewById(R.id.coltLikeNum_coltGrid_item);
+            likeIcon = (ImageView) itemView.findViewById(R.id.likeIcon_coltGrid_item);
+            coltName = (TextView) itemView.findViewById(R.id.coltName_coltGrid_item);
+            coltToMuseumName = (TextView) itemView.findViewById(R.id.museumName_coltGrid_item);
+            linearLayout = (LinearLayout) itemView.findViewById(R.id.colt_item);
+
+
+        }
+    }
+
+    class ViewClickListener implements View.OnClickListener {
+
+        OnViewClickListener onViewClickListener;
+        int position;
+        int viewType;
+
+        public ViewClickListener(OnViewClickListener onViewClickListener, int position, int viewType) {
+            this.onViewClickListener = onViewClickListener;
+            this.position = position;
+            this.viewType = viewType;
         }
 
+        @Override
+        public void onClick(View v) {
+            onViewClickListener.onViewClick(position, viewType);
+
+        }
     }
 }
 
-
-class CollectionGridViewHolder extends RecyclerView.ViewHolder {
-    ImageView coltImage; //藏品图片
-    LinearLayout likeClick; //喜欢的点击控件
-
-    TextView likeNum; //喜欢的数量
-    ImageView likeIcon; //喜欢的图标
-
-
-    TextView coltName; //藏品名称
-    TextView coltToMuseumName; //所属博物馆名称
-
-    LinearLayout linearLayout;
-
-    public CollectionGridViewHolder(View itemView) {
-        super(itemView);
-
-        coltImage = (ImageView) itemView.findViewById(R.id.coltImage_coltGrid_item);
-        likeClick = (LinearLayout) itemView.findViewById(R.id.coltLike_coltGrid_item);
-        likeNum = (TextView) itemView.findViewById(R.id.coltLikeNum_coltGrid_item);
-        likeIcon = (ImageView) itemView.findViewById(R.id.likeIcon_coltGrid_item);
-        coltName = (TextView) itemView.findViewById(R.id.coltName_coltGrid_item);
-        coltToMuseumName = (TextView) itemView.findViewById(R.id.museumName_coltGrid_item);
-        linearLayout = (LinearLayout) itemView.findViewById(R.id.colt_item);
-
-
-
-    }
-}

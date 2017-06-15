@@ -19,10 +19,19 @@ import com.bumptech.glide.RequestManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobColt;
 import entity.Collection;
 import entity.Comments;
+import interfaces.OnBmobReturnWithObj;
+import util.SysUtils;
+
+import static util.ParameterBase.COLT_ID;
+import static util.ParameterBase.IMAGE_URLS;
+
 
 /**
+ *
+ *
  * Created by wjc on 2017/3/7.
  */
 
@@ -54,6 +63,8 @@ public class CollectionActivity extends BaseActivity {
     private Collection collection;
 
     private RequestManager requestManager;
+
+    private String colt_ID;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,10 +80,7 @@ public class CollectionActivity extends BaseActivity {
         initData();
 
 
-        setData();
         initEvents();
-
-
     }
 
     private void initView() {
@@ -95,55 +103,27 @@ public class CollectionActivity extends BaseActivity {
 
         back= (ImageView) findViewById(R.id.activity_colt_back);
 
+        colt_ID= getIntent().getStringExtra(COLT_ID);
+        requestManager= Glide.with(this);
+
     }
 
     private void initData() {
 
-         collection=new Collection();
-        List<String> urls=new ArrayList<String>();
-        urls.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/38ef58db401620a38093b48211c1a027.jpg");
-        collection.setColtLikeNum(9955);
-        collection.setColtImageURLs(urls);
-        collection.setColtName("鸟纹包月瓶");
-        collection.setColtDynasty("清朝");
-        collection.setColtSize("高十米，宽十米");
-        collection.setColtIntru("清末民国时期使用的称量粮食的工具，一面书“㕠聚号记”，一面书“校准市斗”。");
+        getDataFromServer(colt_ID);
 
-        collection.setColtCommentNum(996);
-
-
-        requestManager= Glide.with(this);
     }
 
     private void setData() {
 
 
 
-        coltImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent=new Intent(CollectionActivity.this,ZoomImageActivity.class);
-
-                List<String> URLs=new ArrayList<String>();
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/303ec10a40273f38802f9cf04fd03203.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/50ffdf4140281d96809f8eefdc2a47f6.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/98eec22c406f692780ca9bf7da9a8cf5.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/4e49f0f2400e93608052ba97a9928b3c.jpg");
-
-                intent.putStringArrayListExtra("imageURLs", (ArrayList<String>) URLs);
-                intent.putExtra("position",0);
-                startActivity(intent);
-                overridePendingTransition(R.anim.in_from_right,R.anim.none);
 
 
-            }
-        });
 
-
-        requestManager.load(collection.getColtImageURLs().get(0)).into(coltImage);
+        requestManager.load(collection.getImage1().getFileUrl()+ "!/fxfn/1080x500").into(coltImage);
         likeNum.setText(collection.getColtLikeNum() + "");
-
+        commentNum.setText(collection.getColtCommentNum()+"");
         ObjectAnimator.ofFloat(likeMove, "alpha", 1, 0).setDuration(0).start();
 
         name.setText(collection.getColtName());
@@ -153,26 +133,27 @@ public class CollectionActivity extends BaseActivity {
 
 
 
-           coltImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Intent intent=new Intent(CollectionActivity.this,ZoomImageActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.in_from_right,R.anim.none);
-
-                }
-            });
-
-
-
         }
 
 
 
 
     private void initEvents() {
+        coltImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Intent intent=new Intent(CollectionActivity.this,ZoomImageActivity.class);
+
+
+                intent.putStringArrayListExtra(IMAGE_URLS, SysUtils.getURLs(collection));
+                intent.putExtra("position",0);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right,R.anim.none);
+
+
+            }
+        });
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,7 +165,7 @@ public class CollectionActivity extends BaseActivity {
          * 显示评论的数量
          * 点击后进入评论的详情页
          */
-        commentNum.setText(collection.getColtCommentNum()+"");
+
         commentClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,4 +214,24 @@ public class CollectionActivity extends BaseActivity {
         finish();
         overridePendingTransition(R.anim.none,R.anim.out_to_right);
     }
+
+    public void getDataFromServer( String coltID){
+        BmobColt bmobColt=BmobColt.getInstance(this);
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                collection= (Collection) Obj;
+                setData();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.getByColtID(coltID);
+
+    }
+
+
 }

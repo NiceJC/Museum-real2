@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobFile;
 
 /**
  *
@@ -21,7 +22,10 @@ public class Exhibition extends BmobObject {
 
     private String exhibitName; //展览名称
 
-    private List<String> imageURLs; //展览的图片
+//    private List<String> imageURLs;
+
+    private BmobFile image1; //展览的图片
+
 
     private Museum toMuseum; //所属的博物馆
 
@@ -56,6 +60,7 @@ public class Exhibition extends BmobObject {
 
 
 
+
     public Exhibition() {
     }
 
@@ -67,12 +72,12 @@ public class Exhibition extends BmobObject {
         this.exhibitName = exhibitName;
     }
 
-    public List<String> getImageURLs() {
-        return imageURLs;
+    public BmobFile getImage1() {
+        return image1;
     }
 
-    public void setImageURLs(List<String> imageURLs) {
-        this.imageURLs = imageURLs;
+    public void setImage1(BmobFile image1) {
+        this.image1 = image1;
     }
 
     public Museum getToMuseum() {

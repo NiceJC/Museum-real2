@@ -7,9 +7,11 @@
     >
 
     <ImageView
+android:scaleType="centerCrop"
         android:id="@+id/colt_by_type_item_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="200dp" />
+
 
     <TextView
         android:id="@+id/colt_by_type_item_name"
@@ -17,7 +19,15 @@
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="hahah" />
+        android:textSize="16sp"
+        android:textColor="@color/not_so_white"
+        android:background="@drawable/text_iamge_cover"
+
+
+        />
+
+
+
 
 
 </FrameLayout>

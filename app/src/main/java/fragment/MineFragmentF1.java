@@ -13,67 +13,76 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import BmobUtils.BmobMuseum;
+import BmobUtils.BmobSocialUtil;
 import MyView.GridItemDecoration;
 import adapter.MuseumLikeAdapter;
+import cn.bmob.v3.BmobUser;
 import entity.Museum;
+import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.R;
 
 /**
+ * 显示关注的博物馆
  * Created by wjc on 2017/2/23.
  */
 
 public class MineFragmentF1 extends Fragment {
 
     private View view;
-    private List<Museum> datas;
+
 
     private RecyclerView recyclerView;
 
     MuseumLikeAdapter adapter;
 
+    private List<Museum> datas=new ArrayList<>();
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.mine_fragment_1,container,false);
+        view = inflater.inflate(R.layout.mine_fragment_1, container, false);
 
-        recyclerView= (RecyclerView) view.findViewById(R.id.mine_f1_recyclerView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.mine_f1_recyclerView);
 
-        initdatas();
 
-        adapter=new MuseumLikeAdapter(getActivity(),datas);
+
+        adapter = new MuseumLikeAdapter(getActivity(), datas);
         recyclerView.setAdapter(adapter);
-
-
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
-
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        initdatas();
         return view;
     }
 
-   String u0= "http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg";
-    String u1= "http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg";
-    String u2= "http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg";
-    String u3= "http://bmob-cdn-4183.b0.upaiyun.com/2016/08/04/e91d99f1407610818055e4b642ef040a.jpg";
     private void initdatas() {
 
-        List<String> us=new ArrayList<String>();
-        us.add(u0);
-        us.add(u1);
-        us.add(u2);
-        us.add(u3);
+        getLikedMuseums();
 
-        datas=new ArrayList<Museum>();
-        for(int i=0;i<=3;i++){
 
-            Museum museum=new Museum();
-            List<String> urls=new ArrayList<String>();
-            urls.add(us.get(i));
-            museum.setMuseumName(i+"号博物馆");
-            museum.setImageURLs(urls);
+    }
 
-            datas.add(museum);
+    //获取关注的博物馆
+    public void getLikedMuseums() {
+        BmobMuseum bmobMuseum=BmobMuseum.getInstance(getActivity());
+        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Museum> list= (List<Museum>) Obj;
+                datas.clear();
+                datas.addAll(list);
+                adapter.notifyDataSetChanged();
+            }
 
-        }
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+
+        bmobMuseum.getLikedMuseums(BmobUser.getCurrentUser().getObjectId());
+
+
 
 
     }

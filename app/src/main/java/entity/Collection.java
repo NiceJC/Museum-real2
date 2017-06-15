@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobPointer;
 
 /**
@@ -40,7 +41,14 @@ public class Collection extends BmobObject implements Serializable {
 
     private Integer coltCommentNum; //评论的数量
 
-    private List<String> coltImageURLs; //藏品图片URL
+//    private List<String> coltImageURLs; //藏品图片URL
+
+
+    private BmobFile image1;
+    private BmobFile image2;
+    private BmobFile image3;
+    private BmobFile image4;
+    private BmobFile image5;
 
 
 
@@ -57,7 +65,9 @@ public class Collection extends BmobObject implements Serializable {
 
 
     public Collection() {
+
     }
+
 
     public String getColtName() {
         return coltName;
@@ -115,12 +125,53 @@ public class Collection extends BmobObject implements Serializable {
         this.coltCommentNum = coltCommentNum;
     }
 
-    public List<String> getColtImageURLs() {
-        return coltImageURLs;
+//    public List<String> getColtImageURLs() {
+//        return coltImageURLs;
+////    }
+//
+//    public void setColtImageURLs(List<String> coltImageURLs) {
+//        this.coltImageURLs = coltImageURLs;
+//    }
+
+
+    public BmobFile getImage1() {
+        return image1;
     }
 
-    public void setColtImageURLs(List<String> coltImageURLs) {
-        this.coltImageURLs = coltImageURLs;
+    public void setImage1(BmobFile image1) {
+        this.image1 = image1;
+    }
+
+    public BmobFile getImage2() {
+        return image2;
+    }
+
+    public void setImage2(BmobFile image2) {
+        this.image2 = image2;
+    }
+
+    public BmobFile getImage3() {
+        return image3;
+    }
+
+    public void setImage3(BmobFile image3) {
+        this.image3 = image3;
+    }
+
+    public BmobFile getImage4() {
+        return image4;
+    }
+
+    public void setImage4(BmobFile image4) {
+        this.image4 = image4;
+    }
+
+    public BmobFile getImage5() {
+        return image5;
+    }
+
+    public void setImage5(BmobFile image5) {
+        this.image5 = image5;
     }
 
     public ExhibitRoom getColtShowRoom() {

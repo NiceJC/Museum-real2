@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
     android:background="@drawable/tab_bg"
     android:orientation="vertical"
-    android:padding="10dp"
-
-    >
+    android:padding="10dp">
 
     <LinearLayout
 
@@ -20,8 +19,7 @@
             android:id="@+id/blog_user_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center"
-           />
+            android:layout_gravity="center" />
 
         <LinearLayout
 
@@ -37,36 +35,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="15sp" />
+                android:textSize="16sp" />
 
             <TextView
+
                 android:id="@+id/blog_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
 
         </LinearLayout>
 
-<View
-    android:layout_weight="1"
-    android:layout_width="0dp"
-    android:layout_height="0dp"/>
-        <ImageView
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-
-            android:id="@+id/blog_watch_icon"
-            android:layout_width="60dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/blog_watch_icon" />
 
     </LinearLayout>
 
     <TextView
 
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
         android:id="@+id/blog_content_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -104,59 +97,61 @@
             android:layout_weight="3" />
 
         <LinearLayout
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:id="@+id/blog_comment"
-            android:layout_weight="1"
+            android:id="@+id/blog_comment_click"
             android:layout_width="0dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
-                android:src="@drawable/comment"
+                android:layout_marginLeft="20dp"
                 android:id="@+id/blog_comment_icon"
                 android:layout_width="20dp"
+                android:layout_height="20dp"
 
-                android:layout_height="20dp" />
+                android:src="@drawable/comment" />
+
             <TextView
 
-                android:layout_marginLeft="5dp"
-
                 android:id="@+id/blog_comment_num"
+
+                android:text="0"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp" />
 
 
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:id="@+id/blog_praise"
-            android:layout_weight="1"
+            android:id="@+id/blog_praise_click"
             android:layout_width="0dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
+                android:layout_marginLeft="5dp"
                 android:id="@+id/blog_praise_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/blog_praise_icon"
 
 
-
                 />
+
             <TextView
 
-                android:layout_marginLeft="5dp"
                 android:id="@+id/blog_praise_num"
-
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+
+                android:text="0"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp" />
 
         </LinearLayout>
-
-
-
 
 
     </LinearLayout>

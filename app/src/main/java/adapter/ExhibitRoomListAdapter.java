@@ -2,104 +2,80 @@ package adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-
 import java.util.List;
 
 import entity.ExhibitRoom;
-import interfaces.OnItemClickListener;
 import jintong.museum2.R;
 
 /**
  *
- *博物馆详情页的展厅的Adapter
- * Created by wjc on 2017/3/6.
+ * Created by wjc on 2017/5/22.
  */
 
-public class ExhibitRoomListAdapter extends RecyclerView.Adapter<ExhibitRoomViewHolder> {
+public class ExhibitRoomListAdapter extends BaseAdapter<ExhibitRoomListAdapter.ExhibitRoomViewHolder> {
 
-    Context context;
-    List<ExhibitRoom> rooms;
-    RequestManager requestManager;
-
-
-    private OnItemClickListener onItemClickListener;
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
-    public ExhibitRoomListAdapter(Context context, List<ExhibitRoom> datas) {
-        this.context=context;
-        this.rooms=datas;
-        requestManager= Glide.with(context);
-
-
+    public ExhibitRoomListAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
+        super(context, listDatas, onViewClickListener);
     }
 
     @Override
     public ExhibitRoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.exhibit_room_item,parent,false);
-        ExhibitRoomViewHolder viewHolder=new ExhibitRoomViewHolder(view);
-
-
-        return viewHolder;
+        return new ExhibitRoomViewHolder(mInflater.inflate(R.layout.exhibit_room_item, parent, false));
     }
 
+
     @Override
-    public void onBindViewHolder(final ExhibitRoomViewHolder holder, final int position) {
+    public void onBindViewHolder(ExhibitRoomViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position) ;
+        ExhibitRoom room = (ExhibitRoom) listDatas.get(position);
 
-        ExhibitRoom room=rooms.get(position);
-        requestManager.load(room.getImageURL()).into(holder.imageView);
+        requestManager.load(room.getImage1().getFileUrl()+"!/fxfn/700x700").into(holder.imageView1);
+//        requestManager.load(room.getImageURL2()+"!/fxfn/300x300").error(R.drawable.blog_watch_icon).into(holder.imageView2);
+//
+//        requestManager.load(room.getImageURL3()+"!/fxfn/300x300").error(R.drawable.blog_watch_icon).into(holder.imageView3);
+//        requestManager.load(room.getImageURL4()+"!/fxfn/300x300").error(R.drawable.blog_watch_icon).into(holder.imageView4);
+
+
         holder.name.setText(room.getName());
-        holder.num.setText(room.getCollectionNum()+"");
-
-        if(onItemClickListener!=null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    onItemClickListener.onItemClick(holder.itemView,position);
-                }
-            });
-
-
-
-        }
-
-
-
+        holder.num.setText(room.getCollectionNum() + "");
 
     }
 
     @Override
     public int getItemCount() {
-        return rooms.size() ;
+        return listDatas.size();
     }
 
 
-}
-class ExhibitRoomViewHolder extends RecyclerView.ViewHolder {
-     ImageView imageView; //展厅图片
-    TextView name; //展厅名称
-    TextView num; //展厅展品数量
+    class ExhibitRoomViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView1; //展厅图片
+        ImageView imageView2;
+        ImageView imageView3;
+        ImageView imageView4;
+
+        TextView name; //展厅名称
+        TextView num; //展厅展品数量
 
 
-    public ExhibitRoomViewHolder(View itemView) {
-        super(itemView);
+        public ExhibitRoomViewHolder(View itemView) {
+            super(itemView);
 
-        imageView= (ImageView) itemView.findViewById(R.id.exhibit_room_image);
-        name= (TextView) itemView.findViewById(R.id.exhibit_room_name);
-        num= (TextView) itemView.findViewById(R.id.exhibit_room_count);
+            imageView1 = (ImageView) itemView.findViewById(R.id.exhibit_room_image_1);
+//            imageView2 = (ImageView) itemView.findViewById(R.id.exhibit_room_image_2);
+//            imageView3 = (ImageView) itemView.findViewById(R.id.exhibit_room_image_3);
+//            imageView4 = (ImageView) itemView.findViewById(R.id.exhibit_room_image_4);
 
 
 
+            name = (TextView) itemView.findViewById(R.id.exhibit_room_name);
+            num = (TextView) itemView.findViewById(R.id.exhibit_room_count);
+
+
+        }
     }
 }

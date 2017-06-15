@@ -347,15 +347,15 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <MyView.PullRecyclerView
 
-
+                android:orientation="vertical"
                 android:id="@+id/museum_detail_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
 
-            </android.support.v7.widget.RecyclerView>
+            </MyView.PullRecyclerView>
 
         </LinearLayout>
 

@@ -40,7 +40,7 @@
         <TextView
 
 
-            android:id="@+id/museum_detail_name"
+            android:id="@+id/activity_colt_type_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -64,14 +64,15 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <MyView.PullRecyclerView
 
+        android:orientation="vertical"
         android:id="@+id/type_colt_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-    </android.support.v7.widget.RecyclerView>
+    </MyView.PullRecyclerView>
 
 
 </LinearLayout>
