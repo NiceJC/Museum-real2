@@ -31,6 +31,9 @@ public class Comments extends BmobObject {
     private Blog blog;
     private String commentText; //评论正文
     private User author;//评论的作者
+    private Integer commentType;//评论类型
+
+
 
 //    private long commentTime; //评论时间
 
@@ -95,6 +98,14 @@ public class Comments extends BmobObject {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public Integer getCommentType() {
+        return commentType;
+    }
+
+    public void setCommentType(Integer commentType) {
+        this.commentType = commentType;
     }
     //
 //

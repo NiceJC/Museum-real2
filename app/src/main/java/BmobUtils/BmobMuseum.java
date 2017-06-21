@@ -206,8 +206,10 @@ public class BmobMuseum {
             public void done(BmobException e) {
                 if(e==null){
                     Log.i("bmob","关注博物馆成功");
+                    onBmobReturnWithObj.onSuccess(null);
                 }else{
                     Log.i("bmob","失败："+e.getMessage());
+                    onBmobReturnWithObj.onFail(null);
                 }
             }
         });
@@ -245,8 +247,11 @@ public class BmobMuseum {
             public void done(BmobException e) {
                 if(e==null){
                     Log.i("bmob","取消关注博物馆成功");
+                    onBmobReturnWithObj.onSuccess(null);
                 }else{
+
                     Log.i("bmob","失败："+e.getMessage());
+                    onBmobReturnWithObj.onFail(null);
                 }
             }
         });
@@ -282,6 +287,24 @@ public class BmobMuseum {
     }
 
 
+    //获取关注某个博物馆的所有用户
+    public void getFansOfMuseum(String museumID){
+        Museum museum=new Museum();
+        museum.setObjectId(museumID);
+
+        BmobQuery<User> query=new BmobQuery<>();
+        query.addWhereRelatedTo("watchedUsers",new BmobPointer(museum));
+        query.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> list, BmobException e) {
+                if(e==null){
+                    onBmobReturnWithObj.onSuccess(list);
+                }else{
+                    Log.i("bmob","失败："+e.getMessage());
+                }
+            }
+        });
+    }
 
 
 }

@@ -14,10 +14,13 @@ import java.util.List;
 import java.util.Objects;
 
 import BmobUtils.BmobExhibition;
+import BmobUtils.BmobMuseum;
 import MyView.PullBaseView;
 import MyView.PullRecyclerView;
 import adapter.ExhibitionListAdapter;
+import cn.bmob.v3.BmobUser;
 import entity.Exhibition;
+import entity.Museum;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.ExhibitionActivity;
 import jintong.museum2.R;

@@ -149,7 +149,7 @@
                         android:layout_centerInParent="true"
 
                         android:layout_toRightOf="@id/divider"
-                        android:src="@drawable/watch" />
+                        android:src="@drawable/blog_watch_icon"  />
 
 
                 </RelativeLayout>

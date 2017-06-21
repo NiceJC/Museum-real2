@@ -239,14 +239,20 @@ public class BmobSocialUtil {
     }
 
 
+
+
     /**
      * 获取关注的用户
      *
      */
-    public void getFollowing(String userID){
+    public void getFollowing(String userID,int curPage){
         User user=new User();
         user.setObjectId(userID);
         BmobQuery<User> query=new BmobQuery<User>();
+
+        query.order("-createdAt");
+        query.setSkip(LIMIT_TEN*curPage);
+
         query.addWhereRelatedTo("watchUsers",new BmobPointer(user));
         query.findObjects(new FindListener<User>() {
             @Override
@@ -263,12 +269,17 @@ public class BmobSocialUtil {
     /**
      * 获取所有粉丝
      */
-    public void getFans(String userID){
+    public void getFans(String userID,int curPage){
 
 
         User user=new User();
         user.setObjectId(userID);
+
         BmobQuery<User> query=new BmobQuery<User>();
+
+        query.order("-createdAt");
+        query.setSkip(LIMIT_TEN*curPage);
+
         query.addWhereRelatedTo("fans",new BmobPointer(user));
         query.findObjects(new FindListener<User>() {
             @Override
@@ -280,9 +291,43 @@ public class BmobSocialUtil {
                 }
             }
         });
-
-
     }
+
+     public void getFansAndFollowingNum(String userID){
+         User user=new User();
+         user.setObjectId(userID);
+         BmobQuery<User> query=new BmobQuery<User>();
+         query.addWhereRelatedTo("watchUsers",new BmobPointer(user));
+         query.findObjects(new FindListener<User>() {
+             @Override
+             public void done(List<User> list, BmobException e) {
+                 if(e==null){
+                     onBmobReturnWithObj.onSuccess(list.size());
+                 }else{
+                     Log.i("bmob","失败："+e.getMessage());
+                 }
+             }
+         });
+
+
+
+         BmobQuery<User> query2=new BmobQuery<User>();
+         query2.addWhereRelatedTo("fans",new BmobPointer(user));
+         query2.findObjects(new FindListener<User>() {
+             @Override
+             public void done(List<User> list, BmobException e) {
+                 if(e==null){
+                     onBmobReturnWithObj.onFail(list.size());
+                 }else{
+                     Log.i("bmob","失败："+e.getMessage());
+                 }
+             }
+         });
+
+     }
+
+
+
 
 
 

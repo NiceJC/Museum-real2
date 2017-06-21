@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_click_bg"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+
+    <ImageView
+
+
+        android:id="@+id/userListItem_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/camera2"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/userListItem_userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="影视新闻"
+
+            android:textSize="16sp" />
+
+
+        <TextView
+
+            android:id="@+id/userListItem_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+
+
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

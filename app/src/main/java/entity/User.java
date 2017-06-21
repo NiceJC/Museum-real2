@@ -47,6 +47,7 @@ public class User extends BmobUser {
 
     private String portraitURL; //头像URL；
 
+    private String userInfo; //简短的一句话介绍
 
 
     public User() {
@@ -140,5 +141,13 @@ public class User extends BmobUser {
 
     public void setWatchExhibitions(BmobRelation watchExhibitions) {
         this.watchExhibitions = watchExhibitions;
+    }
+
+    public String getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(String userInfo) {
+        this.userInfo = userInfo;
     }
 }

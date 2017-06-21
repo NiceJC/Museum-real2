@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import entity.User;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.R;
 import jintong.museum2.SetUpActivity;
+import jintong.museum2.SocialRelationActivity;
 import util.ToastUtils;
 
 /**
@@ -63,7 +65,13 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
     MineFragmentF4 mineFragmentF4;
 
     private LinearLayout tab1, tab2, tab3, tab4;
-    private TextView num1,num2,num3,num4;
+
+    private RelativeLayout followerAndFollowing;
+
+    private TextView fans,following;
+
+
+
 
 
     @Nullable
@@ -90,6 +98,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
     private void initEvents() {
         mViewPager.addOnPageChangeListener(this);
         toSetUp.setOnClickListener(this);
+        followerAndFollowing.setOnClickListener(this);
         tab1.setOnClickListener(this);
         tab2.setOnClickListener(this);
         tab3.setOnClickListener(this);
@@ -140,8 +149,6 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
                     break;
                 default:
                     break;
-
-
             }
 
         }
@@ -158,6 +165,7 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
         };
 
 
+        setFansNum();
 
     }
 
@@ -176,12 +184,11 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
         mTabIndicators.add(tab4);
 
 
-        num1= (TextView) view.findViewById(R.id.mine_indicator_1_num);
-        num2= (TextView) view.findViewById(R.id.mine_indicator_2_num);
-        num3= (TextView) view.findViewById(R.id.mine_indicator_3_num);
-        num4= (TextView) view.findViewById(R.id.mine_indicator_4_num);
 
         toSetUp = (ImageView) view.findViewById(R.id.to_setup);
+        followerAndFollowing= (RelativeLayout) view.findViewById(R.id.mine_follower_following);
+        fans= (TextView) view.findViewById(R.id.mine_fans_num);
+        following= (TextView) view.findViewById(R.id.mine_following_num);
 
 
     }
@@ -213,6 +220,13 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
                 break;
 
 
+            case R.id.mine_follower_following:
+                Intent intent2 = new Intent(getActivity(), SocialRelationActivity.class);
+
+                startActivity(intent2);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+
+                break;
             case R.id.mine_indicator_1:
                 resetOtherTabs();
                 Log.e("mine", "click 11");
@@ -286,97 +300,114 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
         Log.e("mine", "onCreate");
     }
 
-
-    public  void setLikedMuseumNum(){
-        BmobMuseum bmobMuseum=BmobMuseum.getInstance(getActivity());
-        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-            @Override
-            public void onSuccess(Object Obj) {
-                List<Museum> list= (List<Museum>) Obj;
-
-                num1.setText(list.size()+"");
-            }
-
-            @Override
-            public void onFail(Object Obj) {
-
-            }
-        });
-
-        bmobMuseum.getLikedMuseums(BmobUser.getCurrentUser().getObjectId());
-    }
-
-
-    public  void setLikedExhibitNum(){
-        BmobExhibition bmobExhibition=BmobExhibition.getInstance(getActivity());
-        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-            @Override
-            public void onSuccess(Object Obj) {
-                List<Exhibition> list= (List<Exhibition>) Obj;
-
-                num2.setText(list.size()+"");
-            }
-
-            @Override
-            public void onFail(Object Obj) {
-
-            }
-        });
-
-        bmobExhibition.getLikedExhibition(BmobUser.getCurrentUser().getObjectId());
-    }
-
-
-    public  void setLikedColtNum(){
-        BmobColt bmobColt=BmobColt.getInstance(getActivity());
-        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-            @Override
-            public void onSuccess(Object Obj) {
-                List<Museum> list= (List<Museum>) Obj;
-
-                num3.setText(list.size()+"");
-            }
-
-            @Override
-            public void onFail(Object Obj) {
-
-            }
-        });
-
-        bmobColt.getLikedColt(BmobUser.getCurrentUser().getObjectId());
-    }
-
-
-    public  void setPostBlogNum(){
+    //设置粉丝和关注人数
+    public void setFansNum(){
         BmobSocialUtil bmobSocialUtil=BmobSocialUtil.getInstance(getActivity());
         bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
-                List<Museum> list= (List<Museum>) Obj;
-
-                num4.setText(list.size()+"");
+                int num= (int) Obj;
+                following.setText(num+"");
             }
 
             @Override
             public void onFail(Object Obj) {
-
+                int num2= (int) Obj;
+                fans.setText(num2+"");
             }
         });
-
-        bmobSocialUtil.getBlogByAuthor(BmobUser.getCurrentUser().getObjectId());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-
-        setLikedColtNum();
-        setLikedMuseumNum();
-        setLikedExhibitNum();
-        setPostBlogNum();
-
+        bmobSocialUtil.getFansAndFollowingNum(BmobUser.getCurrentUser(User.class).getObjectId());
 
 
     }
+
+
+//
+//    public  void setLikedMuseumNum(){
+//        BmobMuseum bmobMuseum=BmobMuseum.getInstance(getActivity());
+//        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+//            @Override
+//            public void onSuccess(Object Obj) {
+//                List<Museum> list= (List<Museum>) Obj;
+//
+//                num1.setText(list.size()+"");
+//            }
+//
+//            @Override
+//            public void onFail(Object Obj) {
+//
+//            }
+//        });
+//
+//        bmobMuseum.getLikedMuseums(BmobUser.getCurrentUser().getObjectId());
+//    }
+//
+//
+//    public  void setLikedExhibitNum(){
+//        BmobExhibition bmobExhibition=BmobExhibition.getInstance(getActivity());
+//        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+//            @Override
+//            public void onSuccess(Object Obj) {
+//                List<Exhibition> list= (List<Exhibition>) Obj;
+//
+//                num2.setText(list.size()+"");
+//            }
+//
+//            @Override
+//            public void onFail(Object Obj) {
+//
+//            }
+//        });
+//
+//        bmobExhibition.getLikedExhibition(BmobUser.getCurrentUser().getObjectId());
+//    }
+//
+//
+//    public  void setLikedColtNum(){
+//        BmobColt bmobColt=BmobColt.getInstance(getActivity());
+//        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+//            @Override
+//            public void onSuccess(Object Obj) {
+//                List<Museum> list= (List<Museum>) Obj;
+//
+//                num3.setText(list.size()+"");
+//            }
+//
+//            @Override
+//            public void onFail(Object Obj) {
+//
+//            }
+//        });
+//
+//        bmobColt.getLikedColt(BmobUser.getCurrentUser().getObjectId());
+//    }
+//
+//
+//    public  void setPostBlogNum(){
+//        BmobSocialUtil bmobSocialUtil=BmobSocialUtil.getInstance(getActivity());
+//        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+//            @Override
+//            public void onSuccess(Object Obj) {
+//                List<Museum> list= (List<Museum>) Obj;
+//
+//                num4.setText(list.size()+"");
+//            }
+//
+//            @Override
+//            public void onFail(Object Obj) {
+//
+//            }
+//        });
+//
+//        bmobSocialUtil.getBlogByAuthor(BmobUser.getCurrentUser().getObjectId());
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//
+//
+//
+//    }
 }

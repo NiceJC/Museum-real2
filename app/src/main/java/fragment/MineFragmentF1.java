@@ -9,14 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import BmobUtils.BmobMuseum;
-import BmobUtils.BmobSocialUtil;
-import MyView.GridItemDecoration;
-import adapter.MuseumLikeAdapter;
+import adapter.GridRecyclerAdapter;
 import cn.bmob.v3.BmobUser;
 import entity.Museum;
 import interfaces.OnBmobReturnWithObj;
@@ -34,11 +33,12 @@ public class MineFragmentF1 extends Fragment {
 
     private RecyclerView recyclerView;
 
-    MuseumLikeAdapter adapter;
+    GridRecyclerAdapter adapter;
 
-    private List<Museum> datas=new ArrayList<>();
+    private List<Object> datas=new ArrayList<>();
 
 
+    private TextView whenNoData;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -46,12 +46,12 @@ public class MineFragmentF1 extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.mine_f1_recyclerView);
 
+        whenNoData= (TextView) view.findViewById(R.id.when_no_data);
 
-
-        adapter = new MuseumLikeAdapter(getActivity(), datas);
+        adapter = new GridRecyclerAdapter(getActivity(),datas);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        initdatas();
+
         return view;
     }
 
@@ -62,6 +62,12 @@ public class MineFragmentF1 extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        initdatas();
+    }
+
     //获取关注的博物馆
     public void getLikedMuseums() {
         BmobMuseum bmobMuseum=BmobMuseum.getInstance(getActivity());
@@ -69,6 +75,10 @@ public class MineFragmentF1 extends Fragment {
             @Override
             public void onSuccess(Object Obj) {
                 List<Museum> list= (List<Museum>) Obj;
+                if(list.size()==0){
+                    whenNoData.setVisibility(View.VISIBLE);
+                }
+
                 datas.clear();
                 datas.addAll(list);
                 adapter.notifyDataSetChanged();
@@ -81,11 +91,8 @@ public class MineFragmentF1 extends Fragment {
         });
 
         bmobMuseum.getLikedMuseums(BmobUser.getCurrentUser().getObjectId());
-
-
-
-
     }
+
 
 
 }

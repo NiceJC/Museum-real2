@@ -81,6 +81,7 @@ public class BlogListAdapter extends BaseAdapter<BlogListAdapter.BlogRecyclerVie
 
     @Override
     public BlogRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         return new BlogRecyclerViewHolder(mInflater.inflate(R.layout.blog_item, parent, false));
     }
 

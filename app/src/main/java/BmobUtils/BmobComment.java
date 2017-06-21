@@ -161,6 +161,30 @@ public class BmobComment {
 
     }
 
+    //获取用户所有对于藏品的评论
+    public void getCommentToColtByUser(String UserID){
+        BmobQuery<Comments> query =new BmobQuery<>();
+        User user=new User();
+        user.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
+
+        query.addWhereEqualTo("author",new BmobPointer(user));
+        query.addWhereEqualTo("commentType",COMMENT_TO_COLLECTION);
+        query.include("collection");
+        query.findObjects(new FindListener<Comments>() {
+            @Override
+            public void done(List<Comments> list, BmobException e) {
+                if (e == null) {
+                    onBmobReturnWithObj.onSuccess(list);
+                } else {
+                    ToastUtils.toast(context, e.getMessage());
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+
+
+    }
+
 
     //提交评论或者留言 参数包括评论的主体类型，ID以及评论内容
     //type为blog的需要设置commentNum
@@ -178,21 +202,25 @@ public class BmobComment {
                 Museum museum = new Museum();
                 museum.setObjectId(ID);
                 comments.setMuseum(museum);
+                comments.setCommentType(COMMENT_TO_MUSEUM);
                 break;
             case COMMENT_TO_EXHIBITION:
                 Exhibition exhibition = new Exhibition();
                 exhibition.setObjectId(ID);
                 comments.setExhibition(exhibition);
+                comments.setCommentType(COMMENT_TO_EXHIBITION);
                 break;
             case COMMENT_TO_COLLECTION:
                 Collection collection = new Collection();
                 collection.setObjectId(ID);
                 comments.setCollection(collection);
+                comments.setCommentType(COMMENT_TO_COLLECTION);
                 break;
             case COMMENT_TO_BLOG:
                 Blog blog = new Blog();
                 blog.setObjectId(ID);
                 comments.setBlog(blog);
+                comments.setCommentType(COMMENT_TO_BLOG);
                 break;
             default:
                 break;
