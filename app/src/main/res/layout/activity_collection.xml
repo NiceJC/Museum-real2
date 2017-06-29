@@ -1,221 +1,274 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true">
+    android:layout_height="match_parent"
+    android:background="@drawable/tab_bg"
+    android:orientation="vertical">
+
+
+    <View
+
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@drawable/system_bar"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true">
+
+    </View>
 
     <LinearLayout
+
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/tab_bg"
-        android:orientation="vertical">
+        android:layout_height="46dp"
+        android:background="#879bde"
 
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp">
 
-        <View
+        <ImageView
 
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@drawable/system_bar"
-            android:clipToPadding="true"
-            android:fitsSystemWindows="true">
 
-        </View>
+            android:id="@+id/activity_colt_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:padding="8dp"
 
-        <LinearLayout
+            android:src="@mipmap/toleft" />
 
+        <TextView
 
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:background="#1893fb"
 
-            android:orientation="horizontal"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp">
-
-            <ImageView
-
-
-                android:id="@+id/activity_colt_back"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:padding="8dp"
-
-                android:src="@mipmap/toleft" />
-
-            <TextView
-
-
-                android:id="@+id/museum_detail_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="藏品详情"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-
-                />
-
-            <ImageView
-                android:layout_width="40dp"
-
-
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:padding="8dp" />
-
-
-        </LinearLayout>
-
-
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="250dp">
-
-
-            <ImageView
-
-
-                android:id="@+id/museumRoom_item_image"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="centerCrop" />
-
-
-            <LinearLayout
-
-                android:id="@+id/likeClick_museumRoom_item"
-                android:layout_width="wrap_content"
-                android:layout_height="26dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-
-
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/like_bg"
-                android:gravity="center_vertical"
-
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp">
-
-
-                <ImageView
-
-
-                    android:id="@+id/likeIcon_museumRoom_item"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/heart" />
-
-
-                <TextView
-
-                    android:id="@+id/coltLikeNum_museumRoom_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:gravity="center"
-                    android:text="666"
-                    android:textSize="14sp" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-
-                android:id="@+id/commentClick_museumRoom_item"
-                android:layout_width="wrap_content"
-                android:layout_height="26dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-
-
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@id/likeClick_museumRoom_item"
-                android:background="@drawable/like_bg"
-                android:gravity="center_vertical"
-
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp">
-
-
-                <ImageView
-
-
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/comment" />
-
-
-                <TextView
-
-                    android:id="@+id/coltCommentNum_museumRoom_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:gravity="center"
-                    android:text="666"
-                    android:textSize="14sp" />
-
-
-            </LinearLayout>
-
-            <ImageView
-
-
-                android:id="@+id/move_like"
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="12dp"
-                android:layout_marginRight="34dp"
-                android:background="@drawable/heart2" />
-
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/museum_detail_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="藏品详情"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+
+            />
+
+        <ImageView
+            android:layout_width="40dp"
+
+
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:padding="8dp" />
+
+
+    </LinearLayout>
+
+    <MyView.MyScrollview
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/tab_bg"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
 
-            <TextView
-                android:id="@+id/museumRoom_item_name"
-                android:layout_width="wrap_content"
+            <RelativeLayout
 
+                android:layout_width="match_parent"
+                android:layout_height="250dp">
+
+
+                <ImageView
+
+
+                    android:id="@+id/museumRoom_item_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:scaleType="centerCrop" />
+
+
+                <LinearLayout
+
+                    android:id="@+id/likeClick_museumRoom_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+
+
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/like_bg"
+                    android:gravity="center_vertical"
+
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp">
+
+
+                    <ImageView
+
+
+                        android:id="@+id/likeIcon_museumRoom_item"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/heart_selector" />
+
+
+                    <TextView
+
+                        android:id="@+id/coltLikeNum_museumRoom_item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:gravity="center"
+                        android:text="666"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+                <!--<LinearLayout-->
+
+                    <!--android:id="@+id/commentClick_museumRoom_item"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="26dp"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_marginBottom="5dp"-->
+
+
+                    <!--android:layout_marginRight="5dp"-->
+                    <!--android:layout_toLeftOf="@id/likeClick_museumRoom_item"-->
+                    <!--android:background="@drawable/like_bg"-->
+                    <!--android:gravity="center_vertical"-->
+
+                    <!--android:paddingLeft="8dp"-->
+                    <!--android:paddingRight="8dp">-->
+
+
+                    <!--<ImageView-->
+
+
+                        <!--android:layout_width="16dp"-->
+                        <!--android:layout_height="16dp"-->
+                        <!--android:src="@drawable/comment" />-->
+
+
+                    <!--<TextView-->
+
+                        <!--android:id="@+id/coltCommentNum_museumRoom_item"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="3dp"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="666"-->
+                        <!--android:textSize="14sp" />-->
+
+
+                <!--</LinearLayout>-->
+
+                <ImageView
+
+
+                    android:id="@+id/move_like"
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginRight="34dp"
+                    android:background="@drawable/heart_red" />
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="鸟纹抱月瓶"
-                android:textSize="18sp" />
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <TextView
-                android:id="@+id/museumRoom_item_dynasty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="年代不详"
-                android:textSize="14sp" />
 
-            <TextView
+                <TextView
+                    android:id="@+id/museumRoom_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                android:id="@+id/museumRoom_item_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="尺寸不详"
-                android:textSize="14sp" />
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:text="鸟纹抱月瓶"
+                    android:textSize="18sp" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="年代：" />
+
+                    <TextView
+                        android:id="@+id/museumRoom_item_dynasty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="年代不详"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="尺寸：" />
+
+                    <TextView
+
+                        android:id="@+id/museumRoom_item_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="尺寸不详"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="介绍：" />
+
+                    <TextView
+                        android:id="@+id/museumRoom_item_intro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="清末民国时期使用的称量粮食的工具，一面书“鸿羽丰”，一面书“第五号校准锦斗”。"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -224,16 +277,75 @@
                 android:layout_marginTop="5dp"
                 android:background="@color/gray" />
 
+            <android.support.v7.widget.RecyclerView
+
+                android:layout_marginLeft="20dp"
+                android:id="@+id/activity_colt_comments"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
             <TextView
-                android:id="@+id/museumRoom_item_intro"
+
+                android:id="@+id/when_no_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="清末民国时期使用的称量粮食的工具，一面书“鸿羽丰”，一面书“第五号校准锦斗”。"
-                android:textSize="14sp" />
-
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:text="目前还没有评论哦"
+                android:textSize="18sp"
+                android:visibility="gone" />
         </LinearLayout>
+    </MyView.MyScrollview>
 
 
+    <LinearLayout
+        android:id="@+id/blog_a_editText_bar"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_bg"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp"
+
+        android:paddingTop="4dp">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="评论"
+            android:textSize="16sp" />
+
+        <EditText
+
+
+            android:id="@+id/blog_a_comment_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:background="@drawable/register_edittext_bg"
+
+            android:padding="5dp"
+            android:textCursorDrawable="@drawable/text_cursor_black"
+            android:textSize="14sp" />
+
+        <ImageView
+
+            android:id="@+id/blog_a_comment_commit"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/send" />
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>
+

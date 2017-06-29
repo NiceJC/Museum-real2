@@ -3,10 +3,16 @@ package jintong.museum2;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,13 +24,22 @@ import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import BmobUtils.BmobColt;
+import BmobUtils.BmobComment;
+import adapter.CommentRecyclerAdapter;
+import adapter.CommentsListAdapter;
+import cn.bmob.v3.BmobUser;
 import entity.Collection;
 import entity.Comments;
+import entity.User;
 import interfaces.OnBmobReturnWithObj;
 import util.SysUtils;
+import util.ToastUtils;
 
+import static entity.Comments.COMMENT_TO_BLOG;
+import static entity.Comments.COMMENT_TO_COLLECTION;
 import static util.ParameterBase.COLT_ID;
 import static util.ParameterBase.IMAGE_URLS;
 
@@ -54,17 +69,33 @@ public class CollectionActivity extends BaseActivity {
 
     private ImageView likeMove; //用作点赞的动画
 
-    private LinearLayout commentClick;//评论的点击
 
-    private TextView commentNum;//评论的数量
 
-    private ImageView back;
+
+
+    private ImageView back,commit;
+
+    private EditText editText;
 
     private Collection collection;
 
     private RequestManager requestManager;
 
     private String colt_ID;
+
+    private List<Comments> comments=new ArrayList<Comments>(); //所有评论
+
+    private RecyclerView recyclerView;
+    private TextView whenNoData;
+    private CommentRecyclerAdapter adapter;
+
+    private int height; //保存测量得到的软键盘高度
+    private boolean haveChanged = false;
+    private LinearLayout editBar;
+
+    private boolean isLiked=false;
+    private int likecount;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,32 +129,39 @@ public class CollectionActivity extends BaseActivity {
 
         likeMove = (ImageView) findViewById(R.id.move_like);
 
-        commentClick = (LinearLayout) findViewById(R.id.commentClick_museumRoom_item);
-        commentNum = (TextView) findViewById(R.id.coltCommentNum_museumRoom_item);
-
         back= (ImageView) findViewById(R.id.activity_colt_back);
 
         colt_ID= getIntent().getStringExtra(COLT_ID);
         requestManager= Glide.with(this);
 
+        commit= (ImageView) findViewById(R.id.blog_a_comment_commit);
+        editText= (EditText) findViewById(R.id.blog_a_comment_text);
+
+        editBar= (LinearLayout) findViewById(R.id.blog_a_editText_bar);
+
+        recyclerView= (RecyclerView) findViewById(R.id.activity_colt_comments);
+        whenNoData= (TextView) findViewById(R.id.when_no_data);
+        adapter=new CommentRecyclerAdapter(this,comments);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+
+
     }
 
     private void initData() {
 
-        getDataFromServer(colt_ID);
+        getCollectionInfo(colt_ID);
 
+        getAllComments(colt_ID);
     }
 
     private void setData() {
-
-
-
-
-
-
+        getLikedUser(colt_ID);
+        incrementHotvalue();
         requestManager.load(collection.getImage1().getFileUrl()+ "!/fxfn/1080x500").into(coltImage);
         likeNum.setText(collection.getColtLikeNum() + "");
-        commentNum.setText(collection.getColtCommentNum()+"");
+
         ObjectAnimator.ofFloat(likeMove, "alpha", 1, 0).setDuration(0).start();
 
         name.setText(collection.getColtName());
@@ -131,14 +169,13 @@ public class CollectionActivity extends BaseActivity {
         dynasty.setText(collection.getColtDynasty());
         introduction.setText(collection.getColtIntru());
 
-
-
         }
 
 
 
 
     private void initEvents() {
+        setListenerToRootView();
         coltImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,25 +198,6 @@ public class CollectionActivity extends BaseActivity {
                 overridePendingTransition(R.anim.none,R.anim.out_to_right);
             }
         });
-        /**
-         * 显示评论的数量
-         * 点击后进入评论的详情页
-         */
-
-        commentClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(CollectionActivity.this, CommentActivity.class);
-
-                intent.putExtra("coltID",collection.getObjectId());
-//                intent.putExtra("commentType", Comments.COMMENT_TO_COLLECTION);
-                startActivity(intent);
-
-                overridePendingTransition(R.anim.in_from_right, R.anim.none);
-
-            }
-        });
-
 
         //点击你就喜欢上了他  嗯 这是个腊鸡动画 爱看不看
         likeClick.setOnClickListener(new View.OnClickListener() {
@@ -199,14 +217,42 @@ public class CollectionActivity extends BaseActivity {
                         ObjectAnimator.ofFloat(likeMove, "translationX", 0, 30, -30, 0),
                         ObjectAnimator.ofFloat(likeMove, "translationY", 0, -200),
                         ObjectAnimator.ofFloat(likeMove, "alpha", 1, 0.7f, 0)
-
-
                 );
                 set.setDuration(1500).start();
 
 
+                if(isLiked){
+                   removeColtToLike();
+                }else{
+                    addColtToLike();
+                }
             }
         });
+        commit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String content = editText.getText().toString();
+                BmobComment bmobComment = BmobComment.getInstance(CollectionActivity.this);
+                bmobComment.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                    @Override
+                    public void onSuccess(Object Obj) {
+
+                        ToastUtils.toast(CollectionActivity.this, "评论成功");
+
+                        whenNoData.setVisibility(View.GONE);
+                        getAllComments(colt_ID);
+                    }
+
+                    @Override
+                    public void onFail(Object Obj) {
+
+                    }
+                });
+                bmobComment.postComment(COMMENT_TO_COLLECTION, colt_ID, content);
+
+            }
+        });
+
     }
 
     @Override
@@ -215,7 +261,7 @@ public class CollectionActivity extends BaseActivity {
         overridePendingTransition(R.anim.none,R.anim.out_to_right);
     }
 
-    public void getDataFromServer( String coltID){
+    public void getCollectionInfo( String coltID){
         BmobColt bmobColt=BmobColt.getInstance(this);
         bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
@@ -232,6 +278,161 @@ public class CollectionActivity extends BaseActivity {
         bmobColt.getByColtID(coltID);
 
     }
+
+    public void getAllComments(String coltID){
+
+        BmobComment bmobComment=BmobComment.getInstance(this);
+        bmobComment.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Comments> list= (List<Comments>) Obj;
+                if(list==null||list.size()==0){
+                    whenNoData.setVisibility(View.VISIBLE);
+                }else{
+
+                    comments.clear();
+                    comments.addAll(list);
+                    adapter.notifyDataSetChanged();
+
+                }
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobComment.getCommentToColt(coltID);
+
+    }
+
+
+
+    //获取喜欢当前展品的所有用户
+    public void getLikedUser(String colt_ID){
+        BmobColt bmobColt=BmobColt.getInstance(this);
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<User> userList= (List<User>) Obj;
+                if(userList!=null&&userList.size()!=0){
+                    likecount=userList.size();
+                    for (User user :userList
+                            ) {
+                        if(user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
+                            isLiked = true;
+                            break;
+                        }
+                    }
+                    likeIcon.setSelected(isLiked);
+                    likeNum.setText(likecount+"");
+                }else{
+                    likeIcon.setSelected(false);
+                    likeNum.setText(0+"");
+                }
+            }
+            @Override
+            public void onFail(Object Obj) {
+            }
+        });
+        bmobColt.getLikedUsers(colt_ID);
+    }
+
+
+    //添加喜欢
+    private void addColtToLike(){
+
+        BmobColt bmobColt=BmobColt.getInstance(this);
+
+
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                isLiked=true;
+                likecount++;
+                likeIcon.setSelected(isLiked);
+                likeNum.setText(likecount+"");
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.likeColt(colt_ID);
+    }
+
+    //移除喜欢
+    private void removeColtToLike(){
+
+        BmobColt bmobColt=BmobColt.getInstance(this);
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+
+                isLiked=false;
+                likecount--;
+                likeIcon.setSelected(isLiked);
+                likeNum.setText(likecount+"");
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.cancellikeColt(colt_ID);
+    }
+
+    private void incrementHotvalue(){
+        BmobColt.getInstance(this).incrementHotValue(colt_ID);
+
+    }
+
+
+
+    /**
+     * 得到的Rect就是根布局的可视区域，而rootView.bottom是其本应的底部坐标值，
+     * 如果差值大于我们预设的值，就可以认定键盘弹起了。这个预设值是键盘的高度的最小值。
+     * 这个rootView实际上就是DectorView，通过任意一个View再getRootView就能获得。
+     */
+    private boolean isKeyboardShown(View rootView) {
+        final int softKeyboardHeight = 100;
+        Rect r = new Rect();
+        rootView.getWindowVisibleDisplayFrame(r);
+        int heightDiff = rootView.getBottom() - r.bottom;
+        height = heightDiff;
+
+        DisplayMetrics dm = rootView.getResources().getDisplayMetrics();
+        return heightDiff > softKeyboardHeight * dm.density;
+    }
+
+    private void setListenerToRootView() {
+
+        back.getRootView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                boolean isOpen = isKeyboardShown(back.getRootView());
+
+
+                if (isOpen) {
+
+                    ObjectAnimator.ofFloat(editBar, "translationY", 0, -height).setDuration(100).start();
+                    haveChanged = true;
+
+                } else {
+                    if (haveChanged) {
+                        ObjectAnimator.ofFloat(editBar, "translationY", -height, 0).setDuration(100).start();
+                    }
+                }
+            }
+        });
+
+    }
+
 
 
 }

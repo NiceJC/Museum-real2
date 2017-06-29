@@ -47,7 +47,7 @@
                 android:id="@+id/likeIcon_coltGrid_item"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/heart" />
+                android:src="@drawable/heart_red" />
 
             <TextView
 

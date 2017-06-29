@@ -51,7 +51,7 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
         super.onBindViewHolder(holder, position);
         Collection collection = (Collection) listDatas.get(position);
 
-        requestManager.load(collection.getImage1().getFileUrl()+"!/fxfn/1080x1080").into(holder.coltImage);
+        requestManager.load(collection.getImage1().getFileUrl()+"!/fxfn/1080x540").into(holder.coltImage);
         holder.likeNum.setText(collection.getColtLikeNum() + "");
 
         ObjectAnimator.ofFloat(holder.likeMove, "alpha", 1, 0).setDuration(0).start();

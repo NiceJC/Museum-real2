@@ -7,6 +7,7 @@ import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  *
@@ -29,17 +30,6 @@ public class Exhibition extends BmobObject {
 
     private Museum toMuseum; //所属的博物馆
 
-//    private String museumName; //博物馆名称
-//
-//    private double latitude; //纬度    这里的经纬度和城市 也就是博物馆的
-//
-//    private double longitude; //经度
-//
-//    private String locateCity; //所在城市
-
-
-
-//    private int museumID; //博物馆id
 
     private String exhibitIntru; //展览介绍
 
@@ -50,6 +40,8 @@ public class Exhibition extends BmobObject {
     private  String Cost; //花费
 
     private Integer coltNum; //参加主体展览的展品数量
+
+    private BmobRelation watchedUsers; //关注改展览的人
 
     private Integer likeNum; //感兴趣的人数
 
@@ -134,5 +126,13 @@ public class Exhibition extends BmobObject {
 
     public void setHotValue(Integer hotValue) {
         this.hotValue = hotValue;
+    }
+
+    public BmobRelation getWatchedUsers() {
+        return watchedUsers;
+    }
+
+    public void setWatchedUsers(BmobRelation watchedUsers) {
+        this.watchedUsers = watchedUsers;
     }
 }

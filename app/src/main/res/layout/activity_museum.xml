@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+
+    >
 
     <View
 
@@ -149,7 +152,7 @@
                         android:layout_centerInParent="true"
 
                         android:layout_toRightOf="@id/divider"
-                        android:src="@drawable/blog_watch_icon"  />
+                        android:src="@drawable/blog_watch_icon" />
 
 
                 </RelativeLayout>
@@ -297,20 +300,33 @@
                         android:text="介绍："
                         android:textSize="16sp" />
 
-                    <TextView
+                    <MyView.ExpandableTextView
 
 
-                        android:id="@+id/museum_detail_intru"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/expand_text_view"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
-                        android:maxLines="5"
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
+                        expandableTextView:maxCollapsedLines="4">
 
+                        <TextView
+                            android:id="@id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
 
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="sans-serif-light"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp" />
+
+                        <ImageButton
+                            android:id="@id/expand_collapse"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:background="@android:color/transparent"
+                            android:padding="6dp" />
+                    </MyView.ExpandableTextView>
                 </LinearLayout>
 
                 <View
@@ -349,10 +365,10 @@
 
             <MyView.PullRecyclerView
 
-                android:orientation="vertical"
                 android:id="@+id/museum_detail_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
 
             </MyView.PullRecyclerView>

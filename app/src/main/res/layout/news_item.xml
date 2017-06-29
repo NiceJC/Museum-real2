@@ -2,40 +2,74 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/tab_bg_color"
     android:orientation="horizontal">
 
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <ImageView
 
 
-        <ImageView
+        android:id="@+id/news_item_colt_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
 
 
-            android:id="@+id/news_item_colt_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/camera2"
-            android:scaleType="centerCrop" />
-
-        <TextView
-            android:id="@+id/news_item_colt_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:text="hahahha" />
+        android:scaleType="centerCrop" />
 
 
-    </FrameLayout>
-
-    <TextView
-
-        android:layout_margin="10dp"
-        android:id="@+id/news_item_comment"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:gravity="center_vertical"
+
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="展品："/>
+            <TextView
+                android:id="@+id/news_item_colt_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
 
+
+            />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_margin="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="评论：" />
+
+            <TextView
+
+                android:id="@+id/news_item_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+
+                />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

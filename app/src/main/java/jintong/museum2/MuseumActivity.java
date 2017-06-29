@@ -22,6 +22,7 @@ import java.util.Objects;
 import BmobUtils.BmobColt;
 import BmobUtils.BmobExhibitRoom;
 import BmobUtils.BmobMuseum;
+import MyView.ExpandableTextView;
 import MyView.GlideCircleTransform;
 import MyView.PullBaseView;
 import MyView.PullRecyclerView;
@@ -60,7 +61,7 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
 
     private ImageView museumWatch;//关注图标，点击切换关注状态
 
-    private TextView museumIntru; //博物馆简短介绍
+    private ExpandableTextView museumIntru; //博物馆简短介绍
 
     private TextView address; // 详细地址
     private TextView time; //开馆时间
@@ -133,7 +134,7 @@ setWatchInfo();
 
 
         imageView = (ImageView) findViewById(R.id.museum_detail_image);
-        museumIntru = (TextView) findViewById(R.id.museum_detail_intru);
+        museumIntru = (ExpandableTextView) findViewById(R.id.expand_text_view);
         address = (TextView) findViewById(R.id.museum_detail_address);
         time = (TextView) findViewById(R.id.museum_detail_time);
         cost = (TextView) findViewById(R.id.museum_detail_cost);

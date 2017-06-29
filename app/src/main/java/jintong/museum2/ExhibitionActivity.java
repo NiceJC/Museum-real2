@@ -1,8 +1,10 @@
 package jintong.museum2;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -15,16 +17,21 @@ import java.util.List;
 
 import BmobUtils.BmobColt;
 import BmobUtils.BmobExhibition;
+import BmobUtils.BmobMuseum;
+import MyView.ExpandableTextView;
 import MyView.PullBaseView;
 import MyView.PullRecyclerView;
 import adapter.ColtListAdapter;
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
 import entity.Collection;
 import entity.Exhibition;
+import entity.User;
 import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
 import util.ToastUtils;
 
+import static util.ParameterBase.COLT_ID;
 import static util.ParameterBase.EXHIBITION_ID;
 
 /**
@@ -43,7 +50,19 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
     private Exhibition exhibition;
     private ColtListAdapter adapter;
     private int currentPage = 0;
-    private TextView introduction;
+
+
+
+    private int watchNum;
+    private boolean isWatched;
+
+    private TextView exhibitWatchNum,address,time,cost;//关注人数
+
+    private ExpandableTextView intro;
+    private ImageView exhibitWatch;//关注图标，点击切换关注状态
+
+
+
 
 
     private String exhibitID;
@@ -72,19 +91,32 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
 
 
     private void setData() {
-
-        introduction.setText(exhibition.getExhibitIntru());
+        setWatchInfo();
         roomName.setText(exhibition.getExhibitName());
+        address.setText(exhibition.getToMuseum().getMuseumName());
+        cost.setText(exhibition.getCost());
+        time.setText(exhibition.getTime());
+        intro.setText(exhibition.getExhibitIntru());
+
 
     }
 
     private void initView() {
 
-        introduction = (TextView) findViewById(R.id.room_introduction);
+
+
         back = (ImageView) findViewById(R.id.museum_room_back);
         roomName = (TextView) findViewById(R.id.museum_room_name);
         recyclerView = (PullRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
 
+        exhibitWatchNum= (TextView) findViewById(R.id.exhibit_detail_watchNum);
+
+        exhibitWatch= (ImageView) findViewById(R.id.exhibit_detail_watch);
+
+        address= (TextView) findViewById(R.id.exhibit_detail_address);
+        time= (TextView) findViewById(R.id.exhibit_detail_time);
+        cost= (TextView) findViewById(R.id.exhibit_detail_cost);
+        intro = (ExpandableTextView) findViewById(R.id.expand_text_view);
 
         recyclerView.setFocusable(false);
         manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
@@ -105,9 +137,6 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
         recyclerView.setCanPullDown(false); //不用下拉
         recyclerView.setAdapter(adapter);
 
-
-
-
     }
 
 
@@ -121,6 +150,8 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
         getExhibitionInfo(exhibitID);
         pullMoreFromServer(exhibitID,0);
 
+        currentPage=1;
+
 
     }
 
@@ -133,6 +164,12 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
                 finish();
                 overridePendingTransition(R.anim.none,R.anim.out_to_right);
 
+            }
+        });
+        exhibitWatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickWatchExhibit();
             }
         });
 
@@ -159,10 +196,20 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
     @Override
     public void onItemClick(int position) {
 
+
+
+
     }
 
     @Override
     public void onItemLongClick(int position) {
+
+        Intent intent=new Intent(this,CollectionActivity.class);
+        Collection collection= (Collection) datas.get(position);
+        intent.putExtra(COLT_ID,collection.getObjectId());
+        startActivity(intent);
+        overridePendingTransition(R.anim.in_from_right,R.anim.none);
+
 
     }
 
@@ -229,6 +276,95 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
         bmobColt.getByBelongID(exhibitionID, EXHIBITION_ID, curPage);
 
     }
+    //设置用户是否已经关注博物馆，以及关注的总人数
+    public void setWatchInfo(){
+        BmobExhibition bmobExhibition=BmobExhibition.getInstance(this);
+        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<User> list= (List<User>) Obj;
 
+                isWatched=false;
+                watchNum=list.size();
+
+                for (User user:list
+                        ) {
+
+                    if(user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())){
+                        isWatched=true;
+                        break;
+                    }
+                }
+
+
+                exhibitWatch.setSelected(isWatched);
+                exhibitWatchNum.setText(watchNum+"");
+            }
+            @Override
+            public void onFail(Object Obj) {
+            }
+        });
+        bmobExhibition.getFansOfExhibition(exhibitID);
+    }
+
+    //关注或者取消关注 当前的博物馆
+    public void clickWatchExhibit(){
+
+        if(isWatched){ //已经关注  取消关注
+            new AlertDialog.Builder(this).setTitle("取消关注").setMessage("确定取消关注？")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, final int which) {
+                            BmobExhibition bmobExhibition=BmobExhibition.getInstance(ExhibitionActivity.this);
+                            bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                                @Override
+                                public void onSuccess(Object Obj) {
+                                    ToastUtils.toast(ExhibitionActivity.this,"已取消关注");
+
+                                    isWatched=false;
+                                    watchNum=watchNum-1;
+                                    exhibitWatch.setSelected(isWatched);
+                                    exhibitWatchNum.setText(watchNum+"");
+
+                                }
+                                @Override
+                                public void onFail(Object Obj) {
+                                }
+                            });
+                            bmobExhibition.cancelWatchExhibit(exhibitID);
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }else{//未关注  点击关注
+            BmobExhibition bmobExhibition=BmobExhibition.getInstance(this);
+            bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                @Override
+                public void onSuccess(Object Obj) {
+
+                    ToastUtils.toast(ExhibitionActivity.this,"已成功关注");
+
+                    exhibitWatch.setSelected(true);
+
+                    isWatched=true;
+                    watchNum=watchNum+1;
+                    exhibitWatch.setSelected(isWatched);
+                    exhibitWatchNum.setText(watchNum+"");
+
+                }
+
+                @Override
+                public void onFail(Object Obj) {
+
+                }
+            });
+            bmobExhibition.watchExhibit(exhibitID);
+        }
+    }
 
 }

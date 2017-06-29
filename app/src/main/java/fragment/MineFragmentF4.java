@@ -39,8 +39,9 @@ public class MineFragmentF4 extends Fragment {
 
     CommentsListAdapter adapter;
 
-    private List<Object> datas=new ArrayList<>();
+    private List<Comments> datas=new ArrayList<>();
 
+    LinearLayoutManager manager;
     private TextView whenNoData;
     @Nullable
     @Override
@@ -50,11 +51,13 @@ public class MineFragmentF4 extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.mine_f1_recyclerView);
 
         whenNoData= (TextView) view.findViewById(R.id.when_no_data);
-
-        adapter = new CommentsListAdapter(datas,getActivity());
+        manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+        adapter=new CommentsListAdapter(datas,getActivity());
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+
+        initdatas();
         return view;
     }
 
@@ -63,12 +66,6 @@ public class MineFragmentF4 extends Fragment {
         getComments();
 
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        initdatas();
     }
 
     //获取关注的博物馆

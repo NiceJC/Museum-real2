@@ -33,7 +33,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
     protected T mRecyclerView;
     private boolean isCanScrollAtRereshing = true;//刷新时是否可滑动
     private boolean isCanPullDown = true;//是否可下拉
-    private boolean isCanPullUp = true;//是否可上拉
+    private boolean isCanPullUp = true;//滑动到底部时是否需要进行刷新（还有没有更多数据）
     // pull state
     private static final int PULL_UP_STATE = 0;
     private static final int PULL_DOWN_STATE = 1;
@@ -150,6 +150,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
         addView(mFooterView, params);
     }
 
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -239,16 +240,17 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
     }
 
     /**
-     * 是否应该到了父View,即PullToRefreshView滑动
+     * 是否应该由本View来处理滑动 而不是交给子View（RecyclerView）
      *
      * @param deltaY , deltaY > 0 是向下运动,< 0是向上运动
+     *               deltaY的值时与当次滑动的ACTION_DOWN坐标进行比对
      * @return
      */
     private boolean isRefreshViewScroll(int deltaY) {
         if (mHeaderState == REFRESHING || mFooterState == REFRESHING) {
             return false;
         }
-        if (deltaY >= -20 && deltaY <= 20)
+        if (deltaY >= -20 && deltaY <= 20) //滑动太小也不做处理
             return false;
 
         if (mRecyclerView != null) {

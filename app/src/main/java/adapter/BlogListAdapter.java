@@ -28,6 +28,7 @@ import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.BlogActivity;
 import jintong.museum2.R;
 import jintong.museum2.ZoomImageActivity;
+import util.DateUtils;
 import util.SysUtils;
 
 /**
@@ -97,7 +98,7 @@ public class BlogListAdapter extends BaseAdapter<BlogListAdapter.BlogRecyclerVie
                 .transform(new GlideCircleTransform(context))
                 .into(holder.userIcon);
 
-        holder.time.setText(blog.getCreatedAt());
+        holder.time.setText(DateUtils.geRegularTime(blog.getCreatedAt()));
         holder.userName.setText(blog.getAuthor().getNickName());
         holder.content.setText(blog.getContentText());
 

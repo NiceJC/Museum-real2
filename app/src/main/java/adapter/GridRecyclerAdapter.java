@@ -1,6 +1,7 @@
 package adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +20,15 @@ import java.util.List;
 import entity.Collection;
 import entity.Exhibition;
 import entity.Museum;
+import jintong.museum2.CollectionActivity;
+import jintong.museum2.ExhibitionActivity;
+import jintong.museum2.MuseumActivity;
 import jintong.museum2.R;
 import util.SysUtils;
+
+import static util.ParameterBase.COLT_ID;
+import static util.ParameterBase.EXHIBITION_ID;
+import static util.ParameterBase.MUSEUM_ID;
 
 /**
  *
@@ -62,20 +70,45 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<GridRecyclerAdapte
 
         Object object=datas.get(position);
         if(object instanceof Museum){
-            Museum museum= (Museum) object;
+            final Museum museum= (Museum) object;
             holder.textView.setText(museum.getMuseumName());
             requestManager.load(museum.getImageURLs().get(0)+ "!/fxfn/500x500").into(holder.imageView);
 
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, MuseumActivity.class);
+                    intent.putExtra(MUSEUM_ID,museum.getObjectId());
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.in_from_right,R.anim.none);
+                }
+            });
         }else if(object instanceof Exhibition){
-            Exhibition exhibition= (Exhibition) object;
+            final Exhibition exhibition= (Exhibition) object;
             holder.textView.setText(exhibition.getExhibitName());
             requestManager.load(exhibition.getImage1().getFileUrl()+ "!/fxfn/500x500").into(holder.imageView);
-
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, ExhibitionActivity.class);
+                    intent.putExtra(EXHIBITION_ID,exhibition.getObjectId());
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.in_from_right,R.anim.none);
+                }
+            });
         }else{
-            Collection collection= (Collection) object;
+            final Collection collection= (Collection) object;
             holder.textView.setText(collection.getColtName());
             requestManager.load(collection.getImage1().getFileUrl()+ "!/fxfn/500x500").into(holder.imageView);
-
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(context, CollectionActivity.class);
+                    intent.putExtra(COLT_ID,collection.getObjectId());
+                    context.startActivity(intent);
+                    context.overridePendingTransition(R.anim.in_from_right,R.anim.none);
+                }
+            });
         }
 
 

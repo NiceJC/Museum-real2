@@ -24,12 +24,12 @@ import jintong.museum2.R;
 
 public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapter.CommentsListViewHolder> {
 
-    private List<Object> commentsList;
+    private List<Comments> commentsList;
     private Context context;
     private RequestManager requestManager;
 
 
-    public CommentsListAdapter(List<Object> commentsList, Context context) {
+    public CommentsListAdapter(List<Comments> commentsList, Context context) {
         this.commentsList = commentsList;
         this.context = context;
         this.requestManager = Glide.with(context);
@@ -42,8 +42,8 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
 
     @Override
     public void onBindViewHolder(CommentsListViewHolder holder, int position) {
-        Comments comments = (Comments) commentsList.get(position);
-        requestManager.load(comments.getCollection().getImage1().getFileUrl()+ "!/fxfn/200x00").into(holder.coltImage);
+        Comments comments =  commentsList.get(position);
+        requestManager.load(comments.getCollection().getImage1().getFileUrl()+ "!/fxfn/200x200").into(holder.coltImage);
         holder.coltName.setText(comments.getCollection().getColtName());
         holder.commentText.setText(comments.getCommentText());
 
@@ -52,7 +52,7 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
 
     @Override
     public int getItemCount() {
-        return 0;
+        return commentsList.size();
     }
 
     class CommentsListViewHolder extends  RecyclerView.ViewHolder{

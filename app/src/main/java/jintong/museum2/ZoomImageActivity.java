@@ -82,7 +82,9 @@ public class ZoomImageActivity extends BaseActivity implements View.OnClickListe
                     }
                 });
 
-                Glide.with(ZoomImageActivity.this).load(mImageURLS.get(position)).into(imageView);
+                Glide.with(ZoomImageActivity.this)
+                        .load(mImageURLS.get(position)+ "!/fxfn/1500x1500")
+                        .into(imageView);
 
                 container.addView(imageView);
 
@@ -123,7 +125,9 @@ public class ZoomImageActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void onPageSelected(int position) {
-                Glide.with(ZoomImageActivity.this).load(mImageURLS.get(position)).into(mImageViews[position]);
+                Glide.with(ZoomImageActivity.this)
+                        .load(mImageURLS.get(position)+ "!/fxfn/1500x1500")
+                        .into(mImageViews[position]);
                 mCurrent.setText(position + 1 + "");
 
 

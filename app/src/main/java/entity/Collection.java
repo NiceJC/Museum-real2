@@ -6,6 +6,7 @@ import java.util.List;
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
 
 /**
  * 藏品的实体类
@@ -59,6 +60,7 @@ public class Collection extends BmobObject implements Serializable {
 
     private Exhibition toExhibition; //参加的主体展览
 
+    private BmobRelation likedUser; //喜欢的用户
 
     private Integer hotValue; //热力值
 
@@ -204,5 +206,13 @@ public class Collection extends BmobObject implements Serializable {
 
     public void setHotValue(Integer hotValue) {
         this.hotValue = hotValue;
+    }
+
+    public BmobRelation getLikedUser() {
+        return likedUser;
+    }
+
+    public void setLikedUser(BmobRelation likedUser) {
+        this.likedUser = likedUser;
     }
 }

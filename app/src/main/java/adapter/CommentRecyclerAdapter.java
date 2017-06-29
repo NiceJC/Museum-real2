@@ -17,6 +17,7 @@ import java.util.List;
 import MyView.GlideCircleTransform;
 import entity.Comments;
 import jintong.museum2.R;
+import util.DateUtils;
 
 import static jintong.museum2.R.id.comment_text;
 
@@ -56,7 +57,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
         holder.userName.setText(comment.getAuthor().getNickName());
         holder.contentText.setText(comment.getCommentText());
 
-        holder.time.setText(comment.getCreatedAt());
+        holder.time.setText(DateUtils.geRegularTime(comment.getCreatedAt()));
 
 
     }

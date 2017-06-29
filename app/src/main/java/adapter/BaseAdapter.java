@@ -25,6 +25,9 @@ public class BaseAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView
     public OnItemClickListener onItemClickListener;//item点击事件
     public OnItemLongClickListener onItemLongClickListener;//item长按事件
 
+
+
+
     public BaseAdapter(Context context, List<Object> listDatas) {
         init(context,listDatas);
     }
@@ -77,6 +80,8 @@ public class BaseAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView
             }
         });
     }
+
+
 
     @Override
     public int getItemCount() {

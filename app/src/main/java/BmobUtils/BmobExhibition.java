@@ -6,11 +6,14 @@ import android.util.Log;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import entity.ExhibitRoom;
 import entity.Exhibition;
 import entity.Museum;
@@ -115,6 +118,7 @@ public class BmobExhibition {
     public void getExhibitionByID(String ID){
 
         BmobQuery<Exhibition> query=new BmobQuery<Exhibition>();
+        query.include("toMuseum");
         query.getObject(ID, new QueryListener<Exhibition>() {
             @Override
             public void done(Exhibition exhibition, BmobException e) {
@@ -158,11 +162,12 @@ public class BmobExhibition {
     }
 
 
+    //查询某用户关注的所有展览
     public void getLikedExhibition(String userID){
         User user=new User();
         user.setObjectId(userID);
         BmobQuery<Exhibition> query=new BmobQuery<Exhibition>();
-        query.addWhereRelatedTo("watchMuseums",new BmobPointer(user));
+        query.addWhereRelatedTo("watchExhibitions",new BmobPointer(user));
         query.findObjects(new FindListener<Exhibition>() {
             @Override
             public void done(List<Exhibition> list, BmobException e) {
@@ -171,6 +176,112 @@ public class BmobExhibition {
                 }else{
                     Log.i("bmob","失败："+e.getMessage());
                 }
+            }
+        });
+    }
+
+
+    //获取关注某个展览的所有用户
+    public void getFansOfExhibition(String exhibitID){
+        Exhibition exhibition=new Exhibition();
+        exhibition.setObjectId(exhibitID);
+
+        BmobQuery<User> query=new BmobQuery<>();
+        query.addWhereRelatedTo("watchedUsers",new BmobPointer(exhibition));
+        query.findObjects(new FindListener<User>() {
+            @Override
+            public void done(List<User> list, BmobException e) {
+                if(e==null){
+                    onBmobReturnWithObj.onSuccess(list);
+                }else{
+                    Log.i("bmob","失败："+e.getMessage());
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 关注展览
+     *
+     * 将关注的展览添加进用户的BmobRelation
+     *
+     * 同时将用户添加进Exhibition的BmobRelation
+     *
+     */
+    public void watchExhibit(String exhibitID){
+        User user= BmobUser.getCurrentUser(User.class);
+        Exhibition exhibition=new Exhibition();
+        exhibition.setObjectId(exhibitID);
+
+        BmobRelation relation=new BmobRelation();
+        relation.add(exhibition);
+        user.setWatchExhibitions(relation);
+
+        BmobRelation relation1=new BmobRelation();
+        relation1.add(user);
+        exhibition.setWatchedUsers(relation1);
+
+
+        user.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if(e==null){
+                    Log.i("bmob","关注展馆成功");
+                    onBmobReturnWithObj.onSuccess(null);
+                }else{
+                    Log.i("bmob","失败："+e.getMessage());
+                    onBmobReturnWithObj.onFail(null);
+                }
+            }
+        });
+
+        exhibition.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+
+            }
+        });
+
+
+    }
+
+    /**
+     * 取消关注博物馆
+     *
+     */
+    public void cancelWatchExhibit(String exhibitID){
+        User user=BmobUser.getCurrentUser(User.class);
+        Exhibition  exhibition=new Exhibition();
+        exhibition.setObjectId(exhibitID);
+
+        BmobRelation relation=new BmobRelation();
+        relation.remove(exhibition);
+        user.setWatchExhibitions(relation);
+
+        BmobRelation relation1=new BmobRelation();
+        relation1.remove(user);
+        exhibition.setWatchedUsers(relation1);
+
+
+        user.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if(e==null){
+                    Log.i("bmob","取消关注展览成功");
+                    onBmobReturnWithObj.onSuccess(null);
+                }else{
+
+                    Log.i("bmob","失败："+e.getMessage());
+                    onBmobReturnWithObj.onFail(null);
+                }
+            }
+        });
+
+        exhibition.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+
             }
         });
     }

@@ -42,6 +42,7 @@ import entity.Comments;
 import entity.User;
 import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
+import util.DateUtils;
 import util.SysUtils;
 import util.ToastUtils;
 
@@ -199,7 +200,7 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
                 .bitmapTransform(new GlideCircleTransform(this))
                 .into(userIcon);
 
-        time.setText(blog.getCreatedAt());
+        time.setText(DateUtils.geRegularTime(blog.getCreatedAt()));
 
         userName.setText(blog.getAuthor().getNickName());
         content.setText(blog.getContentText());
@@ -313,8 +314,8 @@ public class BlogActivity extends BaseActivity implements View.OnClickListener {
                     public void onSuccess(Object Obj) {
 
                         ToastUtils.toast(BlogActivity.this, "评论成功");
-                        finish();
-                        overridePendingTransition(R.anim.none, R.anim.out_to_right);
+
+                        getCommentsFromServer(blog_ID);
                     }
 
                     @Override

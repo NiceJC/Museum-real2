@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
 
@@ -44,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
 
-            android:text="展览详情"
+            android:text="详情"
             android:layout_weight="1"
             android:gravity="center"
 
@@ -63,6 +64,15 @@
 
 
     </LinearLayout>
+
+    <TextView
+        android:textSize="18sp"
+        android:gravity="center"
+        android:id="@+id/museum_room_name"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
     <RelativeLayout
 
@@ -86,14 +96,13 @@
             android:background="@color/gray" />
 
         <TextView
-            android:id="@+id/museum_detail_watchNum"
+            android:id="@+id/exhibit_detail_watchNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-
             android:layout_centerInParent="true"
             android:layout_toLeftOf="@id/divider"
 
+            android:text="   "
 
             android:textSize="14sp" />
 
@@ -102,21 +111,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_toLeftOf="@id/museum_detail_watchNum"
+            android:layout_toLeftOf="@id/exhibit_detail_watchNum"
 
             android:text="关注: "
             android:textSize="14sp" />
 
 
         <ImageView
-            android:id="@+id/museum_detail_watch"
+            android:id="@+id/exhibit_detail_watch"
 
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_centerInParent="true"
 
             android:layout_toRightOf="@id/divider"
-            android:src="@drawable/watch" />
+            android:src="@drawable/blog_watch_icon"/>
 
 
     </RelativeLayout>
@@ -145,7 +154,6 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_gravity="center"
-
             android:src="@mipmap/lo1"
 
 
@@ -162,7 +170,7 @@
 
         <TextView
 
-            android:id="@+id/museum_detail_address"
+            android:id="@+id/exhibit_detail_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -199,7 +207,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/museum_detail_time"
+            android:id="@+id/exhibit_detail_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -236,7 +244,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/museum_detail_cost"
+            android:id="@+id/exhibit_detail_cost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -263,19 +271,31 @@
             android:layout_marginLeft="18dp"
             android:text="介绍："
             android:textSize="16sp" />
+        <MyView.ExpandableTextView
+            android:id="@+id/expand_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            expandableTextView:maxCollapsedLines="4">
+
 
         <TextView
+            android:id="@id/expandable_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="14sp"
+            android:textColor="@color/gray" />
 
-
-            android:id="@+id/museum_detail_intru"
+        <ImageButton
+            android:id="@id/expand_collapse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@android:color/transparent"/>
 
-            android:maxLines="5"
-            android:paddingBottom="2dp"
-            android:paddingTop="2dp"
-            android:textColor="@color/gray"
-            android:textSize="14sp" />
+        </MyView.ExpandableTextView>
 
 
     </LinearLayout>
@@ -299,19 +319,7 @@
             android:orientation="vertical">
 
 
-            <TextView
-                android:textSize="16sp"
-                android:gravity="center"
-                android:id="@+id/museum_room_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
-
-            <TextView
-                android:id="@+id/room_introduction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp" />
 
             <View
                 android:layout_width="match_parent"
