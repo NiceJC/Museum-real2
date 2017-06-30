@@ -52,25 +52,32 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
         Collection collection = (Collection) listDatas.get(position);
 
         requestManager.load(collection.getImage1().getFileUrl()+"!/fxfn/1080x540").into(holder.coltImage);
-        holder.likeNum.setText(collection.getColtLikeNum() + "");
+//        holder.likeNum.setText(collection.getColtLikeNum() + "");
 
         ObjectAnimator.ofFloat(holder.likeMove, "alpha", 1, 0).setDuration(0).start();
 
         holder.name.setText(collection.getColtName());
         holder.size.setText(collection.getColtSize());
         holder.dynasty.setText(collection.getColtDynasty());
-        holder.introduction.setText(collection.getColtIntru());
+
+        String coltIntro;
+        if(collection.getColtIntru()==null||collection.getColtIntru().equals("")){
+            coltIntro="暂无资料";
+        }else{
+            coltIntro=collection.getColtIntru();
+        }
+        holder.introduction.setText(coltIntro);
 
 
         /**
          * 显示评论的数量
          * 点击后进入评论的详情页
          */
-        holder.commentNum.setText(collection.getColtCommentNum()+"");
-
-
-        holder.commentClick.setOnClickListener(new ViewClickListener(onViewClickListener,position,1));
-        holder.likeClick.setOnClickListener(new ViewClickListener(onViewClickListener,position,2));
+//        holder.commentNum.setText(collection.getColtCommentNum()+"");
+//
+//
+//        holder.commentClick.setOnClickListener(new ViewClickListener(onViewClickListener,position,1));
+//        holder.likeClick.setOnClickListener(new ViewClickListener(onViewClickListener,position,2));
 
         holder.coltImage.setOnClickListener(new ViewClickListener(onViewClickListener,position,3));
 
@@ -130,11 +137,11 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
 
         ImageView coltImage; //藏品图片
 
-        LinearLayout likeClick; //喜欢的点击
-
-        ImageView likeIcon; //喜欢的图标
-
-        TextView likeNum; //喜欢数量
+//        LinearLayout likeClick; //喜欢的点击
+//
+//        ImageView likeIcon; //喜欢的图标
+//
+//        TextView likeNum; //喜欢数量
 
         TextView name; //藏品名称
 
@@ -145,19 +152,19 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
         TextView introduction; //详情介绍
 
         ImageView likeMove; //用作点赞的动画
-
-        LinearLayout commentClick;//评论的点击
-
-        TextView commentNum;//评论的数量
+//
+//        LinearLayout commentClick;//评论的点击
+//
+//        TextView commentNum;//评论的数量
 
 
         public ColtListViewHolder(View itemView) {
             super(itemView);
 
             coltImage = (ImageView) itemView.findViewById(R.id.museumRoom_item_image);
-            likeClick = (LinearLayout) itemView.findViewById(R.id.likeClick_museumRoom_item);
-            likeIcon = (ImageView) itemView.findViewById(R.id.likeIcon_museumRoom_item);
-            likeNum = (TextView) itemView.findViewById(R.id.coltLikeNum_museumRoom_item);
+//            likeClick = (LinearLayout) itemView.findViewById(R.id.likeClick_museumRoom_item);
+//            likeIcon = (ImageView) itemView.findViewById(R.id.likeIcon_museumRoom_item);
+//            likeNum = (TextView) itemView.findViewById(R.id.coltLikeNum_museumRoom_item);
 
             name = (TextView) itemView.findViewById(R.id.museumRoom_item_name);
             size = (TextView) itemView.findViewById(R.id.museumRoom_item_size);
@@ -165,9 +172,9 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
             introduction = (TextView) itemView.findViewById(R.id.museumRoom_item_intro);
 
             likeMove = (ImageView) itemView.findViewById(R.id.move_like);
-
-            commentClick = (LinearLayout) itemView.findViewById(R.id.commentClick_museumRoom_item);
-            commentNum = (TextView) itemView.findViewById(R.id.coltCommentNum_museumRoom_item);
+//
+//            commentClick = (LinearLayout) itemView.findViewById(R.id.commentClick_museumRoom_item);
+//            commentNum = (TextView) itemView.findViewById(R.id.coltCommentNum_museumRoom_item);
 
 
         }

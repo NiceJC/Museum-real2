@@ -43,7 +43,7 @@ public class CollectionGridAdapter extends BaseAdapter<CollectionGridAdapter.Col
     public CollectionGridAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
 
         super(context, listDatas, onViewClickListener);
-        mImageViewWidth = (SysUtils.getScreenWidth((Activity) context) - SysUtils.DpToPx(context, 8 + 8 + 10)) / 2;
+        mImageViewWidth = (SysUtils.getScreenWidth((Activity) context) - SysUtils.DpToPx(context, 16)) / 2;
 
     }
 

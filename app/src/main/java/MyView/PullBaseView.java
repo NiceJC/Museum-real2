@@ -19,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -77,23 +76,23 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
 
     /**
      * 防止tab切换回自定义View时，恢复状态时将id一并恢复，造成控件id重复的情况
+     *
      * @param state
      */
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
 
-            try {
-                super.onRestoreInstanceState(state);
-            }catch (Exception e) {
+        try {
+            super.onRestoreInstanceState(state);
+        } catch (Exception e) {
 
-            }
-            state=null;
+        }
+        state = null;
 
     }
 
     /**
      * init
-     *
      */
     private void init(Context context, AttributeSet attrs) {
         // Load all of the animations we need in code rather than through XML
@@ -159,7 +158,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {//刷新时禁止滑动
+        switch (ev.getAction()) {//刷新时禁止滑动  直接把滑动事件消费了
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
@@ -197,9 +196,10 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
         return false;
     }
 
-    /*
-     * 如果在onInterceptTouchEvent()方法中没有拦截(即onInterceptTouchEvent()方法中 return
-     * false)PullBaseView 的子View来处理;否则由下面的方法来处理(即由PullToRefreshView自己来处理)
+
+    /**
+     * 如果onInterceptTouchEvent返回了true，即拦截了事件（内部的RecyclerView滑动到低端或者顶端的时候）
+     * 那么交由下面的onTouchEvent来处理
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -296,30 +296,30 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
      */
     boolean isScrollTop() {
 
-        RecyclerView.LayoutManager layoutManager=mRecyclerView.getLayoutManager();
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
 
 
-        if(layoutManager instanceof StaggeredGridLayoutManager){
-            StaggeredGridLayoutManager staggeredGridLayoutManager= (StaggeredGridLayoutManager) layoutManager;
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
 
 
             int[] firstPositions = new int[staggeredGridLayoutManager.getSpanCount()];
             staggeredGridLayoutManager.findFirstVisibleItemPositions(firstPositions);
 
-            if (findMin(firstPositions)== 0) {
+            if (findMin(firstPositions) == 0) {
                 return true;
             } else {
                 return false;
             }
-        }else if(layoutManager instanceof LinearLayoutManager){
-            LinearLayoutManager linearLayoutManager= (LinearLayoutManager) layoutManager;
+        } else if (layoutManager instanceof LinearLayoutManager) {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
             if (linearLayoutManager.findFirstVisibleItemPosition() == 0) {
                 return true;
             } else {
                 return false;
             }
-        }else {
-            GridLayoutManager gridLayoutManager= (GridLayoutManager) layoutManager;
+        } else {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
 
             if (gridLayoutManager.findFirstVisibleItemPosition() == 0) {
                 return true;
@@ -331,36 +331,37 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
 
     /**
      * 判断mRecyclerView是否滑动到底部
-     *(mRecyclerView.getAdapter().getItemCount() - 1)
+     * (mRecyclerView.getAdapter().getItemCount() - 1)
+     *
      * @return
      */
     boolean isScrollBottom() {
 
 
-        RecyclerView.LayoutManager layoutManager=mRecyclerView.getLayoutManager();
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
 
 
-        if(layoutManager instanceof StaggeredGridLayoutManager){
-            StaggeredGridLayoutManager staggeredGridLayoutManager= (StaggeredGridLayoutManager) layoutManager;
+        if (layoutManager instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
 
 
             int[] lastPositions = new int[staggeredGridLayoutManager.getSpanCount()];
             staggeredGridLayoutManager.findLastVisibleItemPositions(lastPositions);
 
-            if (findMax(lastPositions)== (mRecyclerView.getAdapter().getItemCount() - 1)) {
+            if (findMax(lastPositions) == (mRecyclerView.getAdapter().getItemCount() - 1)) {
                 return true;
             } else {
                 return false;
             }
-        }else if(layoutManager instanceof LinearLayoutManager){
-            LinearLayoutManager linearLayoutManager= (LinearLayoutManager) layoutManager;
+        } else if (layoutManager instanceof LinearLayoutManager) {
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
             if (linearLayoutManager.findLastVisibleItemPosition() == (mRecyclerView.getAdapter().getItemCount() - 1)) {
                 return true;
             } else {
                 return false;
             }
-        }else {
-            GridLayoutManager gridLayoutManager= (GridLayoutManager) layoutManager;
+        } else {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
 
             if (gridLayoutManager.findLastVisibleItemPosition() == (mRecyclerView.getAdapter().getItemCount() - 1)) {
                 return true;
@@ -499,15 +500,16 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
      * 如果没有更多数据拉取，改变底部文字
      */
 
-    public void onNoMoreData(){
+    public void onNoMoreData() {
 
         mFooterTextView.setText(R.string.pull_to_refresh_no_more_data);
 
         setCanPullUp(false);
 
     }
+
     //重置底部
-    public void resetFootView(){
+    public void resetFootView() {
 
 
         mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
@@ -516,7 +518,6 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
 
 
     }
-
 
 
     /**
@@ -583,7 +584,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
      */
     public void setCanPullUp(boolean canPullUp) {
         isCanPullUp = canPullUp;
-        if(!canPullUp){
+        if (!canPullUp) {
             mFooterView.setVisibility(GONE);
         }
     }
@@ -596,7 +597,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
     public void setCanPullDown(boolean canPullDown) {
         isCanPullDown = canPullDown;
 
-        if(!canPullDown){
+        if (!canPullDown) {
             mHeaderView.setVisibility(GONE);
         }
     }
@@ -631,7 +632,6 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
         }
         return max;
     }
-
 
 
     private int findMin(int[] lastPositions) {

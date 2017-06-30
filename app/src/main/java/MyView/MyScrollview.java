@@ -45,6 +45,9 @@ public class MyScrollview extends ScrollView {
                 if (Math.abs(moveY - downY) > mTouchSlop) {
                     return true;
                 }
+
+
+
         }
         return super.onInterceptTouchEvent(e);
     }

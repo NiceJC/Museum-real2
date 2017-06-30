@@ -1,11 +1,13 @@
 package adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.util.List;
 
 import entity.Collection;
 import jintong.museum2.R;
+import util.SysUtils;
 
 /**
  *
@@ -29,9 +32,14 @@ import jintong.museum2.R;
 
 public class TypeColtAdapter extends BaseAdapter<TypeColtAdapter.TypeColtViewHolder>{
 
+    private int mImageViewWidth;
 
     public TypeColtAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
         super(context, listDatas, onViewClickListener);
+        mImageViewWidth = (SysUtils.getScreenWidth((Activity) context) - SysUtils.DpToPx(context,  16)) / 2;
+
+
+
     }
 
     @Override
@@ -46,12 +54,13 @@ public class TypeColtAdapter extends BaseAdapter<TypeColtAdapter.TypeColtViewHol
 
         Collection collection= (Collection) listDatas.get(position);
         collection.getImage1().getFileUrl();
+        holder.imageView.setLayoutParams(new FrameLayout.LayoutParams(mImageViewWidth, mImageViewWidth));
+
         requestManager.load(collection.getImage1().getFileUrl()+ "!/fxfn/500x500"
         )
-
                 .animate(R.anim.image_animate)
                 .crossFade()
-                .placeholder(R.drawable.loadingimage)
+                .placeholder(R.drawable.loadingpic)
                 .into(holder.imageView);
 
 
