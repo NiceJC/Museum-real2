@@ -19,10 +19,9 @@ import com.bumptech.glide.RequestManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import MyView.GlideCircleTransform;
-import MyView.GridImageView;
-import MyView.ImageViewInCircle;
-import entity.Blog;
+import myView.GlideCircleTransform;
+import myView.GridImageView;
+import model.Blog;
 import interfaces.OnItemClickListener;
 import jintong.museum2.R;
 import jintong.museum2.ZoomImageActivity;
@@ -135,7 +134,7 @@ public class BlogRecyclerAdapter extends RecyclerView.Adapter<BlogRecyclerViewHo
         holder.watchIcon.setSelected(true);
         holder.praiseIcon.setSelected(false);
         holder.commentNum.setText(blog.getCommentNums()+"");
-        holder.praiseNum.setText(blog.getPraiseNums()+"");
+//        holder.praiseNum.setText(blog.getPraiseNums()+"");
 
 
         holder.userIcon.setOnClickListener(new View.OnClickListener() {

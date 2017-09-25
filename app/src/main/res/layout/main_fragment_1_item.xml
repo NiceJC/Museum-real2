@@ -29,7 +29,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:text=" 吕之艺术陈列 主题展  "
-            android:textColor="@color/tab_bg_color"
+            android:textColor="@color/card_color"
             android:textSize="18sp" />
     </FrameLayout>
 

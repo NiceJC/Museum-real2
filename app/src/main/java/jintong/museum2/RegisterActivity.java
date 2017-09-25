@@ -3,27 +3,17 @@ package jintong.museum2;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.logging.Handler;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import BmobUtils.BmobRegisterAndLogin;
-import entity.User;
-import interfaces.OnBmobReturnSuccess;
+import bmobUtils.BmobRegisterAndLogin;
 import interfaces.OnBmobReturnWithObj;
 import util.MD5;
 import util.ToastUtils;
@@ -64,15 +54,14 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     private int intentType;
 
+    public static RegisterActivity registerActivity=null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_register);
 
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        registerActivity=this;
 
         intentType = getIntent().getIntExtra("type", 1);
 

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import entity.ExhibitRoom;
+import model.ExhibitRoom;
 import jintong.museum2.R;
 
 /**
@@ -22,7 +22,9 @@ public class ExhibitRoomListAdapter extends BaseAdapter<ExhibitRoomListAdapter.E
     public ExhibitRoomListAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
         super(context, listDatas, onViewClickListener);
     }
-
+    public ExhibitRoomListAdapter(Context context, List<Object> listDatas) {
+        super(context, listDatas);
+    }
     @Override
     public ExhibitRoomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ExhibitRoomViewHolder(mInflater.inflate(R.layout.exhibit_room_item, parent, false));

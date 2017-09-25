@@ -3,23 +3,16 @@ package adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
-import entity.Collection;
+import model.Collection;
 import jintong.museum2.R;
 import util.SysUtils;
 
@@ -40,10 +33,10 @@ public class CollectionGridAdapter extends BaseAdapter<CollectionGridAdapter.Col
     private int mItemHeight;
 
 
-    public CollectionGridAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
+    public CollectionGridAdapter(Context context, List<Object> listDatas) {
 
-        super(context, listDatas, onViewClickListener);
-        mImageViewWidth = (SysUtils.getScreenWidth((Activity) context) - SysUtils.DpToPx(context, 16)) / 2;
+        super(context, listDatas);
+        mImageViewWidth = (SysUtils.getScreenWidth((Activity) context) - SysUtils.DpToPx(context, 12)) / 2;
 
     }
 
@@ -65,16 +58,10 @@ public class CollectionGridAdapter extends BaseAdapter<CollectionGridAdapter.Col
         Collection collection = (Collection) listDatas.get(position);
         holder.coltName.setText(collection.getColtName());
         holder.likeNum.setText(collection.getColtLikeNum() + "");
-        if (collection.getColtToMuseum() != null) {
-            holder.coltToMuseumName.setText(collection.getColtToMuseum().getMuseumName());
 
 
-        }
 
-        holder.likeClick.setOnClickListener(new ViewClickListener(onViewClickListener, position, 1));
-
-
-        holder.coltImage.setLayoutParams(new FrameLayout.LayoutParams(mImageViewWidth, mImageViewWidth));
+        holder.coltImage.setLayoutParams(new LinearLayout.LayoutParams(mImageViewWidth, mImageViewWidth));
 
 
         requestManager.load(collection.getImage1().getFileUrl() + "!/fxfn/500x500").into(holder.coltImage);
@@ -92,7 +79,6 @@ public class CollectionGridAdapter extends BaseAdapter<CollectionGridAdapter.Col
 
 
         TextView coltName; //藏品名称
-        TextView coltToMuseumName; //所属博物馆名称
 
         LinearLayout linearLayout;
 
@@ -104,30 +90,12 @@ public class CollectionGridAdapter extends BaseAdapter<CollectionGridAdapter.Col
             likeNum = (TextView) itemView.findViewById(R.id.coltLikeNum_coltGrid_item);
             likeIcon = (ImageView) itemView.findViewById(R.id.likeIcon_coltGrid_item);
             coltName = (TextView) itemView.findViewById(R.id.coltName_coltGrid_item);
-            coltToMuseumName = (TextView) itemView.findViewById(R.id.museumName_coltGrid_item);
+
             linearLayout = (LinearLayout) itemView.findViewById(R.id.colt_item);
 
 
         }
     }
 
-    class ViewClickListener implements View.OnClickListener {
-
-        OnViewClickListener onViewClickListener;
-        int position;
-        int viewType;
-
-        public ViewClickListener(OnViewClickListener onViewClickListener, int position, int viewType) {
-            this.onViewClickListener = onViewClickListener;
-            this.position = position;
-            this.viewType = viewType;
-        }
-
-        @Override
-        public void onClick(View v) {
-            onViewClickListener.onViewClick(position, viewType);
-
-        }
-    }
 }
 

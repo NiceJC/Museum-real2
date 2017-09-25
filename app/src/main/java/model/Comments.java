@@ -1,4 +1,4 @@
-package entity;
+package model;
 
 import cn.bmob.v3.BmobObject;
 

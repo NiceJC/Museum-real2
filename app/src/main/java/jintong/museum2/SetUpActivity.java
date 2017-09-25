@@ -1,47 +1,54 @@
 package jintong.museum2;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.target.Target;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import BmobUtils.BmobFileUtil;
-import BmobUtils.BmobRegisterAndLogin;
-import BmobUtils.BmobUserInfo;
+import bmobUtils.BmobFileUtil;
+import bmobUtils.BmobUserInfo;
 import cn.bmob.v3.BmobUser;
-import entity.User;
+import interfaces.OnBmobReturnWithObj;
+import model.User;
 import interfaces.OnBmobReturnSuccess;
 import interfaces.OnItemSelectedListener;
 import util.DialogUtil;
 import util.SysUtils;
 import util.ToastUtils;
 
-import static BmobUtils.BmobRegisterAndLogin.chekIfLogin;
+import static jintong.museum2.MainActivity.REQUEST_CODE;
 
 /**
  * Created by wjc on 2017/2/27.
@@ -77,6 +84,9 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
 
     private User currentUser;
 
+    private Uri cropUri;
+    private Uri cameraUri;
+    private int screenWidth;
     private OnItemSelectedListener onItemSelectedListener = new OnItemSelectedListener() {
         @Override
         public void getSelectedItem(String content) {
@@ -94,6 +104,8 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
 
     private static final String IMAGE_FILE_NAME = "portrait";
 
+    private static final String IMAGE_AFTER_CROP_NAME="portrait_after_crop";
+
     private static final int CODE_NATIVE_PIC = 1; //本地
 
     private static final int CODE_CAMERA_PIC = 2; //拍照
@@ -108,16 +120,13 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
     private static final String FROM_CAMERA = "拍照选取头像";
 
 
+    private  File f;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("TAG", "oncreate2");
 
         setContentView(R.layout.activity_setup);
-
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 
         initView();
@@ -128,28 +137,28 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
 
     }
 
-
-    //获取Glide自动保存的图片的path
-    private void getImagePath() {
-
-        FutureTarget<File> future = Glide.with(this)
-                .load("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg")
-                .downloadOnly(200, 200);
-
-        try {
-            File cacheFile = future.get();
-            String path = cacheFile.getAbsolutePath();
-            Log.e("TAG", path);
-
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//
+//    //获取Glide自动保存的图片的path
+//    private void getImagePath() {
+//
+//        FutureTarget<File> future = Glide.with(this)
+//                .load("http://bmob-cdn-4183.b0.upaiyun.com/2017/02/20/2dcd5037401d841b8026fb38b4847ac4.jpg")
+//                .downloadOnly(200, 200);
+//
+//        try {
+//            File cacheFile = future.get();
+//            String path = cacheFile.getAbsolutePath();
+//            Log.e("TAG", path);
+//
+//
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
     private void initView() {
 
@@ -178,7 +187,7 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
     private void initData() {
 
         currentUser = BmobUser.getCurrentUser(User.class);
-        Log.d("currntUser", currentUser.toString());
+
 
 
     }
@@ -213,9 +222,13 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                 overridePendingTransition(R.anim.none, R.anim.out_to_right);
                 break;
             case R.id.setup_change_icon:
-                int screenWidth = SysUtils.getScreenWidth(SetUpActivity.this);
+                /**
+                 * 处理一下6.0以上的动态权限问题先
+                 */
 
-                DialogUtil.showItemSelectDialog(SetUpActivity.this, screenWidth / 25 * 24, onItemSelectedListener, FROM_NATIVE, FROM_CAMERA);
+                screenWidth = SysUtils.getScreenWidth(SetUpActivity.this);
+
+                checkLocatePermission();
 
 
                 break;
@@ -226,16 +239,16 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.setup_change_gender:
 
-                Boolean isMan=BmobUser.getCurrentUser(User.class).getMan();
-                if(isMan==null){
-                    isMan=true;
+                Boolean isMan = BmobUser.getCurrentUser(User.class).getMan();
+                if (isMan == null) {
+                    isMan = true;
                 }
                 changeGender(isMan);
                 break;
             case R.id.setup_change_userName:
-                String nickName=BmobUser.getCurrentUser(User.class).getNickName();
-                if(nickName==null){
-                    nickName="";
+                String nickName = BmobUser.getCurrentUser(User.class).getNickName();
+                if (nickName == null) {
+                    nickName = "";
                 }
                 changeNickName(nickName);
 
@@ -243,12 +256,30 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.setup_change_age:
 
-                String age=BmobUser.getCurrentUser(User.class).getAge();
-                if(age==null){
-                    age="00后";
+                String age = BmobUser.getCurrentUser(User.class).getAge();
+                if (age == null) {
+                    age = "00后";
                 }
                 changeAge(age);
                 break;
+            case R.id.setup_change_feedBack:
+                Intent intent=new Intent(this,FeedBackActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right,R.anim.none);
+
+                break;
+            case R.id.setup_check_version:
+                Handler handler=new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtils.toast(SetUpActivity.this,"当前已是最新版本");
+                    }
+                },1000);
+
+
+     
+
             default:
                 break;
 
@@ -270,10 +301,35 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
 
     private void choosePortraitFromCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File cameraImage = new File(Environment.getExternalStorageDirectory(),IMAGE_FILE_NAME);
+        if(cameraImage.exists())
+        {
+            cameraImage.delete();
+            try
+            {
+                cameraImage.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        if (Build.VERSION.SDK_INT>=24)
+        {
+            cameraUri = FileProvider.getUriForFile(SetUpActivity.this,"jintong.museum2.fileprovider",cameraImage);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+        }
+        else
+        {
+            cameraUri = Uri.fromFile(cameraImage);
+        }
+
         if (hasSdcard()) {
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
-                    .fromFile(new File(Environment
-                            .getExternalStorageDirectory(), IMAGE_FILE_NAME)));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
         }
 
         startActivityForResult(intent, CODE_CAMERA_PIC);
@@ -326,23 +382,44 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
      * @param uri
      */
     public void cropRawPhoto(Uri uri) {
-
         Intent intent = new Intent("com.android.camera.action.CROP");
+        //创建File对象，用于存储拍照后的图片
+        File cropImage = new File(Environment.getExternalStorageDirectory(),IMAGE_AFTER_CROP_NAME);
+        if(cropImage.exists())
+        {
+            cropImage.delete();
+            try
+            {
+                cropImage.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        if (Build.VERSION.SDK_INT>=24)
+        {
+            cropUri = FileProvider.getUriForFile(SetUpActivity.this,"jintong.museum2.fileprovider",cropImage);
+
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        else
+        {
+            cropUri = Uri.fromFile(cropImage);
+        }
+
+
+
         intent.setDataAndType(uri, "image/*");
-
-
-        //设置裁剪
         intent.putExtra("crop", "true");
-
-        //设置宽高比例
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-
-        //设置裁剪图片宽高
-        intent.putExtra("outputX", output_X);
-        intent.putExtra("outputY", output_Y);
-
-        intent.putExtra("return-data", true);
+        intent.putExtra("outputX", 500);
+        intent.putExtra("outputY", 500);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
 
         startActivityForResult(intent, CODE_RESULT_PIC);
 
@@ -351,38 +428,62 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
 
     //设置图片并上传
     public void setImageAndUpload(Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            Bitmap photo = extras.getParcelable("data");
-            mIcon.setImageBitmap(photo);
-            //新建文件夹 先选好路径 再调用mkdir函数 现在是根目录下面的Ask文件夹
-            File nf = new File(Environment.getExternalStorageDirectory() + "/Ask");
-            nf.mkdir();
-            //在根目录下面的ASk文件夹下 创建okkk.jpg文件
-            File f = new File(Environment.getExternalStorageDirectory() + "/Ask", "okkk.jpg");
 
+        try {
+
+
+
+            final LoadToast loadToast=ToastUtils.getLoadingToast(this);
+
+            loadToast.setText("修改中...");
+            loadToast.show();
+
+
+            final Bitmap photo = BitmapFactory.decodeStream(getContentResolver().openInputStream(cropUri));
+
+
+
+            //新建文件夹 先选好路径 再调用mkdir函数 现在是根目录下面的photo文件夹
+            File nf = new File(Environment.getExternalStorageDirectory() + "/photo");
+            nf.mkdir();
+            //在根目录下面的photo文件夹下 创建jpg文件
+            String fileName="/"+System.currentTimeMillis()+"portrait.jpg";
+             f = new File(Environment.getExternalStorageDirectory() + "/photo", fileName);
+//            + "/Ask" + "/okkk.jpg"
 
             FileOutputStream out = null;
-            try {//打开输出流 将图片数据填入文件中
-                out = new FileOutputStream(f);
-                photo.compress(Bitmap.CompressFormat.PNG, 90, out);
+            //打开输出流 将图片数据填入文件中
+            out = new FileOutputStream(f);
+            photo.compress(Bitmap.CompressFormat.PNG, 90, out);
 
-                try {
-                    out.flush();
-                    out.close();
-
-
-                    BmobFileUtil.getInstance(this).uploadFile(Environment.getExternalStorageDirectory() + "/Ask" + "/okkk.jpg");
+            out.flush();
+            out.close();
 
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+            BmobFileUtil bmobFileUtil= BmobFileUtil.getInstance(this);
+
+            bmobFileUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+                @Override
+                public void onSuccess(Object Obj) {
+                    loadToast.success();
+
+                    Glide.with(SetUpActivity.this).load(f).into(mIcon);
                 }
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+                @Override
+                public void onFail(Object Obj) {
 
+                    loadToast.error();
+                }
+            });
+
+
+            bmobFileUtil.uploadFile(Environment.getExternalStorageDirectory() + "/photo"+fileName);
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
 
         }
 
@@ -401,13 +502,30 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                     public void onClick(DialogInterface dialog, int which) {
 
 
+
+                        User user=BmobUser.getCurrentUser(User.class);
+                        if(user==null){
+                            Log.e("退出登录前","kong ");
+
+                        }else{
+                            Log.e("退出登陆前", user.getObjectId()+"   " +user.getNickName());
+                        }
                         //退出登录，清除本地缓存用户
                         BmobUser.logOut();
+
+
+                        User user2=BmobUser.getCurrentUser(User.class);
+                        if(user2==null){
+                            Log.e("退出登录后","kong ");
+
+                        }else{
+                            Log.e("退出登陆后", user2.getObjectId()+"   " +user2.getNickName());
+                        }
 
                         ToastUtils.toast(SetUpActivity.this, "当前用户已退出登录");
                         Intent intent = new Intent(SetUpActivity.this, LoginActivity.class);
 
-                        BmobUser.logOut();
+
 
                         finish();
                         startActivity(intent);
@@ -474,7 +592,7 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
     }
 
     //选择性别
-    public void changeGender(Boolean isMan ){
+    public void changeGender(Boolean isMan) {
 
         new AlertDialog.Builder(SetUpActivity.this)
                 .setTitle("请选择")
@@ -483,10 +601,10 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                     public void onClick(DialogInterface dialog, int which) {
 
                         Boolean isMan;
-                        if(which==0){
-                            isMan=true;
-                        }else{
-                            isMan=false;
+                        if (which == 0) {
+                            isMan = true;
+                        } else {
+                            isMan = false;
                         }
 
                         BmobUserInfo.getInstance(SetUpActivity.this).setOnBmobReturnSuccess(new OnBmobReturnSuccess() {
@@ -506,7 +624,6 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                         dialog.dismiss();
 
 
-
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -520,29 +637,29 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
     }
 
     //选择年龄
-    public void changeAge(String age){
-        int ageInt=0;
-        switch (age){
+    public void changeAge(String age) {
+        int ageInt = 0;
+        switch (age) {
             case "00后":
-                ageInt=0;
+                ageInt = 0;
                 break;
             case "90后":
-                ageInt=1;
+                ageInt = 1;
                 break;
             case "80后":
-                ageInt=2;
+                ageInt = 2;
                 break;
             case "70后":
-                ageInt=3;
+                ageInt = 3;
                 break;
             case "60后":
-                ageInt=4;
+                ageInt = 4;
                 break;
             case "50后":
-                ageInt=5;
+                ageInt = 5;
                 break;
             case "其他":
-                ageInt=6;
+                ageInt = 6;
                 break;
             default:
                 break;
@@ -550,42 +667,40 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
         }
 
 
-
         new AlertDialog.Builder(SetUpActivity.this)
                 .setTitle("请选择")
-                .setSingleChoiceItems(new String[]{"00后", "90后","80后","70后","60后","50后","其他"},ageInt, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(new String[]{"00后", "90后", "80后", "70后", "60后", "50后", "其他"}, ageInt, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        String newAge=null;
-                        switch (which){
+                        String newAge = null;
+                        switch (which) {
                             case 0:
-                                newAge="00后";
+                                newAge = "00后";
                                 break;
                             case 1:
-                                newAge="90后";
+                                newAge = "90后";
                                 break;
                             case 2:
-                                newAge="80后";
+                                newAge = "80后";
                                 break;
                             case 3:
-                                newAge="70后";
+                                newAge = "70后";
                                 break;
                             case 4:
-                                newAge="60后";
+                                newAge = "60后";
                                 break;
                             case 5:
-                                newAge="50后";
+                                newAge = "50后";
                                 break;
                             case 6:
-                                newAge="其他";
+                                newAge = "其他";
                                 break;
 
                             default:
                                 break;
 
                         }
-
 
 
                         BmobUserInfo.getInstance(SetUpActivity.this).setOnBmobReturnSuccess(new OnBmobReturnSuccess() {
@@ -605,7 +720,6 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                         dialog.dismiss();
 
 
-
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -615,7 +729,6 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
                     }
                 })
                 .show();
-
 
 
     }
@@ -642,7 +755,7 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
         String porTraitUrl = user.getPortraitURL();
         String nickName = user.getNickName();
         Boolean isMan = user.getMan();
-        String age=user.getAge();
+        String age = user.getAge();
         String phoneNum = user.getMobilePhoneNumber();
 
 
@@ -655,14 +768,63 @@ public class SetUpActivity extends BaseActivity implements View.OnClickListener 
         if (nickName != null) {
             mNickName.setText(nickName);
         }
-        if(age!=null){
+        if (age != null) {
             mAge.setText(age);
         }
         if (phoneNum != null) {
-            mPhone.setText(phoneNum);
+
+
+
+                StringBuilder sb  =new StringBuilder();
+                for (int i = 0; i < phoneNum.length(); i++) {
+                    char c = phoneNum.charAt(i);
+                    if (i >= 3 && i <= 6) {
+                        sb.append('*');
+                    } else {
+                        sb.append(c);
+                    }
+                }
+            mPhone.setText(sb.toString());
+
+
         }
 
 
+    }
+
+    private void checkLocatePermission() {
+
+        boolean isGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
+        if (isGranted) {
+
+            DialogUtil.showItemSelectDialog(SetUpActivity.this, screenWidth / 25 * 24, onItemSelectedListener, FROM_NATIVE, FROM_CAMERA);
+
+        } else {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA}, REQUEST_CODE);
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+            case REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //用户同意授权
+                    DialogUtil.showItemSelectDialog(SetUpActivity.this, screenWidth / 25 * 24, onItemSelectedListener, FROM_NATIVE, FROM_CAMERA);
+
+                } else {
+                    //用户拒绝授权
+                    ToastUtils.toast(this, "没有权限将可能出现异常，用户可以前往应用权限进行设置");
+                }
+                break;
+        }
     }
 
 

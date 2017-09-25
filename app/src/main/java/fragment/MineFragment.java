@@ -3,7 +3,9 @@ package fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -11,67 +13,50 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
-import BmobUtils.BmobColt;
-import BmobUtils.BmobExhibition;
-import BmobUtils.BmobMuseum;
-import BmobUtils.BmobRegisterAndLogin;
-import BmobUtils.BmobSocialUtil;
-import MyView.ChangeColorView;
+import bmobUtils.BmobRegisterAndLogin;
+import bmobUtils.BmobSocialUtil;
 import cn.bmob.v3.BmobUser;
-import entity.Exhibition;
-import entity.Museum;
-import entity.User;
+import db.MuseumDB;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.R;
 import jintong.museum2.SetUpActivity;
 import jintong.museum2.SocialRelationActivity;
+import myView.GlideCircleTransform;
 import util.ToastUtils;
+
+import static util.ParameterBase.USER_ID;
+import static util.ParameterBase.USER_RELATION_ID;
 
 /**
  * Created by wjc on 2017/2/9.
  */
-public class MineFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
+public class MineFragment extends Fragment implements View.OnClickListener {
 
 
     private ViewPager mViewPager;
-    private List<Fragment> mFragments;
-    private String[] mTittles = new String[]{
-            "mineFragmentF1", "mineFragmentF2", "mineFragmentF3", "mineFragmentF4"
+    private List<Fragment> mFragments = new ArrayList<>();
 
-    };
-
-    private ImageView toSetUp;
+    private ImageView toSetUp,portrait;
 
     private View view;
 
-    private FragmentPagerAdapter mAdapter;
-
     private int mSelectedFragment;
-
-    private List<LinearLayout> mTabIndicators ;
-
-    private MineFragmentF1 mineFragmentF1;
-    MineFragmentF2 mineFragmentF2;
-    MineFragmentF3 mineFragmentF3;
-    MineFragmentF4 mineFragmentF4;
-
-    private LinearLayout tab1, tab2, tab3, tab4;
 
     private RelativeLayout followerAndFollowing;
 
-    private TextView fans,following;
+    private TextView fans, following,nicNameText;
+    private TabLayout mTabLayout;
 
-
-
+    private BaseFragmentAdapter mAdapter;
 
 
     @Nullable
@@ -85,117 +70,84 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
 
         initEvents();
 
-        mViewPager.setAdapter(mAdapter);
-
-        resetOtherTabs();
-        mTabIndicators.get(0).setSelected(true);
-        mViewPager.setCurrentItem(0, true);
 
         return view;
 
     }
+    private void initViews() {
+        Log.e("mine", "initViews");
+        mViewPager = (ViewPager) view.findViewById(R.id.mine_viewPager);
 
-    private void initEvents() {
-        mViewPager.addOnPageChangeListener(this);
-        toSetUp.setOnClickListener(this);
-        followerAndFollowing.setOnClickListener(this);
-        tab1.setOnClickListener(this);
-        tab2.setOnClickListener(this);
-        tab3.setOnClickListener(this);
-        tab4.setOnClickListener(this);
 
+        portrait= (ImageView) view.findViewById(R.id.mine_portrait);
+        nicNameText= (TextView) view.findViewById(R.id.mine_nick_name);
+        toSetUp = (ImageView) view.findViewById(R.id.to_setup);
+        followerAndFollowing = (RelativeLayout) view.findViewById(R.id.mine_follower_following);
+        fans = (TextView) view.findViewById(R.id.mine_fans_num);
+        following = (TextView) view.findViewById(R.id.mine_following_num);
+        mTabLayout = (TabLayout) view.findViewById(R.id.tabs);
 
     }
+
 
     private void initDatas() {
 
 
 
-        mFragments = new ArrayList<Fragment>();
-        Log.e("mine", "initDatas");
-        for (String title : mTittles) {
 
 
-            switch (title) {
 
-                case "mineFragmentF1":
-                    if (mineFragmentF1 == null) {
-                        mineFragmentF1 = new MineFragmentF1();
-                    }
 
-                    mFragments.add(mineFragmentF1);
+        if (mAdapter == null) {
 
-                    break;
-                case "mineFragmentF2":
-                    if (mineFragmentF2 == null) {
-                        mineFragmentF2 = new MineFragmentF2();
-                    }
-
-                    mFragments.add(mineFragmentF2);
-                    break;
-                case "mineFragmentF3":
-                    if (mineFragmentF3 == null) {
-                        mineFragmentF3 = new MineFragmentF3();
-                    }
-
-                    mFragments.add(mineFragmentF3);
-                    break;
-                case "mineFragmentF4":
-                    if (mineFragmentF4 == null) {
-                        mineFragmentF4 = new MineFragmentF4();
-                    }
-
-                    mFragments.add(mineFragmentF4);
-                    break;
-                default:
-                    break;
-            }
-
+            mAdapter = new BaseFragmentAdapter(getChildFragmentManager());
         }
-        mAdapter = new FragmentPagerAdapter(getChildFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return mFragments.get(position);
-            }
 
-            @Override
-            public int getCount() {
-                return mFragments.size();
-            }
-        };
-
-
-//        setFansNum();
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
 
     }
 
-    private void initViews() {
-        Log.e("mine", "initViews");
-        mViewPager = (ViewPager) view.findViewById(R.id.mine_viewPager);
-        mTabIndicators= new ArrayList<LinearLayout>();
-        tab1 = (LinearLayout) view.findViewById(R.id.mine_indicator_1);
-        tab2 = (LinearLayout) view.findViewById(R.id.mine_indicator_2);
-        tab3 = (LinearLayout) view.findViewById(R.id.mine_indicator_3);
-        tab4 = (LinearLayout) view.findViewById(R.id.mine_indicator_4);
+    private void initEvents() {
 
-        mTabIndicators.add(tab1);
-        mTabIndicators.add(tab2);
-        mTabIndicators.add(tab3);
-        mTabIndicators.add(tab4);
-
-
-
-        toSetUp = (ImageView) view.findViewById(R.id.to_setup);
-        followerAndFollowing= (RelativeLayout) view.findViewById(R.id.mine_follower_following);
-        fans= (TextView) view.findViewById(R.id.mine_fans_num);
-        following= (TextView) view.findViewById(R.id.mine_following_num);
-
+        toSetUp.setOnClickListener(this);
+        followerAndFollowing.setOnClickListener(this);
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUserInfo();
+    }
 
+    //从网络获取用户个人信息
+    private void getUserInfo() {
 
+        User user = BmobUser.getCurrentUser(User.class);
 
+        if(user==null){
+            return;
+        }
+        String porTraitUrl = user.getPortraitURL();
+        String nickName = user.getNickName();
+
+        Integer fansNum = MuseumDB.getInstance(getActivity()).loadFans().size();
+        Integer followingNum=MuseumDB.getInstance(getActivity()).loadFollowings().size();
+
+        if (porTraitUrl != null) {
+            Glide.with(this).load(porTraitUrl) .transform(new GlideCircleTransform(getContext())).into(portrait);
+        }
+        if (nickName != null) {
+            nicNameText.setText(nickName);
+        }
+        if(fansNum!=null){
+            fans.setText(fansNum+"");
+        }
+        if(followingNum!=null){
+            following.setText(followingNum+"");
+        }
+    }
 
 
 
@@ -210,49 +162,22 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
                 User currentUser = BmobRegisterAndLogin.chekIfLogin();
                 if (currentUser == null) {
 
-                    ToastUtils.toast(getActivity(),"用户尚未登录");
+                    ToastUtils.toast(getActivity(), "用户尚未登录");
                     break;
                 }
                 Intent intent = new Intent(getActivity(), SetUpActivity.class);
 
                 startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
                 break;
 
 
             case R.id.mine_follower_following:
                 Intent intent2 = new Intent(getActivity(), SocialRelationActivity.class);
-
+                User user=BmobUser.getCurrentUser(User.class);
+                intent2.putExtra(USER_RELATION_ID,user.getUserRelationID());
                 startActivity(intent2);
-                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
-
-                break;
-            case R.id.mine_indicator_1:
-                resetOtherTabs();
-                Log.e("mine", "click 11");
-                tab1.setSelected(true);
-                mViewPager.setCurrentItem(0, true);
-
-                break;
-            case R.id.mine_indicator_2:
-                resetOtherTabs();
-                Log.e("mine", "click 22");
-                tab2.setSelected(true);
-                mViewPager.setCurrentItem(1, true);
-
-                break;
-            case R.id.mine_indicator_3:
-                resetOtherTabs();
-                Log.e("mine", "click 33");
-                tab3.setSelected(true);
-                mViewPager.setCurrentItem(2, true);
-
-                break;
-            case R.id.mine_indicator_4:
-                resetOtherTabs();
-                Log.e("nine", "click 44");
-                tab4.setSelected(true);
-                mViewPager.setCurrentItem(3, true);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
 
                 break;
             default:
@@ -263,151 +188,65 @@ public class MineFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-    private void resetOtherTabs() {
-        for (int i = 0; i < mTabIndicators.size(); i++) {
-            mTabIndicators.get(i).setSelected(false);
-
-        }
-
-
-    }
-
-    //OnPageChangeListener的实现方法
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-        Log.e("mine", "selected" + position);
-        resetOtherTabs();
-        mTabIndicators.get(position).setSelected(true);
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Log.e("mine", "onCreate");
-    }
-
-    //设置粉丝和关注人数
-    public void setFansNum(){
-        BmobSocialUtil bmobSocialUtil=BmobSocialUtil.getInstance(getActivity());
-        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-            @Override
-            public void onSuccess(Object Obj) {
-                int num= (int) Obj;
-                following.setText(num+"");
-            }
-
-            @Override
-            public void onFail(Object Obj) {
-                int num2= (int) Obj;
-                fans.setText(num2+"");
-            }
-        });
-        bmobSocialUtil.getFansAndFollowingNum(BmobUser.getCurrentUser(User.class).getObjectId());
-
-
-    }
-
 
 //
-//    public  void setLikedMuseumNum(){
-//        BmobMuseum bmobMuseum=BmobMuseum.getInstance(getActivity());
-//        bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-//            @Override
-//            public void onSuccess(Object Obj) {
-//                List<Museum> list= (List<Museum>) Obj;
-//
-//                num1.setText(list.size()+"");
-//            }
-//
-//            @Override
-//            public void onFail(Object Obj) {
-//
-//            }
-//        });
-//
-//        bmobMuseum.getLikedMuseums(BmobUser.getCurrentUser().getObjectId());
-//    }
-//
-//
-//    public  void setLikedExhibitNum(){
-//        BmobExhibition bmobExhibition=BmobExhibition.getInstance(getActivity());
-//        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-//            @Override
-//            public void onSuccess(Object Obj) {
-//                List<Exhibition> list= (List<Exhibition>) Obj;
-//
-//                num2.setText(list.size()+"");
-//            }
-//
-//            @Override
-//            public void onFail(Object Obj) {
-//
-//            }
-//        });
-//
-//        bmobExhibition.getLikedExhibition(BmobUser.getCurrentUser().getObjectId());
-//    }
-//
-//
-//    public  void setLikedColtNum(){
-//        BmobColt bmobColt=BmobColt.getInstance(getActivity());
-//        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
-//            @Override
-//            public void onSuccess(Object Obj) {
-//                List<Museum> list= (List<Museum>) Obj;
-//
-//                num3.setText(list.size()+"");
-//            }
-//
-//            @Override
-//            public void onFail(Object Obj) {
-//
-//            }
-//        });
-//
-//        bmobColt.getLikedColt(BmobUser.getCurrentUser().getObjectId());
-//    }
-//
-//
-//    public  void setPostBlogNum(){
-//        BmobSocialUtil bmobSocialUtil=BmobSocialUtil.getInstance(getActivity());
+//    //设置粉丝和关注人数
+//    public void setFansNum() {
+//        BmobSocialUtil bmobSocialUtil = BmobSocialUtil.getInstance(getActivity());
 //        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
 //            @Override
 //            public void onSuccess(Object Obj) {
-//                List<Museum> list= (List<Museum>) Obj;
-//
-//                num4.setText(list.size()+"");
+//                int num = (int) Obj;
+//                following.setText(num + "");
 //            }
 //
 //            @Override
 //            public void onFail(Object Obj) {
-//
+//                int num2 = (int) Obj;
+//                fans.setText(num2 + "");
 //            }
 //        });
-//
-//        bmobSocialUtil.getBlogByAuthor(BmobUser.getCurrentUser().getObjectId());
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//
+//        bmobSocialUtil.getFansAndFollowingNum(BmobUser.getCurrentUser(User.class).getObjectId());
 //
 //
 //    }
+
+
+
+    class BaseFragmentAdapter extends FragmentPagerAdapter {
+
+        // 标题数组
+        String[] titles = {
+                "展·馆",
+                "展·览",
+                "展·品",
+                "交·流"};
+
+        public BaseFragmentAdapter(FragmentManager fm) {
+            super(fm);
+            if (mFragments.size() == 0) {
+                mFragments.add(new MineFragmentF1());
+                mFragments.add(new MineFragmentF2());
+                mFragments.add(new MineFragmentF3());
+                mFragments.add(new MineFragmentF4());
+            }
+        }
+
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
+    }
+
 }

@@ -3,5 +3,5 @@
 
 
     <item android:state_pressed="true" android:drawable="@color/gray"/>
-    <item android:drawable="@color/tab_bg_color"/>
+    <item android:drawable="@color/card_color"/>
 </selector>

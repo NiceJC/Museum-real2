@@ -1,4 +1,4 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,21 +12,19 @@ import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
-import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
-import entity.Blog;
-import entity.Collection;
-import entity.ExhibitRoom;
-import entity.Exhibition;
-import entity.Museum;
-import entity.User;
+import model.Collection;
+import model.ExhibitRoom;
+import model.Exhibition;
+import model.Museum;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
 import static util.ParameterBase.EXHIBIROOM_ID;
 import static util.ParameterBase.EXHIBITION_ID;
-import static util.ParameterBase.HOTLIMIT;
-import static util.ParameterBase.LIMIT;
+import static util.ParameterBase.LIMIT_EIGHT;
+import static util.ParameterBase.LIMIT_SIX;
 import static util.ParameterBase.LIMIT_TEN;
 import static util.ParameterBase.MUSEUM_ID;
 
@@ -72,11 +70,10 @@ public class BmobColt {
     public void getHotColt(int curPage) {
 
         BmobQuery<Collection> query = new BmobQuery<Collection>();
-        query.setLimit(HOTLIMIT);
-        query.setSkip(HOTLIMIT*curPage);
+        query.setLimit(LIMIT_EIGHT);
+        query.setSkip(LIMIT_EIGHT *curPage);
 
         query.order("-hotValue,-createdAt");//先按点赞数降序，再按时间降序
-        query.include("coltToMuseum");
         query.findObjects(new FindListener<Collection>() {
             @Override
             public void done(List<Collection> list, BmobException e) {
@@ -84,6 +81,7 @@ public class BmobColt {
 
                     onBmobReturnWithObj.onSuccess(list);
                 } else {
+                    onBmobReturnWithObj.onFail(e.getMessage());
                     ToastUtils.toast(context, e.getMessage());
                 }
 
@@ -120,8 +118,8 @@ public class BmobColt {
         }
 
 
-        query.setLimit(LIMIT);
-        query.setSkip(LIMIT * curPage);
+        query.setLimit(LIMIT_SIX);
+        query.setSkip(LIMIT_SIX * curPage);
         query.order("-createdAt");
         query.findObjects(new FindListener<Collection>() {
             @Override
@@ -143,12 +141,13 @@ public class BmobColt {
     /**
      * 关键词查询，暂时只针对名称的关键字
      */
-    public void getBykeyWord(String keyWord) {
+    public void getBykeyWord(String keyWord,int curPage) {
         BmobQuery<Collection> query = new BmobQuery<Collection>();
-        query.setLimit(LIMIT);
+        query.setLimit(LIMIT_SIX);
+        query.setSkip(LIMIT_SIX *curPage);
 
         query.order("-coltLikeNum,-createdAt");//先按点赞数降序，再按时间降序
-        query.include("coltToMuseum");
+        
         query.addWhereContains("coltName", keyWord);
         query.findObjects(new FindListener<Collection>() {
             @Override
@@ -157,6 +156,7 @@ public class BmobColt {
 
                     onBmobReturnWithObj.onSuccess(list);
                 } else {
+                    onBmobReturnWithObj.onFail(null);
                     ToastUtils.toast(context, e.getMessage());
                 }
 
@@ -273,68 +273,100 @@ public class BmobColt {
      *
      *
      */
-    public void likeColt(String coltID){
+    public void likeColt(final String coltID){
         User user= BmobUser.getCurrentUser(User.class);
         Collection collection=new Collection();
         collection.setObjectId(coltID);
 
+        User newUser=new User();
+        Collection newColt=new Collection();
+
         BmobRelation relation=new BmobRelation();
         relation.add(collection);
-        user.setLikeCollections(relation);
+        newUser.setLikeCollections(relation);
 
         BmobRelation relation1=new BmobRelation();
         relation1.add(user);
-        collection.setLikedUser(relation1);
-        user.update(new UpdateListener() {
+
+        newColt.setLikedUser(relation1);
+
+        newUser.update(BmobUser.getCurrentUser(User.class).getObjectId(),new UpdateListener() {
             @Override
             public void done(BmobException e) {
                 if(e==null){
                     onBmobReturnWithObj.onSuccess(null);
                     Log.i("bmob","喜欢colt成功");
+                    Collection collection1=new Collection();
+                    collection1.increment("coltLikeNum",1);
+                    collection1.update(coltID, new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+
+                        }
+                    });
+
+
+
                 }else{
                     Log.i("bmob","失败："+e.getMessage());
                 }
             }
         });
 
-        collection.update(new UpdateListener() {
+        newColt.update(coltID,new UpdateListener() {
             @Override
             public void done(BmobException e) {
 
             }
         });
-
     }
+
+
     /**
      * 取消喜欢藏品
      *
      *
      */
-    public void cancellikeColt(String coltID){
+    public void cancellikeColt(final String coltID){
         User user= BmobUser.getCurrentUser(User.class);
         Collection collection=new Collection();
         collection.setObjectId(coltID);
 
+
+        User newUser=new User();
+        Collection newColt=new Collection();
+
+
+
         BmobRelation relation=new BmobRelation();
         relation.remove(collection);
-        user.setLikeCollections(relation);
+        newUser.setLikeCollections(relation);
 
         BmobRelation relation1=new BmobRelation();
         relation1.remove(user);
-        collection.setLikedUser(relation1);
-        user.update(new UpdateListener() {
+        newColt.setLikedUser(relation1);
+
+        newUser.update(BmobUser.getCurrentUser(User.class).getObjectId(),new UpdateListener() {
             @Override
             public void done(BmobException e) {
                 if(e==null){
                     onBmobReturnWithObj.onSuccess(null);
                     Log.i("bmob","取消喜欢collection成功");
+                    Collection collection1=new Collection();
+                    collection1.increment("coltLikeNum",-1);
+                    collection1.update(coltID, new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+
+                        }
+                    });
                 }else{
                     Log.i("bmob","失败："+e.getMessage());
                 }
             }
         });
 
-        collection.update(new UpdateListener() {
+        newColt.update(coltID,new UpdateListener() {
             @Override
             public void done(BmobException e) {
 

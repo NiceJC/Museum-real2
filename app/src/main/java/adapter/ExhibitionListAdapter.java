@@ -9,8 +9,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import entity.Exhibition;
+import model.Exhibition;
 import jintong.museum2.R;
+import util.DistanceUtil;
 
 /**
  * Created by wjc on 2017/5/16.
@@ -20,10 +21,10 @@ public class ExhibitionListAdapter extends BaseAdapter<ExhibitionListAdapter.Exh
 
 
 
-    public ExhibitionListAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
+    public ExhibitionListAdapter(Context context, List<Object> listDatas) {
 
 
-        super(context, listDatas, onViewClickListener);
+        super(context, listDatas);
     }
 
     @Override
@@ -42,9 +43,7 @@ public class ExhibitionListAdapter extends BaseAdapter<ExhibitionListAdapter.Exh
         requestManager.load(exhibition.getImage1().getFileUrl()+ "!/fxfn/1080x1080").into((holder).exhibitImage);
         holder.exhibitMuseumName.setText(exhibition.getToMuseum().getMuseumName());
         holder.exhibitMuseumLocation.setText(exhibition.getToMuseum().getLocateCity());
-        holder.exhibitMuseumDistance.setText("99KM"); //这里是需要根据经纬度实时计算的
-
-
+        holder.exhibitMuseumDistance.setText(DistanceUtil. getCurrentLocal(context,exhibition.getToMuseum().getGeoPoint())+"KM"); //这里是需要根据经纬度实时计算的
     }
 
     @Override

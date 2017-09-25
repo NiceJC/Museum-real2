@@ -1,7 +1,6 @@
-package MyView;
+package myView;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;

@@ -8,23 +8,31 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobSocialUtil;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
-import adapter.BlogListAdapter;
+import adapter.BaseAdapter;
+import bmobUtils.BmobSocialUtil;
+import bmobUtils.BmobUserRelation;
+import jintong.museum2.UserInfoActivity;
+import model.Blog;
+import myView.PullBaseView;
+import myView.PullRecyclerView;
 import adapter.UserListAdapter;
 import cn.bmob.v3.BmobUser;
-import entity.Blog;
-import entity.User;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
-import jintong.museum2.BlogActivity;
 import jintong.museum2.R;
 import util.ToastUtils;
+
+import static util.ParameterBase.USER_ID;
+import static util.ParameterBase.USER_RELATION_ID;
 
 
 /**
@@ -33,15 +41,16 @@ import util.ToastUtils;
  */
 
 public class FollowingFragment extends Fragment implements
-        PullBaseView.OnRefreshListener, OnItemClickListener {
+        BaseAdapter.OnItemClickListener {
 
     private View view;
-
     private LinearLayoutManager manager;
-    private PullRecyclerView mRecyclerView;
-    private List<User> mDatas = new ArrayList<User>();
+    private XRecyclerView mRecyclerView;
+    private List<Object> mDatas = new ArrayList<Object>();
     private UserListAdapter mAdapter;
     private int currentPage = 0;
+    private String userRelationID;
+    private ImageView whenNoData;
 
     @Nullable
     @Override
@@ -54,26 +63,39 @@ public class FollowingFragment extends Fragment implements
 
 
         return view;
-
-
     }
 
     private void initViews() {
 
-        mRecyclerView = (PullRecyclerView) view.findViewById(R.id.recylerview_community_f1);
+        userRelationID=getActivity().getIntent().getStringExtra(USER_RELATION_ID);
+        mRecyclerView = (XRecyclerView) view.findViewById(R.id.recyclerView_community_f1);
 
+        whenNoData= (ImageView) view.findViewById(R.id.when_no_data);
 
         //设置RecyclerView的布局管理
         manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setOnRefreshListener(this);
+        mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
 
-        mAdapter = new UserListAdapter(mDatas, getActivity());
+                refreshFromServer();
+            }
+
+            @Override
+            public void onLoadMore() {
+
+                getMoreFromServer(currentPage);
+            }
+        });
+
+        mAdapter = new UserListAdapter(getActivity(), mDatas);
 
 
         mAdapter.setClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
-
+        mRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        mRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
 
     }
 
@@ -83,48 +105,50 @@ public class FollowingFragment extends Fragment implements
         if (mDatas.size() != 0) {
             return;
         }
-        refreshFromServer();
+        mRecyclerView.refresh();
 
-    }
-
-    @Override
-    public void onHeaderRefresh(PullBaseView view) {
-
-        refreshFromServer();
-    }
-
-    @Override
-    public void onFooterRefresh(PullBaseView view) {
-
-        getMoreFromServer(currentPage);
     }
 
 
     //从服务器拉取数据
     public void refreshFromServer() {
 
-        BmobSocialUtil bmobSocialUtil = BmobSocialUtil.getInstance(getActivity());
 
-        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+      BmobUserRelation bmobUserRelation=  BmobUserRelation.getInstance2(getActivity());
+        bmobUserRelation.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
+
                 List<User> userList = (List<User>) Obj;
 
+                if (userList == null || userList.size() == 0) {
 
-                mDatas.clear();
-                mDatas.addAll(userList);
-                mAdapter.notifyDataSetChanged();
-                currentPage = 1;
-                mRecyclerView.onHeaderRefreshComplete();
+                    whenNoData.setVisibility(View.VISIBLE);
+                    mDatas.clear();
+
+                    mAdapter.notifyDataSetChanged();
+
+                } else {
+
+                    whenNoData.setVisibility(View.GONE);
+                    mDatas.clear();
+                    mDatas.addAll(userList);
+                    mAdapter.notifyDataSetChanged();
+                    currentPage = 1;
+                }
+                mRecyclerView.refreshComplete();
+
             }
-
 
             @Override
             public void onFail(Object Obj) {
-
+                mRecyclerView.refreshComplete();
             }
         });
-        bmobSocialUtil.getFollowing(BmobUser.getCurrentUser(User.class).getObjectId(), 0);
+
+
+
+           bmobUserRelation.getFollowing(0,userRelationID);
 
 
     }
@@ -132,9 +156,8 @@ public class FollowingFragment extends Fragment implements
     public void getMoreFromServer(int curPage) {
 
 
-        BmobSocialUtil bmobSocialUtil = BmobSocialUtil.getInstance(getActivity());
-
-        bmobSocialUtil.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+       BmobUserRelation bmobUserRelation= BmobUserRelation.getInstance2(getActivity());
+        bmobUserRelation.setOnBmobReturnWithObj( new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
                 List<User> userList = (List<User>) Obj;
@@ -148,28 +171,36 @@ public class FollowingFragment extends Fragment implements
                     mAdapter.notifyDataSetChanged();
                     currentPage++;
                 }
-                mRecyclerView.onFooterRefreshComplete();
-
+                mRecyclerView.loadMoreComplete();
 
             }
 
             @Override
             public void onFail(Object Obj) {
-
+                mRecyclerView.loadMoreComplete();
             }
         });
-        bmobSocialUtil.getFollowing(BmobUser.getCurrentUser(User.class).getObjectId(), curPage);
+
+
+
+
+              bmobUserRelation.getFollowing(curPage,userRelationID);
+
+
     }
 
 
-    //Item的点击事件
     @Override
-    public void onItemClick(View view, int position) {
-        ToastUtils.toast(getActivity(),"aiya ");
-    }
+    public void onItemClick(int position) {
 
-    @Override
-    public void OnItemLongClick(View view, int position) {
+        User user= (User) mDatas.get(position);
+        Intent intent=new Intent(getActivity(), UserInfoActivity.class);
+        intent.putExtra(USER_ID,user.getObjectId());
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+
+
+
 
     }
 }

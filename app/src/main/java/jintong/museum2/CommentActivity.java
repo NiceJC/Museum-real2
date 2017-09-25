@@ -1,37 +1,31 @@
 package jintong.museum2;
 
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobComment;
+import bmobUtils.BmobComment;
 import adapter.CommentRecyclerAdapter;
-import entity.Comments;
+import model.Comments;
 import interfaces.OnBmobReturnWithObj;
 
-import static entity.Comments.COMMENT_TO_BLOG;
-import static entity.Comments.COMMENT_TO_COLLECTION;
-import static entity.Comments.COMMENT_TO_EXHIBITION;
-import static entity.Comments.COMMENT_TO_MUSEUM;
+import static model.Comments.COMMENT_TO_BLOG;
+import static model.Comments.COMMENT_TO_COLLECTION;
+import static model.Comments.COMMENT_TO_EXHIBITION;
+import static model.Comments.COMMENT_TO_MUSEUM;
 
 /**
  * 展示评论
@@ -91,13 +85,6 @@ public class CommentActivity extends BaseActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_comment);
-
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-//        requestWindowFeature()
 
 
         initView();

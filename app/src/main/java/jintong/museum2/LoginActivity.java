@@ -5,21 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
 
-import javax.security.auth.login.LoginException;
-
-import BmobUtils.BmobRegisterAndLogin;
-import entity.User;
-import interfaces.OnBmobReturnSuccess;
+import bmobUtils.BmobRegisterAndLogin;
+import cn.bmob.v3.BmobUser;
 import interfaces.OnBmobReturnWithObj;
+import model.User;
 import util.MD5;
 import util.ToastUtils;
 
@@ -35,10 +31,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private Button toRegister;
     private Button login;
     private TextView forgetPass;
-    private ImageView weChatLogin;
-    private ImageView qqLogin;
+//    private ImageView weChatLogin;
+//    private ImageView qqLogin;
 
     private String phoneNum;
+    public static LoginActivity loginActivity=null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,12 +43,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         setContentView(R.layout.activity_login);
 
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
         phoneNum=getIntent().getStringExtra("phoneNum");//如果是从重置密码页面跳转过来的，就获取号码，自动填写
 
+        loginActivity=this;
         initView();
         initData();
         initEvents();
@@ -69,8 +63,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         toRegister = (Button) findViewById(R.id.login_to_register);
         login = (Button) findViewById(R.id.login);
         forgetPass = (TextView) findViewById(R.id.forget_passWord);
-        weChatLogin = (ImageView) findViewById(R.id.login_weChat);
-        qqLogin = (ImageView) findViewById(R.id.login_qq);
+//        weChatLogin = (ImageView) findViewById(R.id.login_weChat);
+//        qqLogin = (ImageView) findViewById(R.id.login_qq);
 
 
     }
@@ -82,8 +76,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         toRegister.setOnClickListener(this);
         login.setOnClickListener(this);
         forgetPass.setOnClickListener(this);
-        weChatLogin.setOnClickListener(this);
-        qqLogin.setOnClickListener(this);
+//        weChatLogin.setOnClickListener(this);
+//        qqLogin.setOnClickListener(this);
 
 
     }
@@ -123,9 +117,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             @Override
                             public void onSuccess(Object Obj) {
                                 //登录返回结果真确，登录成功并跳转主界面
+
+                                User user= (User) Obj;
+
+                                if(user==null){
+                                    Log.e("登陆返回的","kong ");
+
+                                }else{
+                                    Log.e("登陆返回的", user.getObjectId()+"   " +user.getNickName());
+                                }
+
                                 Intent intent2 = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent2);
                                 overridePendingTransition(R.anim.none,R.anim.out_to_right);
+
+                                User user2=BmobUser.getCurrentUser(User.class);
+                                if(user==null){
+                                    Log.e("登陆后","kong ");
+
+                                }else{
+                                    Log.e("登陆后", user2.getObjectId()+"   " +user2.getNickName());
+                                }
 
                             }
 
@@ -136,6 +148,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
                         });
+
+                        User user=BmobUser.getCurrentUser(User.class);
+                        if(user==null){
+                            Log.e("登陆前","kong ");
+
+                        }else{
+                            Log.e("登陆前", user.getObjectId()+"   " +user.getNickName());
+                        }
+
 
                         BmobRegisterAndLogin.getInstance(this).loginByUserName(phoneNum, newPass);
 
@@ -161,10 +182,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
                 break;
-            case R.id.login_weChat:
-                break;
-            case R.id.login_qq:
-                break;
+//            case R.id.login_weChat:
+//                break;
+//            case R.id.login_qq:
+//                break;
             default:
                 break;
 

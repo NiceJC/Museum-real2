@@ -7,7 +7,7 @@
     >
 
 
-    <MyView.PullRecyclerView
+    <myView.PullRecyclerView
         android:orientation="vertical"
 
         android:id="@+id/recylerview_main_f2"
@@ -18,7 +18,7 @@
 
 
 
-    </MyView.PullRecyclerView>
+    </myView.PullRecyclerView>
 
 
 

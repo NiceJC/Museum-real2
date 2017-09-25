@@ -12,25 +12,26 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobMuseum;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobMuseum;
+import myView.PullBaseView;
+import myView.PullRecyclerView;
+import adapter.BaseAdapter;
 import adapter.MuseumListAdapter;
-import entity.Museum;
+import model.Museum;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.MuseumActivity;
 import jintong.museum2.R;
 import util.ToastUtils;
 
-import static util.ParameterBase.LIMIT;
+import static util.ParameterBase.LIMIT_SIX;
 import static util.ParameterBase.MUSEUM_ID;
 
 /**
  * 展馆列表
  * Created by wjc on 2017/2/14.
  */
-public class MainFragmentF2 extends Fragment implements adapter.BaseAdapter.OnItemClickListener,
-        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
+public class MainFragmentF2 extends Fragment implements BaseAdapter.OnItemClickListener,
+        BaseAdapter.OnItemLongClickListener, BaseAdapter.OnViewClickListener,
         PullBaseView.OnRefreshListener{
 
     private View view;
@@ -74,7 +75,7 @@ public class MainFragmentF2 extends Fragment implements adapter.BaseAdapter.OnIt
         recyclerView.setOnRefreshListener(this);
 
         recyclerView.setCanPullUp(false);
-        adapter = new MuseumListAdapter(getActivity(), datas, this);
+        adapter = new MuseumListAdapter(getActivity(), datas);
         adapter.setOnItemClickListener(this);
         adapter.setOnItemLongClickListener(this);
         recyclerView.setAdapter(adapter);
@@ -145,8 +146,8 @@ public class MainFragmentF2 extends Fragment implements adapter.BaseAdapter.OnIt
                 adapter.notifyDataSetChanged();
                 recyclerView.onHeaderRefreshComplete();
 
-                if(museumList.size()<LIMIT){
-                    recyclerView.onNoMoreData();
+                if(museumList.size()< LIMIT_SIX){
+//                    recyclerView.onNoMoreData();
                 }
                 currentPage=1;
 

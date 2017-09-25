@@ -2,28 +2,27 @@ package fragment;
 
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.lang.reflect.Type;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import BmobUtils.BmobColt;
-import MyView.GridItemDecoration;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobColt;
+import adapter.BaseAdapter;
 import adapter.CollectionGridAdapter;
-import entity.Collection;
+import jintong.museum2.SearchingActivity;
+import model.Collection;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.CollectionActivity;
 import jintong.museum2.R;
@@ -37,13 +36,13 @@ import static util.ParameterBase.COLT_TYPE;
  * 宝库页面
  * Created by wjc on 2017/2/9.
  */
-public class MuseumFragment extends Fragment implements View.OnClickListener, adapter.BaseAdapter.OnItemClickListener,
-        PullBaseView.OnRefreshListener, adapter.BaseAdapter.OnViewClickListener {
+public class MuseumFragment extends Fragment implements View.OnClickListener, BaseAdapter.OnItemClickListener, XRecyclerView.LoadingListener{
     private View view;
-    private PullRecyclerView recyclerView;
+    private XRecyclerView recyclerView;
     private List<Object> datas = new ArrayList<Object>();
     private CollectionGridAdapter adapter;
 
+    private FloatingActionButton floatingActionButton;
 
     private int theType;
 
@@ -65,7 +64,6 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, ad
         initViews();
         initDatas();
 
-        setData();
         setEvents();
 
         return view;
@@ -80,13 +78,17 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, ad
         typeLacquer.setOnClickListener(this);
         typeOthers.setOnClickListener(this);
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), SearchingActivity.class);
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right,R.anim.none);
+            }
+        });
 
     }
 
-    private void setData() {
-
-
-    }
 
     private void initDatas() {
 
@@ -94,13 +96,14 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, ad
             return;
         }
 
-        pullDataFromServer(0);
+       recyclerView.refresh();
+
 
     }
 
     private void initViews() {
-        recyclerView = (PullRecyclerView) view.findViewById(R.id.colt_recyclerView);
-        recyclerView.setFocusable(false);
+        recyclerView = (XRecyclerView) view.findViewById(R.id.colt_recyclerView);
+
 
         typeBronze = (ImageView) view.findViewById(R.id.museum_fragment_bronze);
         typeChina = (ImageView) view.findViewById(R.id.museum_fragment_china);
@@ -108,15 +111,17 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, ad
         typePaint = (ImageView) view.findViewById(R.id.museum_fragment_paint);
         typeLacquer = (ImageView) view.findViewById(R.id.museum_fragment_lacquer);
         typeOthers = (ImageView) view.findViewById(R.id.museum_fragment_others);
+        floatingActionButton= (FloatingActionButton) view.findViewById(R.id.search_more);
 
-
-        adapter = new CollectionGridAdapter(getActivity(), datas, this);
+        adapter = new CollectionGridAdapter(getActivity(), datas);
+        adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
-
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-        recyclerView.setCanPullDown(false);
-        recyclerView.setCanPullUp(false);
+        recyclerView.setLoadingListener(this);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
     }
 
     @Override
@@ -153,52 +158,63 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, ad
 
     }
 
-    public void pullDataFromServer(final int curPage) {
+    //上拉加载更多
+    public void pullMoreFromServer( int curPage) {
+
+        BmobColt bmobColt = BmobColt.getInstance(getActivity());
+
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Collection> collectionList = (List<Collection>) Obj;
+
+                if (collectionList == null || collectionList.size() == 0) {
+
+                    recyclerView.setNoMore(true);
+
+                } else {
+                    datas.addAll(collectionList);
+                    adapter.notifyDataSetChanged();
+                    currentPage++;
+                }
+                recyclerView.loadMoreComplete();
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+                recyclerView.loadMoreComplete();
+            }
+        });
+        bmobColt.getHotColt(curPage);
+    }
+
+    //刷新数据
+    public void refreshFromServer() {
         BmobColt bmobColt = BmobColt.getInstance(getActivity());
         bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
-                List<Collection> list = (List<Collection>) Obj;
-
-                if (list == null || list.size() == 0) {
-                    ToastUtils.toast(getActivity(), "没有更多数据啦");
-
+                List<Collection> collectionList = (List<Collection>) Obj;
+                if (collectionList == null || collectionList.size() == 0) {
+                    ToastUtils.toast(getActivity(), "暂无数据");
+                    recyclerView.setNoMore(true);
                 } else {
-
-                    if (curPage == 0) {
-                        datas.clear();
-                    }
-
-                    for (Collection collection : list) {
-                        datas.add(collection);
-                    }
+                    datas.clear();
+                    datas.addAll(collectionList);
                     adapter.notifyDataSetChanged();
-
-                    currentPage++;
+                    currentPage = 1;
                 }
-                recyclerView.onFooterRefreshComplete();
-
+                recyclerView.reset();
             }
-
-
             @Override
             public void onFail(Object Obj) {
-
+                recyclerView.reset();
             }
         });
-        bmobColt.getHotColt(curPage);
-
+        bmobColt.getHotColt(0);
     }
 
-    @Override
-    public void onHeaderRefresh(PullBaseView view) {
 
-    }
-
-    @Override
-    public void onFooterRefresh(PullBaseView view) {
-        pullDataFromServer(currentPage);
-    }
 
     @Override
     public void onItemClick(int position) {
@@ -211,8 +227,16 @@ public class MuseumFragment extends Fragment implements View.OnClickListener, ad
         getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.none);
     }
 
-    @Override
-    public void onViewClick(int position, int viewtype) {
 
+
+    @Override
+    public void onRefresh() {
+        refreshFromServer();
+    }
+
+    @Override
+    public void onLoadMore() {
+
+        pullMoreFromServer(currentPage);
     }
 }

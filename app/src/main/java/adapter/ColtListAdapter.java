@@ -1,29 +1,16 @@
 package adapter;
 
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 
 import java.util.List;
 
-import entity.Collection;
-import entity.Comments;
-import entity.Museum;
-import interfaces.OnItemClickListener;
-import jintong.museum2.CommentActivity;
+import model.Collection;
 import jintong.museum2.R;
 
 /**
@@ -37,7 +24,9 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
     public ColtListAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
         super(context, listDatas, onViewClickListener);
     }
-
+    public ColtListAdapter(Context context, List<Object> listDatas) {
+        super(context, listDatas);
+    }
     @Override
     public ColtListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -54,7 +43,7 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
         requestManager.load(collection.getImage1().getFileUrl()+"!/fxfn/1080x540").into(holder.coltImage);
 //        holder.likeNum.setText(collection.getColtLikeNum() + "");
 
-        ObjectAnimator.ofFloat(holder.likeMove, "alpha", 1, 0).setDuration(0).start();
+//        ObjectAnimator.ofFloat(holder.likeMove, "alpha", 1, 0).setDuration(0).start();
 
         holder.name.setText(collection.getColtName());
         holder.size.setText(collection.getColtSize());
@@ -79,7 +68,7 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
 //        holder.commentClick.setOnClickListener(new ViewClickListener(onViewClickListener,position,1));
 //        holder.likeClick.setOnClickListener(new ViewClickListener(onViewClickListener,position,2));
 
-        holder.coltImage.setOnClickListener(new ViewClickListener(onViewClickListener,position,3));
+//        holder.coltImage.setOnClickListener(new ViewClickListener(onViewClickListener,position,3));
 
 //        holder.commentClick.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -151,7 +140,7 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
 
         TextView introduction; //详情介绍
 
-        ImageView likeMove; //用作点赞的动画
+//        ImageView likeMove; //用作点赞的动画
 //
 //        LinearLayout commentClick;//评论的点击
 //
@@ -171,7 +160,7 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
             dynasty = (TextView) itemView.findViewById(R.id.museumRoom_item_dynasty);
             introduction = (TextView) itemView.findViewById(R.id.museumRoom_item_intro);
 
-            likeMove = (ImageView) itemView.findViewById(R.id.move_like);
+//            likeMove = (ImageView) itemView.findViewById(R.id.move_like);
 //
 //            commentClick = (LinearLayout) itemView.findViewById(R.id.commentClick_museumRoom_item);
 //            commentNum = (TextView) itemView.findViewById(R.id.coltCommentNum_museumRoom_item);
@@ -180,24 +169,7 @@ public class ColtListAdapter extends BaseAdapter<ColtListAdapter.ColtListViewHol
         }
 
     }
-    class ViewClickListener implements View.OnClickListener{
 
-        OnViewClickListener onViewClickListener;
-        int position;
-        int viewType;
-
-        public ViewClickListener(OnViewClickListener onViewClickListener, int position, int viewType) {
-            this.onViewClickListener = onViewClickListener;
-            this.position = position;
-            this.viewType = viewType;
-        }
-
-        @Override
-        public void onClick(View v) {
-            onViewClickListener.onViewClick(position,viewType);
-
-        }
-    }
 
 }
 

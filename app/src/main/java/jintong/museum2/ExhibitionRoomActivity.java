@@ -4,43 +4,39 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobColt;
-import BmobUtils.BmobExhibitRoom;
-import BmobUtils.BmobExhibition;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobColt;
+import bmobUtils.BmobExhibitRoom;
+import adapter.BaseAdapter;
 import adapter.ColtListAdapter;
-import entity.Collection;
-import entity.ExhibitRoom;
-import entity.Exhibition;
+import model.Collection;
+import model.ExhibitRoom;
 import interfaces.OnBmobReturnWithObj;
-import interfaces.OnItemClickListener;
 import util.ToastUtils;
 
+import static util.ParameterBase.COLT_ID;
 import static util.ParameterBase.EXHIBIROOM_ID;
-import static util.ParameterBase.EXHIBITION_ID;
 
 /**
  * 展厅展示页面
  * Created by wjc on 2017/3/7.
  */
 
-public class ExhibitionRoomActivity extends BaseActivity implements adapter.BaseAdapter.OnItemClickListener,
-        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
-        PullBaseView.OnRefreshListener{
+public class ExhibitionRoomActivity extends BaseActivity implements BaseAdapter.OnItemClickListener, XRecyclerView.LoadingListener
+
+{
 
 
-    private PullRecyclerView recyclerView;
+    private XRecyclerView recyclerView;
 
     private ImageView back;
 
@@ -68,14 +64,10 @@ public class ExhibitionRoomActivity extends BaseActivity implements adapter.Base
 
         setContentView(R.layout.activity_exbitroom);
 
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
 
         initView();
         initData();
-        setData();
+
         initEvents();
 
 
@@ -84,27 +76,26 @@ public class ExhibitionRoomActivity extends BaseActivity implements adapter.Base
 
     }
 
-    private void setData() {
 
-        roomName.setText(exhibitRoom.getName());
-        introduction.setText(exhibitRoom.getIntroduction());
-
-
-    }
 
     private void initView() {
 
         back= (ImageView) findViewById(R.id.museum_room_back);
         roomName= (TextView) findViewById(R.id.museum_room_name);
-        recyclerView = (PullRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
+        introduction= (TextView) findViewById(R.id.room_introduction);
+
+        recyclerView = (XRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
         recyclerView.setFocusable(false);
 
-        adapter=new ColtListAdapter(ExhibitionRoomActivity.this,datas,this);
+        adapter=new ColtListAdapter(ExhibitionRoomActivity.this,datas);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 
-        introduction= (TextView) findViewById(R.id.room_introduction);
+        adapter.setOnItemClickListener(this);
+        recyclerView.setLoadingListener(this);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
 
 
     }
@@ -119,10 +110,20 @@ public class ExhibitionRoomActivity extends BaseActivity implements adapter.Base
         }
 
         getExhibitRoomInfo(exhitiRoomID);
-        pullMoreFromServer(exhitiRoomID,0);
+        recyclerView.refresh();
 
 
     }
+         private void setData() {
+
+             roomName.setText(exhibitRoom.getName());
+             String intro=exhibitRoom.getIntroduction();
+             if(intro==null||intro.equals("")){
+                 intro="暂无资料";
+             }
+             introduction.setText(intro);
+
+         }
 
     private void initEvents() {
 
@@ -144,69 +145,29 @@ public class ExhibitionRoomActivity extends BaseActivity implements adapter.Base
 
     }
 
-    @Override
-    public void onHeaderRefresh(PullBaseView view) {
-
-    }
-
-    @Override
-    public void onFooterRefresh(PullBaseView view) {
-
-        pullMoreFromServer(exhitiRoomID,currentPage);
-
-
-    }
 
     @Override
     public void onItemClick(int position) {
 
+
+        Intent intent = new Intent(this, CollectionActivity.class);
+        Collection collection = (Collection) datas.get(position);
+        intent.putExtra(COLT_ID, collection.getObjectId());
+        startActivity(intent);
+        overridePendingTransition(R.anim.in_from_right, R.anim.none);
+
+    }
+    @Override
+    public void onRefresh() {
+
+        refreshFromServer(exhitiRoomID);
     }
 
     @Override
-    public void onItemLongClick(int position) {
+    public void onLoadMore() {
 
+        pullMoreFromServer(exhitiRoomID,currentPage);
     }
-
-    @Override
-    public void onViewClick(int position, int viewtype) {
-
-        switch (viewtype){
-            //评论
-            case 1:
-                break;
-
-            //点赞
-            case 2:
-                break;
-
-            //图片
-            case 3:
-
-                Intent intent=new Intent(ExhibitionRoomActivity.this,ZoomImageActivity.class);
-
-                List<String> URLs=new ArrayList<String>();
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/303ec10a40273f38802f9cf04fd03203.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/50ffdf4140281d96809f8eefdc2a47f6.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/98eec22c406f692780ca9bf7da9a8cf5.jpg");
-                URLs.add("http://bmob-cdn-4183.b0.upaiyun.com/2016/08/03/4e49f0f2400e93608052ba97a9928b3c.jpg");
-
-                intent.putStringArrayListExtra("imageURLs", (ArrayList<String>) URLs);
-                intent.putExtra("position",0);
-                startActivity(intent);
-                overridePendingTransition(R.anim.in_zoom,R.anim.none);
-
-                break;
-            default:
-                break;
-
-
-        }
-
-
-
-    }
-
-
     //获取当前的展厅信息
     public void getExhibitRoomInfo(String exhitiRoomID){
         BmobExhibitRoom bmobExhibitRoom=BmobExhibitRoom.getInstance(this);
@@ -243,16 +204,15 @@ public class ExhibitionRoomActivity extends BaseActivity implements adapter.Base
                 List<Collection> collectionList = (List<Collection>) Obj;
 
                 if (collectionList == null || collectionList.size() == 0) {
-                    ToastUtils.toast(ExhibitionRoomActivity.this, "没有更多内容啦");
+                   recyclerView.setNoMore(true);
 
                 } else {
-                    for (Collection collection : collectionList) {
-                        datas.add(collection);
-                    }
+                    datas.addAll(collectionList);
                     adapter.notifyDataSetChanged();
                     currentPage++;
                 }
-                recyclerView.onFooterRefreshComplete();
+                recyclerView.loadMoreComplete();
+
 
 
             }
@@ -266,4 +226,37 @@ public class ExhibitionRoomActivity extends BaseActivity implements adapter.Base
 
     }
 
+
+    //刷新数据
+    public void refreshFromServer(String exhitiRoomID) {
+
+        BmobColt bmobColt = BmobColt.getInstance(this);
+
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<Collection> collectionList = (List<Collection>) Obj;
+
+                if (collectionList == null || collectionList.size() == 0) {
+                    ToastUtils.toast(ExhibitionRoomActivity.this, "暂无数据");
+
+                    recyclerView.setNoMore(true);
+
+                } else {
+                    datas.clear();
+                    datas.addAll(collectionList);
+                    adapter.notifyDataSetChanged();
+                    currentPage = 1;
+                }
+                recyclerView.reset();
+
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
+            }
+        });
+        bmobColt.getByBelongID(exhitiRoomID, EXHIBIROOM_ID, 0);
+    }
 }

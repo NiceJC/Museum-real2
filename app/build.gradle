@@ -1,41 +1,133 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
 
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "jintong.museum2"
+        applicationId "jintong.museum2"   //包名
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true  //突破应用方法数65535的限制
+
+        manifestPlaceholders = [UMENG_CHANNAL_VALUE: "umeng"]  //指定默认渠道号
     }
-    buildTypes {
+
+    //添加签名文件配置   也可以在module中添加signingConfigs自动生成配置信息
+    signingConfigs {
+        debug {}
         release {
+            keyAlias 'wjc'
+            keyPassword 'Zjjtwh999111'
+            storeFile file('museumKeystore.jks')
+            storePassword 'Zjjtwh888'
+        }
+    }
+
+    buildTypes {  //指定打包的配置  包括 混淆、多渠道打包
+        debug {
+//            debuggable true
+//            jniDebuggable true
+//            zipAlignEnabled true
             minifyEnabled false
+//            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+        release {
+//            debuggable false
+//            jniDebuggable false
+//            zipAlignEnabled true
+            minifyEnabled false    //是否启用混淆
+//            shrinkResources true
+            signingConfig signingConfigs.release  //引用上方的release签名文件配置
+
+            //proguard-Android.txt是系统默认的混淆配置文件，已经为我们配置了常用的配置项，位置/Users/wjc/Library/Android/sdk/tools/proguard/proguard-android.txt
+            // proguard-rules.pro中可以补充配置其他选项，也可以不加任何配置
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //指定release包的输出文件名字就是渠道名
+            applicationVariants.all{variant->
+                variant.outputs.each{output->
+                    def outFile=output.outputFile
+                    if(outFile!=null && outFile.name.endsWith(".apk")){
+                        def fileName="${variant.productFlavors[0].name}"+".apk"
+                        output.outputFile=new File(outFile.parent,fileName);
+                    }
+
+                }
+
+            }
+
+
+        }
+    }
+
+
+
+
+    productFlavors { //直接在每个渠道后替换友盟渠道号，或者只是写个空的渠道号，使用下方productFlavors.all自动替换
+//        xiaomi {
+//            manifestPlaceholders=[UMENG_CHANNEL_VALUE: "xiaomi"] --为小米渠道新建渠道号"xiaomi"
+
+//            resValue("string","app_name","xiaomi_app") --替换小米渠道的app_name的值
+//        }
+        wandoujia {}
+//        c360 {}
+//        baidu{}
+//        huawei {}
+//        yingyongbao {}
+
+
+//        okhttp{
+//            applicationIdSuffix "okhttp"   --添加包名后缀，也就是修改包名，包名不同的两个app就可以同时安装在一个手机上
+//            resValue("string","app_name","okhttp_app")
+//        }
+//
+//        jpush{
+//            applicationIdSuffix "jpush"
+//            resValue("string","app_name","jpush_app")
+//        }
+
+    }
+
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+
+
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 }
-
+//配置SO文件的使用  百度地图的
 repositories {
     flatDir {
         dirs 'libs'
     }
 
 }
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile 'cn.bmob.android:bmob-sdk:3.5.7'
+    compile 'com.umeng.analytics:analytics:latest.integration'
 
+//第三方上拉下拉 RecyclerView包装库
+    compile 'com.wuxiaolong.pullloadmorerecyclerview:library:1.1.2'
 
-
-    compile 'cn.bmob.android:bmob-sdk:3.5.0'
+    compile 'com.jcodecraeer:xrecyclerview:1.3.2'
+    compile 'net.steamcrafted:load-toast:1.0.10'
 
 
 }

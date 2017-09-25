@@ -2,16 +2,14 @@ package jintong.museum2;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,24 +20,23 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
 
+import net.steamcrafted.loadtoast.LoadToast;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import BmobUtils.BmobColt;
-import BmobUtils.BmobComment;
+import bmobUtils.BmobColt;
+import bmobUtils.BmobComment;
 import adapter.CommentRecyclerAdapter;
-import adapter.CommentsListAdapter;
 import cn.bmob.v3.BmobUser;
-import entity.Collection;
-import entity.Comments;
-import entity.User;
+import model.Collection;
+import model.Comments;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
 import util.SysUtils;
 import util.ToastUtils;
 
-import static entity.Comments.COMMENT_TO_BLOG;
-import static entity.Comments.COMMENT_TO_COLLECTION;
+import static model.Comments.COMMENT_TO_COLLECTION;
 import static util.ParameterBase.COLT_ID;
 import static util.ParameterBase.IMAGE_URLS;
 
@@ -96,26 +93,26 @@ public class CollectionActivity extends BaseActivity {
     private boolean isLiked=false;
     private int likecount;
 
+    private LoadToast lt;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
         setContentView(R.layout.activity_collection);
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 
         initView();
         initData();
-
-
         initEvents();
     }
 
     private void initView() {
 
+
+
+        lt=ToastUtils.getLoadingToast(this);
 
         coltImage = (ImageView) findViewById(R.id.museumRoom_item_image);
         likeClick = (LinearLayout) findViewById(R.id.likeClick_museumRoom_item);
@@ -160,13 +157,19 @@ public class CollectionActivity extends BaseActivity {
         getLikedUser(colt_ID);
         incrementHotvalue();
         requestManager.load(collection.getImage1().getFileUrl()+ "!/fxfn/1080x500").into(coltImage);
-        likeNum.setText(collection.getColtLikeNum() + "");
 
         ObjectAnimator.ofFloat(likeMove, "alpha", 1, 0).setDuration(0).start();
 
         name.setText(collection.getColtName());
         size.setText(collection.getColtSize());
         dynasty.setText(collection.getColtDynasty());
+
+        likecount=collection.getColtLikeNum();
+        likeNum.setText(likecount+"");
+        if(collection.getColtIntru()==null||collection.getColtIntru().equals("")){
+            introduction.setText("暂无资料");
+
+        }
         introduction.setText(collection.getColtIntru());
 
         }
@@ -175,7 +178,8 @@ public class CollectionActivity extends BaseActivity {
 
 
     private void initEvents() {
-        setListenerToRootView();
+
+//        setListenerToRootView();
         coltImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,8 +208,8 @@ public class CollectionActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
+
                 likeMove.getBackground().setAlpha(155);
-                Toast.makeText(CollectionActivity.this, "I like" , Toast.LENGTH_SHORT).show();
 
                 AnimatorSet set = new AnimatorSet();
                 set.playTogether(
@@ -229,15 +233,20 @@ public class CollectionActivity extends BaseActivity {
             }
         });
         commit.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
+                lt.show();
                 final String content = editText.getText().toString();
                 BmobComment bmobComment = BmobComment.getInstance(CollectionActivity.this);
                 bmobComment.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                     @Override
                     public void onSuccess(Object Obj) {
 
-                        ToastUtils.toast(CollectionActivity.this, "评论成功");
+                        lt.success();
+                        hideSoftInput();
+                        editText.setText("");
 
                         whenNoData.setVisibility(View.GONE);
                         getAllComments(colt_ID);
@@ -246,6 +255,7 @@ public class CollectionActivity extends BaseActivity {
                     @Override
                     public void onFail(Object Obj) {
 
+                        lt.error();
                     }
                 });
                 bmobComment.postComment(COMMENT_TO_COLLECTION, colt_ID, content);
@@ -317,7 +327,7 @@ public class CollectionActivity extends BaseActivity {
             public void onSuccess(Object Obj) {
                 List<User> userList= (List<User>) Obj;
                 if(userList!=null&&userList.size()!=0){
-                    likecount=userList.size();
+
                     for (User user :userList
                             ) {
                         if(user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
@@ -326,10 +336,10 @@ public class CollectionActivity extends BaseActivity {
                         }
                     }
                     likeIcon.setSelected(isLiked);
-                    likeNum.setText(likecount+"");
+
                 }else{
                     likeIcon.setSelected(false);
-                    likeNum.setText(0+"");
+
                 }
             }
             @Override
@@ -372,6 +382,7 @@ public class CollectionActivity extends BaseActivity {
             @Override
             public void onSuccess(Object Obj) {
 
+
                 isLiked=false;
                 likecount--;
                 likeIcon.setSelected(isLiked);
@@ -392,46 +403,52 @@ public class CollectionActivity extends BaseActivity {
 
     }
 
-
-
-    /**
-     * 得到的Rect就是根布局的可视区域，而rootView.bottom是其本应的底部坐标值，
-     * 如果差值大于我们预设的值，就可以认定键盘弹起了。这个预设值是键盘的高度的最小值。
-     * 这个rootView实际上就是DectorView，通过任意一个View再getRootView就能获得。
-     */
-    private boolean isKeyboardShown(View rootView) {
-        final int softKeyboardHeight = 100;
-        Rect r = new Rect();
-        rootView.getWindowVisibleDisplayFrame(r);
-        int heightDiff = rootView.getBottom() - r.bottom;
-        height = heightDiff;
-
-        DisplayMetrics dm = rootView.getResources().getDisplayMetrics();
-        return heightDiff > softKeyboardHeight * dm.density;
+    private void hideSoftInput(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0) ;
     }
 
-    private void setListenerToRootView() {
-
-        back.getRootView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                boolean isOpen = isKeyboardShown(back.getRootView());
 
 
-                if (isOpen) {
-
-                    ObjectAnimator.ofFloat(editBar, "translationY", 0, -height).setDuration(100).start();
-                    haveChanged = true;
-
-                } else {
-                    if (haveChanged) {
-                        ObjectAnimator.ofFloat(editBar, "translationY", -height, 0).setDuration(100).start();
-                    }
-                }
-            }
-        });
-
-    }
+//
+//    /**
+//     * 得到的Rect就是根布局的可视区域，而rootView.bottom是其本应的底部坐标值，
+//     * 如果差值大于我们预设的值，就可以认定键盘弹起了。这个预设值是键盘的高度的最小值。
+//     * 这个rootView实际上就是DectorView，通过任意一个View再getRootView就能获得。
+//     */
+//    private boolean isKeyboardShown(View rootView) {
+//        final int softKeyboardHeight = 100;
+//        Rect r = new Rect();
+//        rootView.getWindowVisibleDisplayFrame(r);
+//        int heightDiff = rootView.getBottom() - r.bottom;
+//        height = heightDiff;
+//
+//        DisplayMetrics dm = rootView.getResources().getDisplayMetrics();
+//        return heightDiff > softKeyboardHeight * dm.density;
+//    }
+//
+//    private void setListenerToRootView() {
+//
+//        back.getRootView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                boolean isOpen = isKeyboardShown(back.getRootView());
+//
+//
+//                if (isOpen) {
+//
+//                    ObjectAnimator.ofFloat(editBar, "translationY", 0, -height).setDuration(100).start();
+//                    haveChanged = true;
+//
+//                } else {
+//                    if (haveChanged) {
+//                        ObjectAnimator.ofFloat(editBar, "translationY", -height, 0).setDuration(100).start();
+//                    }
+//                }
+//            }
+//        });
+//
+//    }
 
 
 

@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1893fb</color>
+    <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryTint">#c81893fb</color>
     <color name="colorPrimaryDark">#303F9F</color>
+
     <color name="textColorPrimaryDark">#181818</color>
 
+
+    
     <color name="colorAccent">#FF4081</color>
-    <color name="tab_bg_color">#fafafa</color>
+    <color name="card_color">#ffffff</color>
+    <color name="card_divider">#F2F4F7</color>
 
+    <color name="text_color_black">#212121</color>
+    <color name="text_color_weak">#919DA4</color>community2.png
+
+    
+    <color name="toast_background">#78f4f4f4</color>
+    
+    
     <color name="praised_color">#e15541</color>
-
+    <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="gray">#8e8e8e</color>
     <color name="choose_gray">#b5b5b5</color>

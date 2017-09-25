@@ -8,22 +8,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <View
-
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:background="@drawable/system_bar"
-        android:clipToPadding="true"
-        android:fitsSystemWindows="true">
-
-    </View>
-
     <LinearLayout
 
 
         android:layout_width="match_parent"
         android:layout_height="46dp"
-        android:background="#1893fb"
+        android:background="?attr/colorPrimary"
 
         android:orientation="horizontal"
         android:paddingBottom="3dp"

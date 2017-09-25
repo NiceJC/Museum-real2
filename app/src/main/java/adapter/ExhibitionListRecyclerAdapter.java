@@ -12,10 +12,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import entity.Exhibition;
+import model.Exhibition;
 import interfaces.OnItemClickListener;
 import jintong.museum2.R;
 

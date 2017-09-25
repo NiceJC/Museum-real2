@@ -1,4 +1,4 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,16 +12,13 @@ import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
-import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
-import entity.ExhibitRoom;
-import entity.Exhibition;
-import entity.Museum;
-import entity.User;
+import model.Exhibition;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
-import static util.ParameterBase.LIMIT;
+import static util.ParameterBase.LIMIT_SIX;
 
 /**
  * 展览的服务端操作类
@@ -68,9 +65,7 @@ public class BmobExhibition {
     public void refreshExhibition() {
 
         BmobQuery<Exhibition> query = new BmobQuery<Exhibition>();
-
-
-        query.setLimit(LIMIT);
+        query.setLimit(LIMIT_SIX);
         query.order("-createdAt");
         query.include("toMuseum");
         query.findObjects(new FindListener<Exhibition>() {
@@ -94,8 +89,8 @@ public class BmobExhibition {
     public void getMoreExhibition(int curPage) {
 
         BmobQuery<Exhibition> query = new BmobQuery<Exhibition>();
-        query.setLimit(LIMIT);
-        query.setSkip(LIMIT * curPage);
+        query.setLimit(LIMIT_SIX);
+        query.setSkip(LIMIT_SIX * curPage);
         query.order("-createdAt");
         query.include("toMuseum");
         query.findObjects(new FindListener<Exhibition>() {
@@ -140,10 +135,11 @@ public class BmobExhibition {
     /**
      * 关键词查询，暂时只针对名称的关键字
      */
-    public void getBykeyWord(String keyWord) {
+    public void getBykeyWord(String keyWord,int curPage) {
         BmobQuery<Exhibition> query = new BmobQuery<Exhibition>();
-        query.setLimit(LIMIT);
+        query.setLimit(LIMIT_SIX);
 
+        query.setSkip(LIMIT_SIX*curPage);
         query.order("-createdAt");//先按点赞数降序，再按时间降序
         query.include("toMuseum");
         query.addWhereContains("exhibitName", keyWord);
@@ -154,6 +150,7 @@ public class BmobExhibition {
 
                     onBmobReturnWithObj.onSuccess(list);
                 } else {
+                    onBmobReturnWithObj.onFail(null);
                     ToastUtils.toast(context, e.getMessage());
                 }
 

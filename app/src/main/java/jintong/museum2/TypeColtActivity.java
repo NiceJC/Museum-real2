@@ -1,39 +1,35 @@
 package jintong.museum2;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobColt;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobColt;
+import myView.PullBaseView;
+import myView.PullRecyclerView;
+import adapter.BaseAdapter;
 import adapter.TypeColtAdapter;
-import entity.Collection;
+import model.Collection;
 import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
 import static util.ParameterBase.COLT_ID;
 import static util.ParameterBase.COLT_TYPE;
-import static util.ParameterBase.EXHIBIROOM_ID;
 
 /**
  * 用瀑布流展示
  * Created by wjc on 2017/3/24.
  */
 
-public class TypeColtActivity extends BaseActivity implements adapter.BaseAdapter.OnItemClickListener,
-        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
+public class TypeColtActivity extends BaseActivity implements BaseAdapter.OnItemClickListener,
+        BaseAdapter.OnItemLongClickListener, BaseAdapter.OnViewClickListener,
         PullBaseView.OnRefreshListener {
 
     private ImageView back;
@@ -50,8 +46,6 @@ public class TypeColtActivity extends BaseActivity implements adapter.BaseAdapte
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_colt_by_type);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 
         initView();

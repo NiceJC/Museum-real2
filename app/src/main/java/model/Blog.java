@@ -1,9 +1,6 @@
-package entity;
-
-import android.content.Intent;
+package model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobObject;
@@ -25,6 +22,7 @@ public class Blog extends BmobObject implements Serializable  {
      //关联关系  这一部分是与Bmob解不开了。。
 
     private User Author; //作者
+    private String authorID; //作者ID  便于查找关注人的blog
 //    private List<Comments> commentsList; //下方的评论
 
 //    private Intent userID; //所属用户的ID
@@ -42,16 +40,17 @@ public class Blog extends BmobObject implements Serializable  {
 //    private Boolean isWatched;//是否当前用户已经关注
 //    private Boolean isPraised;//是否已经点赞
     private Integer commentNums;//评论的数量
-    private Integer praiseNums;//点赞的数量
 
+    private Integer likeNum;
+    private Boolean isLiked;
     private BmobRelation likedUsers; //点赞过的用户
 
 
 
     private List<String> imageURLs;//发表的图片
 
-    private Boolean isLiked;
-    private Integer likeNum;
+
+
 
     public Blog() {
     }
@@ -79,14 +78,6 @@ public class Blog extends BmobObject implements Serializable  {
 
     public void setCommentNums(Integer commentNums) {
         this.commentNums = commentNums;
-    }
-
-    public Integer getPraiseNums() {
-        return praiseNums;
-    }
-
-    public void setPraiseNums(Integer praiseNums) {
-        this.praiseNums = praiseNums;
     }
 
     public List<String> getImageURLs() {
@@ -119,6 +110,14 @@ public class Blog extends BmobObject implements Serializable  {
 
     public void setLikeNum(Integer likeNum) {
         this.likeNum = likeNum;
+    }
+
+    public String getAuthorID() {
+        return authorID;
+    }
+
+    public void setAuthorID(String authorID) {
+        this.authorID = authorID;
     }
 }
 

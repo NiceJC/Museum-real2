@@ -1,8 +1,5 @@
-package entity;
+package model;
 
-import java.util.List;
-
-import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobRelation;
 
@@ -28,13 +25,18 @@ public class User extends BmobUser {
 
     private BmobRelation watchExhibitions; //关注的主题展览
 
-    private BmobRelation watchUsers; //关注的其他用户
+//    private BmobRelation watchUsers; //关注的其他用户
+//
+    private Integer watchUserNum;  //关注的其他用户的数量
 
     private BmobRelation likeBlogs; //点赞的Blog
 
-    private BmobRelation fans; //粉丝（被关注）
+//    private BmobRelation fans; //粉丝（被关注）
+//
+    private Integer fansNum; //粉丝的数量
 
 
+    private String userRelationID;
 
     private String nickName;  //用户昵称
 
@@ -47,7 +49,7 @@ public class User extends BmobUser {
 
     private String portraitURL; //头像URL；
 
-    private String userInfo; //简短的一句话介绍
+    private String shortIntroducon; //简短的一句话介绍
 
 
     public User() {
@@ -71,21 +73,21 @@ public class User extends BmobUser {
         this.watchMuseums = watchMuseums;
     }
 
-    public BmobRelation getWatchUsers() {
-        return watchUsers;
-    }
-
-    public void setWatchUsers(BmobRelation watchUsers) {
-        this.watchUsers = watchUsers;
-    }
-
-    public BmobRelation getFans() {
-        return fans;
-    }
-
-    public void setFans(BmobRelation fans) {
-        this.fans = fans;
-    }
+//    public BmobRelation getWatchUsers() {
+//        return watchUsers;
+//    }
+//
+//    public void setWatchUsers(BmobRelation watchUsers) {
+//        this.watchUsers = watchUsers;
+//    }
+//
+//    public BmobRelation getFans() {
+//        return fans;
+//    }
+//
+//    public void setFans(BmobRelation fans) {
+//        this.fans = fans;
+//    }
 
     public String getNickName() {
         return nickName;
@@ -143,11 +145,36 @@ public class User extends BmobUser {
         this.watchExhibitions = watchExhibitions;
     }
 
-    public String getUserInfo() {
-        return userInfo;
+
+    public Integer getWatchUserNum() {
+        return watchUserNum;
     }
 
-    public void setUserInfo(String userInfo) {
-        this.userInfo = userInfo;
+    public void setWatchUserNum(Integer watchUserNum) {
+        this.watchUserNum = watchUserNum;
+    }
+
+    public Integer getFansNum() {
+        return fansNum;
+    }
+
+    public void setFansNum(Integer fansNum) {
+        this.fansNum = fansNum;
+    }
+
+    public String getUserRelationID() {
+        return userRelationID;
+    }
+
+    public void setUserRelationID(String userRelationID) {
+        this.userRelationID = userRelationID;
+    }
+
+    public String getShortIntroducon() {
+        return shortIntroducon;
+    }
+
+    public void setShortIntroducon(String shortIntroducon) {
+        this.shortIntroducon = shortIntroducon;
     }
 }

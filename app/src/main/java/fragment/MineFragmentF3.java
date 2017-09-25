@@ -8,17 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobColt;
-import BmobUtils.BmobExhibition;
+import bmobUtils.BmobColt;
 import adapter.GridRecyclerAdapter;
 import cn.bmob.v3.BmobUser;
-import entity.Collection;
-import entity.Exhibition;
+import model.Collection;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.R;
 
@@ -40,7 +39,7 @@ public class MineFragmentF3 extends Fragment {
     private List<Object> datas=new ArrayList<>();
 
 
-    private TextView whenNoData;
+    private ImageView whenNoData;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,7 +47,7 @@ public class MineFragmentF3 extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.mine_f1_recyclerView);
 
-        whenNoData= (TextView) view.findViewById(R.id.when_no_data);
+        whenNoData= (ImageView) view.findViewById(R.id.when_no_data);
 
         adapter = new GridRecyclerAdapter(getActivity(),datas);
         recyclerView.setAdapter(adapter);
@@ -79,11 +78,16 @@ public class MineFragmentF3 extends Fragment {
                 List<Collection> list= (List<Collection>) Obj;
                 if(list.size()==0){
                     whenNoData.setVisibility(View.VISIBLE);
-                }
+                    datas.clear();
 
-                datas.clear();
-                datas.addAll(list);
-                adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+
+                }else{
+                    whenNoData.setVisibility(View.GONE);
+                    datas.clear();
+                    datas.addAll(list);
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override

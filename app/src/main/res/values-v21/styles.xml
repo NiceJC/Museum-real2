@@ -1,0 +1,24 @@
+<resources>
+
+
+
+
+    <!--&lt;!&ndash; Base application theme. &ndash;&gt;-->
+    <!--<style name="AppTheme.Base" parent="android:Theme.Material.Light">-->
+        <!--&lt;!&ndash; 隐藏自带的actionBar,以及设置不显示title &ndash;&gt;-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+    <!--</style>-->
+
+    <!--<style name="BaseAppTheme" parent="AppTheme.Base">-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <!--<item name="android:windowBackground">@color/window_background</item>-->
+        <!--//分隔线-->
+        <!--<item name="android:listDivider">@drawable/divider_vertical</item>-->
+        <!--<item name="android:horizontalDivider">@drawable/divider_horizontal</item>-->
+    <!--</style>-->
+
+    <!--<style name="AppTheme" parent="BaseAppTheme"/>-->
+</resources>

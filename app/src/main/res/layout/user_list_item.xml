@@ -10,10 +10,11 @@
     <ImageView
 
 
+        android:padding="5dp"
         android:id="@+id/userListItem_icon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@drawable/camera2"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/portrait"
         android:scaleType="centerCrop" />
 
     <LinearLayout
@@ -27,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:text="影视新闻"
+            android:textColor="@color/text_color_black"
 
             android:textSize="16sp" />
 
@@ -41,6 +42,8 @@
             android:ellipsize="end"
             android:maxLines="1"
 
+            android:textColor="@color/text_color_weak"
+            android:textSize="14sp"
 
             />
     </LinearLayout>

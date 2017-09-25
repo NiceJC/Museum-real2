@@ -6,15 +6,7 @@
     android:background="@mipmap/register_bg"
     android:orientation="vertical">
 
-    <View
 
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:background="@drawable/system_bar_2"
-        android:clipToPadding="true"
-        android:fitsSystemWindows="true">
-
-    </View>
 
     <ImageView
 
@@ -145,46 +137,46 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <TextView
+    <!--<TextView-->
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="第三方登录"
-        android:textColor="#c6c6c6"
-        android:textSize="15sp" />
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:text="第三方登录"-->
+        <!--android:textColor="#c6c6c6"-->
+        <!--android:textSize="15sp" />-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="20dp">-->
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <!--<View-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
 
-        <ImageView
+        <!--<ImageView-->
 
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginRight="20dp"
-           android:src="@drawable/wechat_bg"
-            android:id="@+id/login_weChat" />
+            <!--android:layout_width="35dp"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_marginRight="20dp"-->
+           <!--android:src="@drawable/wechat_bg"-->
+            <!--android:id="@+id/login_weChat" />-->
 
-        <ImageView
-            android:id="@+id/login_qq"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/qq_bg" />
+        <!--<ImageView-->
+            <!--android:id="@+id/login_qq"-->
+            <!--android:layout_width="35dp"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:src="@drawable/qq_bg" />-->
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </LinearLayout>
+        <!--<View-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1" />-->
+    <!--</LinearLayout>-->
 
 
     <View

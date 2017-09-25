@@ -20,11 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import MyView.FlowLayout;
+import myView.FlowLayout;
 import interfaces.OnSearchingJump;
-import interfaces.OnclickFinish;
 import jintong.museum2.R;
-import jintong.museum2.SearchingActivity;
 
 /**
  * Created by wjc on 2017/3/22.

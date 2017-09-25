@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package MyView;
+package myView;
 
 import android.annotation.TargetApi;
 import android.content.Context;

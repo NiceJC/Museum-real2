@@ -1,4 +1,4 @@
-package MyView;
+package myView;
 
 /**
  * Created by wjc on 2017/5/15.

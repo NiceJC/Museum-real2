@@ -7,16 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.WindowManager;
 import android.widget.Toast;
 
-import BmobUtils.BmobRegisterAndLogin;
+import bmobUtils.BmobRegisterAndLogin;
 import cn.bmob.v3.Bmob;
-import entity.User;
+import model.User;
 
 /**
  * 先判断是否是第一次打开
@@ -32,9 +28,6 @@ public class FirstActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);  //全屏
 
         //默认初始化Bmob
         Bmob.initialize(this, "304456d5ce42872a4128217b3643ff81");

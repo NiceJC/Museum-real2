@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/card_divider"
+    >
+
+    <LinearLayout
+
+
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="?attr/colorPrimary"
+
+        android:orientation="horizontal"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp">
+
+        <ImageView
+
+            android:id="@+id/feedback_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:padding="8dp"
+
+            android:src="@mipmap/toleft" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="意见反馈"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+
+            />
+
+        <TextView
+            android:layout_width="50dp"
+
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+
+            android:textColor="#c8c8c8"
+            android:textSize="14sp"
+         />
+
+
+    </LinearLayout>
+
+
+
+
+    <EditText
+
+
+        android:id="@+id/feedback_content"
+        android:layout_margin="5dp"
+        android:padding="8dp"
+        android:textColorHint="#a7a7a7"
+        android:textCursorDrawable="@drawable/text_cursor_type"
+        android:textSize="16sp"
+        android:hint="请输入您的反馈意见"
+        android:background="@drawable/feedback_bg"
+        android:lines="12"
+        android:gravity="left"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <EditText
+        android:id="@+id/feedback_contact"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:padding="8dp"
+        android:layout_marginTop="20dp"
+        android:textColorHint="#a7a7a7"
+        android:textCursorDrawable="@drawable/text_cursor_type"
+        android:textSize="16sp"
+        android:hint="联系方式：邮箱／QQ／手机号"
+        android:background="@drawable/feedback_bg"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/feedback_commit"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text="提交"
+        android:textColor="@color/card_divider"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/feedback_commit"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+
+</LinearLayout>

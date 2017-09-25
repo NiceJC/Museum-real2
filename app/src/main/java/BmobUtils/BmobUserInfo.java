@@ -1,13 +1,16 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
-import entity.User;
+import interfaces.OnBmobReturnWithObj;
+import model.User;
 import interfaces.OnBmobReturnSuccess;
 import util.ToastUtils;
 
@@ -22,13 +25,20 @@ public class BmobUserInfo {
     private static BmobUserInfo instance=null;
     private OnBmobReturnSuccess onBmobReturnSuccess;
 
+
+
     public BmobUserInfo() {
 
     }
 
+
+
+
+
     public void setOnBmobReturnSuccess(OnBmobReturnSuccess onBmobReturnSuccess) {
         this.onBmobReturnSuccess = onBmobReturnSuccess;
     }
+
 
     private Handler handler=new Handler(){
         @Override
@@ -130,6 +140,9 @@ public class BmobUserInfo {
             }
         });
     }
+
+
+
 
 //    //设置绑定手机号
 //    public void setPhoneNum(String phoneNum){

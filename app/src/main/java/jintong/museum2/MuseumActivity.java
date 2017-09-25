@@ -6,34 +6,29 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import BmobUtils.BmobColt;
-import BmobUtils.BmobExhibitRoom;
-import BmobUtils.BmobMuseum;
-import MyView.ExpandableTextView;
-import MyView.GlideCircleTransform;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobExhibitRoom;
+import bmobUtils.BmobMuseum;
+import myView.ExpandableTextView;
+import myView.GlideCircleTransform;
+import adapter.BaseAdapter;
 import adapter.ExhibitRoomListAdapter;
 import cn.bmob.v3.BmobUser;
-import entity.Collection;
-import entity.ExhibitRoom;
-import entity.Museum;
-import entity.User;
+import model.ExhibitRoom;
+import model.Museum;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
-import interfaces.OnItemClickListener;
 import util.ToastUtils;
 
 import static com.bumptech.glide.Glide.with;
@@ -41,12 +36,10 @@ import static util.ParameterBase.EXHIBIROOM_ID;
 import static util.ParameterBase.MUSEUM_ID;
 
 /**
- *
- *
  * Created by wjc on 2017/3/6.
  */
 
-public class MuseumActivity extends BaseActivity implements View.OnClickListener,adapter.BaseAdapter.OnItemClickListener,adapter.BaseAdapter.OnViewClickListener, PullBaseView.OnRefreshListener{
+public class MuseumActivity extends BaseActivity implements View.OnClickListener, BaseAdapter.OnItemClickListener, XRecyclerView.LoadingListener {
 
 
     private TextView museumName; //博物馆名称
@@ -66,15 +59,15 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
     private TextView address; // 详细地址
     private TextView time; //开馆时间
     private TextView cost; //游览门票
-    private PullRecyclerView recyclerView; //展厅列表
+    private XRecyclerView recyclerView; //展厅列表
 
 
     private ExhibitRoomListAdapter adapter;
     private String museumID;
-    private int currentPage=0;
+    private int currentPage = 0;
 
     private Museum museum;
-    private List<Object> rooms=new ArrayList<Object>();
+    private List<Object> rooms = new ArrayList<Object>();
 
 
     private int watchNum;  //博物馆的粉丝数
@@ -87,11 +80,6 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
 
         setContentView(R.layout.activity_museum);
 
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-
         initView();
         initData();
 
@@ -99,29 +87,6 @@ public class MuseumActivity extends BaseActivity implements View.OnClickListener
 
 
     }
-
-    private void setData() {
-
-        RequestManager requestManager = Glide.with(this);
-
-        museumName.setText(museum.getMuseumName());
-        requestManager.load(museum.getImageURLs().get(0)).into(imageView);
-        museumIntru.setText(museum.getMuseumInfo());
-
-        Glide.with(this).load(museum.getIconURL())
-                .transform(new GlideCircleTransform(this))
-                .into(museumIcon);
-
-
-setWatchInfo();
-        address.setText(museum.getMuseumAddress());
-        time.setText(museum.getOpening_time());
-        cost.setText(museum.getCost());
-
-    }
-
-
-
 
     private void initView() {
 
@@ -138,43 +103,63 @@ setWatchInfo();
         address = (TextView) findViewById(R.id.museum_detail_address);
         time = (TextView) findViewById(R.id.museum_detail_time);
         cost = (TextView) findViewById(R.id.museum_detail_cost);
-        recyclerView = (PullRecyclerView) findViewById(R.id.museum_detail_recyclerView);
+        recyclerView = (XRecyclerView) findViewById(R.id.museum_detail_recyclerView);
 
 
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
-        adapter=new ExhibitRoomListAdapter(MuseumActivity.this,rooms,this);
+        adapter = new ExhibitRoomListAdapter(MuseumActivity.this, rooms);
+
         recyclerView.setAdapter(adapter);
-        recyclerView.setCanPullUp(false);
-        recyclerView.setCanPullDown(false);
-
-
-
-
+        adapter.setOnItemClickListener(this);
+        recyclerView.setLoadingListener(this);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+        recyclerView.setLoadingMoreEnabled(false);
 
 
     }
 
     private void initData() {
-        museumID=getIntent().getStringExtra(MUSEUM_ID);
+        museumID = getIntent().getStringExtra(MUSEUM_ID);
 
-       if(rooms.size()!=0){
-           return;
-       }
+        if (rooms.size() != 0) {
+            return;
+        }
 
         getMuseumInfo(museumID);
-        pullMoreFromServer(museumID,0);
-        currentPage=1;
+        recyclerView.refresh();
 
     }
+    private void setData() {
 
+        RequestManager requestManager = Glide.with(this);
+
+        museumName.setText(museum.getMuseumName());
+        requestManager.load(museum.getImageURLs().get(0)).into(imageView);
+        museumIntru.setText(museum.getMuseumInfo());
+
+        Glide.with(this).load(museum.getIconURL())
+                .transform(new GlideCircleTransform(this))
+                .into(museumIcon);
+
+
+        setWatchInfo();
+        address.setText(museum.getMuseumAddress());
+        time.setText(museum.getOpening_time());
+        cost.setText(museum.getCost());
+
+    }
     private void initEvents() {
 
         back.setOnClickListener(this);
         museumWatch.setOnClickListener(this);
 
 
+
     }
+
+
 
 
     @Override
@@ -192,7 +177,6 @@ setWatchInfo();
                 break;
 
 
-
             default:
                 break;
 
@@ -201,46 +185,34 @@ setWatchInfo();
 
 
     }
-
-
-
-    @Override
-    public void onHeaderRefresh(PullBaseView view) {
-
-
-    }
-
-    @Override
-    public void onFooterRefresh(PullBaseView view) {
-
-    }
-
     @Override
     public void onItemClick(int position) {
 
-        Intent intent=new Intent(MuseumActivity.this,ExhibitionRoomActivity.class);
-        ExhibitRoom exhibitRoom= (ExhibitRoom) rooms.get(position);
-        intent.putExtra(EXHIBIROOM_ID,exhibitRoom.getObjectId());
+        Intent intent = new Intent(MuseumActivity.this, ExhibitionRoomActivity.class);
+        ExhibitRoom exhibitRoom = (ExhibitRoom) rooms.get(position);
+        intent.putExtra(EXHIBIROOM_ID, exhibitRoom.getObjectId());
         startActivity(intent);
-        overridePendingTransition(R.anim.in_from_right,R.anim.none);
+        overridePendingTransition(R.anim.in_from_right, R.anim.none);
 
     }
 
     @Override
-    public void onViewClick(int position, int viewtype) {
-
+    public void onRefresh() {
+        refreshFromServer(museumID,0);
     }
 
+    @Override
+    public void onLoadMore() {
 
-
+    }
     //获取当前的博物馆信息
-    public void getMuseumInfo(String museumID){
-        BmobMuseum bmobMuseum=BmobMuseum.getInstance(this);
+    public void getMuseumInfo(String museumID) {
+        BmobMuseum bmobMuseum = BmobMuseum.getInstance(this);
         bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
 
-                museum= (Museum) Obj;
+                museum = (Museum) Obj;
                 setData();
 
             }
@@ -254,12 +226,11 @@ setWatchInfo();
         bmobMuseum.getMuseumByID(museumID);
 
 
-
     }
 
 
     //加载展厅
-    public void pullMoreFromServer(String museumID, int curPage) {
+    public void refreshFromServer(String museumID, int curPage) {
 
         BmobExhibitRoom bmobExhibitRoom = BmobExhibitRoom.getInstance(this);
 
@@ -269,19 +240,16 @@ setWatchInfo();
                 List<ExhibitRoom> exhibitRoomList = (List<ExhibitRoom>) Obj;
 
                 if (exhibitRoomList == null || exhibitRoomList.size() == 0) {
-                    ToastUtils.toast(MuseumActivity.this, "没有更多内容啦");
+                    ToastUtils.toast(MuseumActivity.this, "暂无数据");
 
+                    recyclerView.setNoMore(true);
                 } else {
                     rooms.clear();
-                    for ( ExhibitRoom exhibitRoom : exhibitRoomList) {
-
-
-                        rooms.add(exhibitRoom);
-                    }
+                    rooms.addAll(exhibitRoomList);
                     adapter.notifyDataSetChanged();
-                    currentPage++;
+                    currentPage=1;
                 }
-                recyclerView.onFooterRefreshComplete();
+                recyclerView.reset();
             }
 
             @Override
@@ -292,30 +260,32 @@ setWatchInfo();
         bmobExhibitRoom.getExhibitRoomsByMuseum(museumID, curPage);
 
     }
+
     //设置用户是否已经关注博物馆，以及关注的总人数
-    public void setWatchInfo(){
-        BmobMuseum bmobMuseum=BmobMuseum.getInstance(this);
+    public void setWatchInfo() {
+        BmobMuseum bmobMuseum = BmobMuseum.getInstance(this);
         bmobMuseum.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
-                List<User> list= (List<User>) Obj;
+                List<User> list = (List<User>) Obj;
 
-                isWatched=false;
-                watchNum=list.size();
+                isWatched = false;
+                watchNum = list.size();
 
-                for (User user:list
+                for (User user : list
                         ) {
 
-                    if(user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())){
-                       isWatched=true;
+                    if (user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
+                        isWatched = true;
                         break;
                     }
                 }
 
 
                 museumWatch.setSelected(isWatched);
-                museumWatchNum.setText(watchNum+"");
+                museumWatchNum.setText(watchNum + "");
             }
+
             @Override
             public void onFail(Object Obj) {
             }
@@ -324,25 +294,26 @@ setWatchInfo();
     }
 
     //关注或者取消关注 当前的博物馆
-    public void clickWatchMuseum(){
+    public void clickWatchMuseum() {
 
-        if(isWatched){ //已经关注  取消关注
+        if (isWatched) { //已经关注  取消关注
             new AlertDialog.Builder(this).setTitle("取消关注").setMessage("确定取消关注？")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, final int which) {
-                            BmobMuseum bmobmusem=BmobMuseum.getInstance(MuseumActivity.this);
+                            BmobMuseum bmobmusem = BmobMuseum.getInstance(MuseumActivity.this);
                             bmobmusem.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                                 @Override
                                 public void onSuccess(Object Obj) {
-                                    ToastUtils.toast(MuseumActivity.this,"已取消关注");
+                                    ToastUtils.toast(MuseumActivity.this, "已取消关注");
 
-                                    isWatched=false;
-                                    watchNum=watchNum-1;
+                                    isWatched = false;
+                                    watchNum = watchNum - 1;
                                     museumWatch.setSelected(isWatched);
-                                    museumWatchNum.setText(watchNum+"");
+                                    museumWatchNum.setText(watchNum + "");
 
                                 }
+
                                 @Override
                                 public void onFail(Object Obj) {
                                 }
@@ -357,20 +328,20 @@ setWatchInfo();
                         }
                     })
                     .show();
-        }else{//未关注  点击关注
-            BmobMuseum bmobmusem=BmobMuseum.getInstance(this);
+        } else {//未关注  点击关注
+            BmobMuseum bmobmusem = BmobMuseum.getInstance(this);
             bmobmusem.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                 @Override
                 public void onSuccess(Object Obj) {
 
-                    ToastUtils.toast(MuseumActivity.this,"已成功关注");
+                    ToastUtils.toast(MuseumActivity.this, "已成功关注");
 
                     museumWatch.setSelected(true);
 
-                    isWatched=true;
-                    watchNum=watchNum+1;
+                    isWatched = true;
+                    watchNum = watchNum + 1;
                     museumWatch.setSelected(isWatched);
-                    museumWatchNum.setText(watchNum+"");
+                    museumWatchNum.setText(watchNum + "");
 
                 }
 
@@ -382,6 +353,7 @@ setWatchInfo();
             bmobmusem.watchMuseum(museumID);
         }
     }
+
 
 
 }

@@ -1,4 +1,4 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,25 +12,23 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
-import entity.Blog;
-import entity.Collection;
-import entity.Comments;
-import entity.Exhibition;
-import entity.Museum;
-import entity.User;
+import model.Blog;
+import model.Collection;
+import model.Comments;
+import model.Exhibition;
+import model.Museum;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
-import static entity.Comments.COMMENT_TO_BLOG;
-import static entity.Comments.COMMENT_TO_COLLECTION;
-import static entity.Comments.COMMENT_TO_EXHIBITION;
-import static entity.Comments.COMMENT_TO_MUSEUM;
+import static model.Comments.COMMENT_TO_BLOG;
+import static model.Comments.COMMENT_TO_COLLECTION;
+import static model.Comments.COMMENT_TO_EXHIBITION;
+import static model.Comments.COMMENT_TO_MUSEUM;
 
 /**
  * 评论的Bmob操作
  * 包括评论的提交 查询 删除
- * 提交评论的时候，需要额外地将评论数+1 ，便于在Blog或者Collection列表上第一时间显示出评论数量
- * （好麻烦啊  早知道用BmobRelation了）
  * Created by wjc on 2017/5/4.
  */
 
@@ -230,13 +228,14 @@ public class BmobComment {
             @Override
             public void done(String s, BmobException e) {
                 if (e == null) {
-                    onBmobReturnWithObj.onSuccess(null);
+
 
                     if(commentType==COMMENT_TO_BLOG){
                         updateBlogCommentCount(ID);
 
                     }
 
+                    onBmobReturnWithObj.onSuccess(null);
                     Log.i("bmob", "评论发表成功");
                 } else {
                     onBmobReturnWithObj.onFail(null);
@@ -261,6 +260,8 @@ public class BmobComment {
             public void done(List<Comments> list, BmobException e) {
                 if (e == null) {
                     int count = list.size();
+                    onBmobReturnWithObj.onSuccess(count);
+
                     Blog blog = new Blog();
                     blog.setCommentNums(count);
                     blog.update(blogID, new UpdateListener() {

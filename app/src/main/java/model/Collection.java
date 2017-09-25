@@ -1,11 +1,9 @@
-package entity;
+package model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.datatype.BmobRelation;
 
 /**
@@ -46,6 +44,8 @@ public class Collection extends BmobObject implements Serializable {
 
 
     private BmobFile image1;
+    private String image1Url; //图片的url 只要第一张，主要用于数据库的存取
+
     private BmobFile image2;
     private BmobFile image3;
     private BmobFile image4;
@@ -70,6 +70,13 @@ public class Collection extends BmobObject implements Serializable {
 
     }
 
+    public String getImage1Url() {
+        return image1Url;
+    }
+
+    public void setImage1Url(String image1Url) {
+        this.image1Url = image1Url;
+    }
 
     public String getColtName() {
         return coltName;
@@ -215,4 +222,6 @@ public class Collection extends BmobObject implements Serializable {
     public void setLikedUser(BmobRelation likedUser) {
         this.likedUser = likedUser;
     }
+
+
 }

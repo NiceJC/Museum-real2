@@ -69,7 +69,6 @@ public class CommunityFragment extends Fragment {
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
 
-
         /**
          *新建适配器
          * 注意 在Fragment中内嵌Viewpager需要使用getChildFragmentManager()
@@ -121,9 +120,6 @@ public class CommunityFragment extends Fragment {
         public int getCount() {
             return fragmentList.size();
         }
-
-
-
 
     }
 

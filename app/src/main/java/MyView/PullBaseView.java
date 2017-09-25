@@ -1,4 +1,4 @@
-package MyView;
+package myView;
 
 import android.content.Context;
 import android.os.Parcelable;
@@ -49,15 +49,11 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
     private TextView mHeaderTextView;
     private TextView mHeaderUpdateTextView;
     private ProgressBar mHeaderProgressBar;
-    //footerview
-    private View mFooterView;
-    private int mFooterViewHeight;
-    private TextView mFooterTextView;
-    private ProgressBar mFooterProgressBar;
+
 
     private LayoutInflater mInflater;
     private int mHeaderState;
-    private int mFooterState;
+
     private int mPullState;
 
     private RotateAnimation mFlipAnimation;//变为向下的箭头,改变箭头方向
@@ -138,23 +134,8 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
         return sdf.format(new Date());
     }
 
-    private void addFooterView() {
-        // footer view
-        mFooterView = mInflater.inflate(R.layout.refresh_footer, this, false);
-        mFooterTextView = (TextView) mFooterView.findViewById(R.id.pull_to_load_text);
-        mFooterProgressBar = (ProgressBar) mFooterView.findViewById(R.id.pull_to_load_progress);
-        measureView(mFooterView);
-        mFooterViewHeight = mFooterView.getMeasuredHeight();
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, mFooterViewHeight);
-        addView(mFooterView, params);
-    }
 
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        addFooterView();
-    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -164,7 +145,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (!isCanScrollAtRereshing) {
-                    if (mHeaderState == REFRESHING || mFooterState == REFRESHING) {
+                    if (mHeaderState == REFRESHING) {
                         return true;
                     }
                 }
@@ -209,8 +190,6 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
                 int deltaY = y - mLastMotionY;
                 if (isCanPullDown && mPullState == PULL_DOWN_STATE) {
                     headerPrepareToRefresh(deltaY);
-                } else if (isCanPullUp && mPullState == PULL_UP_STATE) {
-                    footerPrepareToRefresh(deltaY);
                 }
                 mLastMotionY = y;
                 break;
@@ -221,14 +200,6 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
                     if (topMargin >= 0) {
                         // 开始刷新
                         headerRefreshing();
-                    } else {
-                        // 还没有执行刷新，重新隐藏
-                        setHeaderTopMargin(-mHeaderViewHeight);
-                    }
-                } else if (isCanPullUp && mPullState == PULL_UP_STATE) {
-                    if (Math.abs(topMargin) >= mHeaderViewHeight + mFooterViewHeight) {
-                        // 开始执行footer 刷新
-                        footerRefreshing();
                     } else {
                         // 还没有执行刷新，重新隐藏
                         setHeaderTopMargin(-mHeaderViewHeight);
@@ -247,7 +218,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
      * @return
      */
     private boolean isRefreshViewScroll(int deltaY) {
-        if (mHeaderState == REFRESHING || mFooterState == REFRESHING) {
+        if (mHeaderState == REFRESHING ) {
             return false;
         }
         if (deltaY >= -20 && deltaY <= 20) //滑动太小也不做处理
@@ -273,17 +244,9 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
                 }
 
             } else if (deltaY < 0) {
-                View lastChild = mRecyclerView.getChildAt(mRecyclerView.getChildCount() - 1);
-                if (lastChild == null) {
-                    // 如果mRecyclerView中没有数据,不拦截
+
                     return false;
-                }
-                // 最后一个子view的Bottom小于父View的高度说明mRecyclerView的数据没有填满父view,
-                // 等于父View的高度说明mRecyclerView已经滑动到最后
-                if (lastChild.getBottom() <= getHeight() && isScrollBottom()) {
-                    mPullState = PULL_UP_STATE;
-                    return true;
-                }
+
             }
         }
         return false;
@@ -395,24 +358,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
         }
     }
 
-    /**
-     * footer 准备刷新,手指移动过程,还没有释放 移动footer view高度同样和移动header view
-     * 高度是一样，都是通过修改header view的topmargin的值来达到
-     *
-     * @param deltaY ,手指滑动的距离
-     */
-    private void footerPrepareToRefresh(int deltaY) {
-        int newTopMargin = changingHeaderViewTopMargin(deltaY);
-        // 如果header view topMargin 的绝对值大于或等于header + footer 的高度
-        // 说明footer view 完全显示出来了，修改footer view 的提示状态
-        if (Math.abs(newTopMargin) >= (mHeaderViewHeight + mFooterViewHeight) && mFooterState != RELEASE_TO_REFRESH) {
-            mFooterTextView.setText(R.string.pull_to_refresh_footer_release_label);
-            mFooterState = RELEASE_TO_REFRESH;
-        } else if (Math.abs(newTopMargin) < (mHeaderViewHeight + mFooterViewHeight)) {
-            mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
-            mFooterState = PULL_TO_REFRESH;
-        }
-    }
+
 
     /**
      * 修改Header view top margin的值
@@ -455,19 +401,7 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
         }
     }
 
-    /**
-     * footer refreshing
-     */
-    private void footerRefreshing() {
-        mFooterState = REFRESHING;
-        int top = mHeaderViewHeight + mFooterViewHeight;
-        setHeaderTopMargin(-top);
-        mFooterTextView.setVisibility(View.GONE);
-        mFooterProgressBar.setVisibility(View.VISIBLE);
-        if (refreshListener != null) {
-            refreshListener.onFooterRefresh(this);
-        }
-    }
+
 
     /**
      * 设置header view 的topMargin的值
@@ -496,42 +430,19 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
     }
 
 
-    /**
-     * 如果没有更多数据拉取，改变底部文字
-     */
 
-    public void onNoMoreData() {
-
-        mFooterTextView.setText(R.string.pull_to_refresh_no_more_data);
-
-        setCanPullUp(false);
-
-    }
-
-    //重置底部
-    public void resetFootView() {
-
-
-        mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
-
-        setCanPullUp(true);
-
-
-    }
 
 
     /**
      * footer view 完成更新后恢复初始状态
      */
     public void onFooterRefreshComplete() {
-        setHeaderTopMargin(-mHeaderViewHeight);
-        mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
-        mFooterTextView.setVisibility(View.VISIBLE);
-        mFooterProgressBar.setVisibility(View.GONE);
-        mFooterState = PULL_TO_REFRESH;
-        /**
-         * 刷新之后是否直接拉到底部
-         */
+//        setHeaderTopMargin(-mHeaderViewHeight);
+//        mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
+//        mFooterTextView.setVisibility(View.VISIBLE);
+//        mFooterProgressBar.setVisibility(View.GONE);
+//        mFooterState = PULL_TO_REFRESH;
+//
 //        if (mRecyclerView != null) {
 //            mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 //        }
@@ -583,10 +494,10 @@ public abstract class PullBaseView<T extends RecyclerView> extends LinearLayout 
      * @param canPullUp
      */
     public void setCanPullUp(boolean canPullUp) {
-        isCanPullUp = canPullUp;
-        if (!canPullUp) {
-            mFooterView.setVisibility(GONE);
-        }
+//        isCanPullUp = canPullUp;
+//        if (!canPullUp) {
+//            mFooterView.setVisibility(GONE);
+//        }
     }
 
     /**

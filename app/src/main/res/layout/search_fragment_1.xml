@@ -10,14 +10,14 @@
         android:layout_margin="10dp"
         android:text="热门搜索" />
 
-    <MyView.FlowLayout
+    <myView.FlowLayout
         android:id="@+id/flow_useful_keywords"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
 
 
-    </MyView.FlowLayout>
+    </myView.FlowLayout>
 
     <View
         android:layout_width="match_parent"
@@ -50,13 +50,13 @@
 
     </LinearLayout>
 
-    <MyView.FlowLayout
+    <myView.FlowLayout
         android:id="@+id/flow_used_keywords"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
 
 
-    </MyView.FlowLayout>
+    </myView.FlowLayout>
 
 </LinearLayout>

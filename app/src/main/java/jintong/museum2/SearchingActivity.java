@@ -1,45 +1,27 @@
 package jintong.museum2;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import MyView.FlowLayout;
-import MyView.NoScrollViewPager;
+import myView.NoScrollViewPager;
 import fragment.SearchingFragmentF1;
 import fragment.SearchingFragmentF2;
 import interfaces.OnSearchingJump;
-import interfaces.OnclickFinish;
-
-import static android.R.attr.breadCrumbShortTitle;
-import static android.R.attr.button;
-import static android.R.attr.key;
 
 /**
  * 搜索页面
@@ -69,10 +51,6 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_searching);
-
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 
 
@@ -104,9 +82,9 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
         }
         if(fragment2==null){
             fragment2=new SearchingFragmentF2();
-            Bundle bundle=new Bundle();
-            bundle.putString("keyWord",null);
-            fragment2.setArguments(bundle);
+//            Bundle bundle=new Bundle();
+//            bundle.putString("keyWord",null);
+//            fragment2.setArguments(bundle);
             fragments.add(fragment2);
         }
 
@@ -137,10 +115,14 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
         fragment1.setOnSearchingJump(new OnSearchingJump() {
             @Override
             public void onSearching(String keyWord) {
-                Bundle bundle=new Bundle();
-                bundle.putString("keyWord",keyWord);
-                fragment2.setArguments(bundle);
+//                Bundle bundle=new Bundle();
+//                bundle.putString("keyWord",keyWord);
+//                fragment2.setArguments(bundle);
                 viewPager.setCurrentItem(1);
+
+                editText.setText(keyWord);
+                editText.setSelection(keyWord.length());
+                fragment2.refreshKeyWords(keyWord);
             }
         });
 
@@ -234,12 +216,13 @@ public class SearchingActivity extends BaseActivity implements View.OnClickListe
     private void searching(String keyword) {
         Toast.makeText(SearchingActivity.this, "searching", Toast.LENGTH_SHORT).show();
         saveWordsToSP(keyword);
-
-        Bundle bundle=new Bundle();
-        bundle.putString("keyWord",keyword);
-        fragment2.setArguments(bundle);
+//
+//        Bundle bundle=new Bundle();
+//        bundle.putString("keyWord",keyword);
+//        fragment2.setArguments(bundle);
         viewPager.setCurrentItem(1);
 
+        fragment2.refreshKeyWords(keyword);
 
 
     }

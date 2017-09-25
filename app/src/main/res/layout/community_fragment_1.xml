@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/card_divider"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
 
-    <MyView.PullRecyclerView
-        android:orientation="vertical"
-        android:id="@+id/recylerview_community_f1"
+        android:id="@+id/recyclerView_community_f1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants" />
+    <ImageView
 
 
-    </MyView.PullRecyclerView>
+        android:layout_marginTop="100dp"
+
+        android:visibility="gone"
+        android:id="@+id/when_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:src="@drawable/nodata" />
+
+
 </LinearLayout>

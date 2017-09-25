@@ -1,25 +1,23 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FetchUserInfoListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
-import entity.User;
-import interfaces.OnBmobReturnSuccess;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
+import model.UserRelation;
 import util.ToastUtils;
 
 /**
@@ -82,12 +80,23 @@ public class BmobRegisterAndLogin {
         User user = new User();
         user.setUsername(userName);
         user.setPassword(passWord);
-        user.setRegisterType(type);
+          user.setRegisterType(type);
         user.signUp(new SaveListener<User>() {
             @Override
             public void done(User user, BmobException e) {
                 if (e == null) {
                     ToastUtils.toast(context, "注册成功");
+
+                    User newUser=new User();
+
+                    newUser.update(user.getObjectId(), new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+
+                        }
+                    });
+
+
 
                 } else {
                     e.printStackTrace();
@@ -143,7 +152,8 @@ public class BmobRegisterAndLogin {
                     Log.i(TAG, "登录成功");
                     ToastUtils.toast(context,"登录成功");
 
-                    onBmobReturnWithObj.onSuccess(null);
+                    fetchUserInfo();
+                    onBmobReturnWithObj.onSuccess(user);
 
                 }else{
 
@@ -155,7 +165,24 @@ public class BmobRegisterAndLogin {
         });
 
     }
+    /**
+     * 更新本地用户信息
+     * 注意：需要先登录，否则会报9024错误
+     *
+     * @see cn.bmob.v3.helper.ErrorCode#
+     */
+    private void fetchUserInfo() {
+        BmobUser.fetchUserJsonInfo(new FetchUserInfoListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
 
+                } else {
+
+                }
+            }
+        });
+    }
 
 
 
@@ -222,6 +249,10 @@ public class BmobRegisterAndLogin {
         User user = new User();
         user.setMobilePhoneNumber(num);
         user.setPassword(passWord);
+        user.setNickName("猜猜我是谁");
+
+        user.setPortraitURL("http://bmob-cdn-13569.b0.upaiyun.com/2017/09/19/eced5301408a8705808a3019dfd59044.png");
+
         user.signOrLogin(code, new SaveListener<User>() {
             @Override
             public void done(User user, BmobException e) {

@@ -4,7 +4,12 @@ package jintong.museum2;
 
 import android.app.Application;
 
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+
 import cn.bmob.v3.Bmob;
+import util.MyLocationListener;
 
 
 /**
@@ -15,20 +20,22 @@ public class MyApplication extends Application {
 
 
     //Bmob的初始化appID
-    public static String APPID="5d3ed91c22b8a36cf7f36d35bed95428";
+    public static String APPID="443dccd52fafe0a53cc95cf53b28f12f";
 
 
-    //ShareSDK的appkey和APPSecret
-//    public static String APPKEY="1af879d9c01a0";
-//    public static String APPSECRET="bb05b679188bdebc1c83d32c0f1ca6d3";
+
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        //Bmob初始化
         Bmob.initialize(this,APPID);
 
-//        SMSSDK.initSDK(this,APPKEY,APPSECRET);
+
 
     }
+
+
+
 }

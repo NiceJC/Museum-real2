@@ -1,4 +1,4 @@
-package MyView;
+package myView;
 
 import android.app.Activity;
 import android.graphics.Rect;

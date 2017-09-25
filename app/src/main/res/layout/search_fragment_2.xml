@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/search_frag2_tab"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@drawable/tab_bg"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabTextAppearance="@style/TabTextStyle"
+        app:tabTextColor="#232323"
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/search_2_recyclerView"
+        />
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/search_frag2_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
-    </android.support.v7.widget.RecyclerView>
+    </android.support.v4.view.ViewPager>
 
-
-        <TextView
-            android:id="@+id/noResultText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="没有找到您想要的结果"
-            android:textSize="16sp"
-            android:visibility="gone" />
 
     </LinearLayout>

@@ -6,21 +6,12 @@
     android:layout_height="match_parent">
 
 
-    <View
-
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:background="@drawable/system_bar"
-        android:clipToPadding="true"
-        android:fitsSystemWindows="true">
-
-    </View>
     <LinearLayout
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
         android:orientation="horizontal"
 
-        android:background="#1893fb"
+        android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="46dp">
         <ImageView
@@ -36,7 +27,7 @@
         <TextView
             android:gravity="center"
             android:textSize="18sp"
-            android:text="我的好友"
+            android:text="好友关系"
 
             android:textColor="#ffffff"
             android:layout_gravity="center"

@@ -2,22 +2,16 @@ package adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-
 import java.util.List;
 
-import entity.Exhibition;
-import entity.Museum;
-import interfaces.OnItemClickListener;
+import model.Museum;
 import jintong.museum2.R;
+import util.DistanceUtil;
 
 /**
  * 首页展馆列表RecyclerView的Adapter
@@ -28,8 +22,8 @@ import jintong.museum2.R;
 public class MuseumListAdapter extends BaseAdapter<MuseumListAdapter.MuseumListViewHolder> {
 
 
-    public MuseumListAdapter(Context context, List<Object> listDatas, OnViewClickListener onViewClickListener) {
-        super(context, listDatas, onViewClickListener);
+    public MuseumListAdapter(Context context, List<Object> listDatas) {
+        super(context, listDatas);
     }
 
     @Override
@@ -47,9 +41,15 @@ public class MuseumListAdapter extends BaseAdapter<MuseumListAdapter.MuseumListV
         holder.museumName.setText(museum.getMuseumName());
 
         holder.museumLocation.setText(museum.getLocateCity());
-        holder.museumDistance.setText("99KM"); //这里是需要根据经纬度实时计算的
+
+        holder.museumDistance.setText(DistanceUtil. getCurrentLocal(context,museum.getGeoPoint())+"KM"); //这里是需要根据经纬度实时计算的
+
 
     }
+
+
+
+
 
     @Override
     public int getItemCount() {

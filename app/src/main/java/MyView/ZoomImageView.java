@@ -1,6 +1,5 @@
-package MyView;
+package myView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -13,11 +12,9 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
-import interfaces.OnItemClickListener;
 import interfaces.OnclickFinish;
 
 /**

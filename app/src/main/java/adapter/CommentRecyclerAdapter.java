@@ -14,8 +14,8 @@ import com.bumptech.glide.RequestManager;
 
 import java.util.List;
 
-import MyView.GlideCircleTransform;
-import entity.Comments;
+import myView.GlideCircleTransform;
+import model.Comments;
 import jintong.museum2.R;
 import util.DateUtils;
 

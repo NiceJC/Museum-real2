@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    android:background="@color/tab_bg_color"
+    android:layout_margin="3dp"
+
     android:orientation="horizontal">
 
 
     <ImageView
 
 
+        android:background="@color/card_color"
+        android:padding="5dp"
         android:id="@+id/news_item_colt_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -19,24 +21,27 @@
 
 
     <LinearLayout
+        android:layout_marginLeft="5dp"
+        android:background="@color/card_color"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:gravity="center_vertical"
 
-            android:layout_margin="5dp"
+            android:layout_margin="3dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:gravity="center"
 
-                android:text="展品："/>
-            <TextView
+                android:textColor="@color/text_color_black"
                 android:id="@+id/news_item_colt_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,6 +54,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_margin="2dp"
             android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,10 +66,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
+                android:textColor="@color/text_color_weak"
                 android:text="评论：" />
 
             <TextView
 
+                android:text=""
+                android:maxLines="3"
+                android:ellipsize="end"
                 android:id="@+id/news_item_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

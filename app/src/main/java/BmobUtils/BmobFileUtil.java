@@ -1,13 +1,11 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
@@ -16,7 +14,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadBatchListener;
 import cn.bmob.v3.listener.UploadFileListener;
-import entity.User;
+import model.User;
 import interfaces.OnBmobReturnSuccess;
 import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
@@ -119,7 +117,7 @@ public class BmobFileUtil  {
 
 
 
-    //上传本地文件到服务器,并更新数据表  成功后返回一个URL
+    //上传本地文件到服务器 .成功后返回一个URL,并将URL更新到用户数据表
     public void uploadFile(String path){
         final BmobFile bmobFile=new BmobFile(new File(path));
         bmobFile.uploadblock(new UploadFileListener() {
@@ -138,14 +136,16 @@ public class BmobFileUtil  {
                         @Override
                         public void done(BmobException e) {
                             if(e==null){
-                                ToastUtils.toast(context,"更新用户信息成功");
+                                onBmobReturnWithObj.onSuccess(null);
                             }else{
-                                ToastUtils.toast(context,"更新用户信息失败:" + e.getMessage());
+                                onBmobReturnWithObj.onFail(e.getMessage());
+                                Log.e("bmob",e.getMessage());
                             }
                         }
                     });
 
                 }else{
+                    onBmobReturnWithObj.onFail(e.getMessage());
                     Log.d(TAG,"上传文件失败"+e.getMessage());
                     ToastUtils.toast(context,"上传文件失败"+e.getMessage());
                 }

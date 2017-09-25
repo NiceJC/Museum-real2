@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,7 +9,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="46dp"
-        android:background="#1893fb"
+        android:background="?attr/colorPrimary"
 
         android:orientation="horizontal"
         android:paddingBottom="3dp"
@@ -39,161 +40,207 @@
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
             android:padding="4dp"
-            android:src="@drawable/selector_find" />
+           />
 
 
     </LinearLayout>
 
-    <MyView.MyScrollview
-        android:scrollbars="none"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:descendantFocusability="blocksDescendants"
+    <android.support.design.widget.CoordinatorLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_light"
+
+        >
+
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/main.appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@color/card_divider"
 
 
-            <LinearLayout
+            android:theme="@style/ThemeOverlay.AppCompat">
 
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/main.collapsing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/tab_bg"
-                android:orientation="vertical"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp">
 
+                app:contentScrim="?attr/colorPrimary"
 
-                <LinearLayout
-
-                    android:layout_width="match_parent"
-
-                    android:layout_height="wrap_content"
-
-
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingTop="8dp"
-
-
-                    >
-
-                    <ImageView
-                        android:id="@+id/museum_fragment_bronze"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/type_bronze" />
-
-                    <ImageView
-                        android:id="@+id/museum_fragment_jade"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/type_jade" />
-
-                    <ImageView
-                        android:id="@+id/museum_fragment_paint"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/type_paint" />
-
-
-                </LinearLayout>
-
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/tab_bg"
+                    android:orientation="vertical"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    app:layout_collapseMode="parallax">
 
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
 
+                    <LinearLayout
 
-                    android:paddingBottom="8dp">
+                        android:layout_width="match_parent"
 
-                    <ImageView
-
-                        android:id="@+id/museum_fragment_china"
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/type_china" />
 
-                    <ImageView
-                        android:id="@+id/museum_fragment_lacquer"
-                        android:layout_width="0dp"
+
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+
+
+                        >
+
+                        <ImageView
+                            android:id="@+id/museum_fragment_bronze"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/type_bronze" />
+
+                        <ImageView
+                            android:id="@+id/museum_fragment_jade"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/type_jade" />
+
+                        <ImageView
+                            android:id="@+id/museum_fragment_paint"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/type_paint" />
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/type_lacquer" />
 
-                    <ImageView
-                        android:id="@+id/museum_fragment_others"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/type_others" />
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
 
 
+                        android:paddingBottom="8dp">
+
+                        <ImageView
+
+                            android:id="@+id/museum_fragment_china"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/type_china" />
+
+                        <ImageView
+                            android:id="@+id/museum_fragment_lacquer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/type_lacquer" />
+
+                        <ImageView
+                            android:id="@+id/museum_fragment_others"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
+                            android:src="@mipmap/type_others" />
+
+
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </android.support.design.widget.CollapsingToolbarLayout>
 
             <LinearLayout
+                android:id="@+id/divider"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@color/tab_bg_color"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="2dp"
                 android:gravity="center_vertical"
+
                 android:orientation="horizontal"
-                android:paddingLeft="5dp"
-                android:paddingTop="5dp"
-              >
+                android:padding="2dp"
+
+                >
 
 
                 <TextView
-                    android:textSize="16sp"
+                    android:id="@+id/textView4"
+
+
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:paddingLeft="3dp"
-                    android:text="大家都爱看" />
+                    android:background="@drawable/blue_bg"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
 
+
+                    android:paddingRight="10dp"
+                    android:text="热门展品"
+                    android:textColor="#ffffff"
+
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/colorPrimary" />
             </LinearLayout>
+        </android.support.design.widget.AppBarLayout>
 
-            <MyView.PullRecyclerView
+        <com.jcodecraeer.xrecyclerview.XRecyclerView
+            android:id="@+id/colt_recyclerView"
+            android:background="@color/card_divider"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
-
-                android:id="@+id/colt_recyclerView"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-           >
-
-
-            </MyView.PullRecyclerView>
+        </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
 
-        </LinearLayout>
-    </MyView.MyScrollview>
+        <android.support.design.widget.FloatingActionButton
+
+            android:id="@+id/search_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="5dp"
+
+            android:elevation="6dp"
+            app:pressedTranslationZ="6dp"
+            android:layout_margin="20dp"
+            android:src="@drawable/selector_find"
+            />
+
+
+    </android.support.design.widget.CoordinatorLayout>
+
 
 </LinearLayout>

@@ -13,7 +13,7 @@ import com.bumptech.glide.RequestManager;
 import java.util.List;
 
 /**
- * BaseAdapter
+ * BaseListAdapter
  */
 public class BaseAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
 
@@ -24,6 +24,9 @@ public class BaseAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView
     public OnViewClickListener onViewClickListener;//item子view点击事件
     public OnItemClickListener onItemClickListener;//item点击事件
     public OnItemLongClickListener onItemLongClickListener;//item长按事件
+
+
+
 
 
 
@@ -57,6 +60,9 @@ public class BaseAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView
 
     @Override
     public T onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
+
         return null;
     }
 

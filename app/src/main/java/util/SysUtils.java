@@ -8,7 +8,7 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import entity.Collection;
+import model.Collection;
 
 /**
  * 1、根据当前手机的屏幕密度，将Dp单位转为PX
@@ -29,8 +29,12 @@ public class SysUtils {
         WindowManager windowManager = activity.getWindowManager();
         Display display = windowManager.getDefaultDisplay();
         width = display.getWidth();
+
         return width;
     }
+
+
+
 
     //提取出摸某个藏品的所有图片的URL
     public static ArrayList<String> getURLs(Collection collection) {

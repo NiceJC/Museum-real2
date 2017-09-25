@@ -1,23 +1,24 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 隐藏自带的actionBar,以及设置不显示title -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BaseAppTheme" parent="AppTheme.Base">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-       //分隔线
+        <item name="android:windowBackground">@color/card_divider</item>
+        //分隔线
         <item name="android:listDivider">@drawable/divider_vertical</item>
         <item name="android:horizontalDivider">@drawable/divider_horizontal</item>
-   
     </style>
-    
-    <!--设置顶部tab的text字体大小-->
-    <style name="TabTextStyle" >
 
-        <item name="android:textSize">@dimen/top_tab_text_size</item>
+    <style name="AppTheme" parent="BaseAppTheme"/>
 
-    </style>
 
     <!--设置启动页的主题的 背景图片-->
     <style name="FirstTheme" parent="Theme.AppCompat.NoActionBar">
@@ -51,9 +52,11 @@
     </style>
 
 
+    <!--设置顶部tab的text字体大小-->
+    <style name="TabTextStyle" >
 
+        <item name="android:textSize">@dimen/top_tab_text_size</item>
 
-
-
+    </style>
 
 </resources>

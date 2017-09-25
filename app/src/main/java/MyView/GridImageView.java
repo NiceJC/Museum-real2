@@ -1,9 +1,8 @@
-package MyView;
+package myView;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.GridView;
-import android.widget.ListAdapter;
 
 /**
  *

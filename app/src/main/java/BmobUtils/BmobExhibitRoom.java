@@ -1,4 +1,4 @@
-package BmobUtils;
+package bmobUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,13 +11,12 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
-import entity.ExhibitRoom;
-import entity.Exhibition;
-import entity.Museum;
+import model.ExhibitRoom;
+import model.Museum;
 import interfaces.OnBmobReturnWithObj;
 import util.ToastUtils;
 
-import static util.ParameterBase.LIMIT;
+import static util.ParameterBase.LIMIT_SIX;
 
 /**
  * Created by wjc on 2017/5/12.
@@ -63,8 +62,8 @@ public class BmobExhibitRoom  {
 
         BmobQuery<ExhibitRoom> query = new BmobQuery<ExhibitRoom>();
 //        query.setLimit(5);
-        query.setLimit(LIMIT);
-        query.setSkip(LIMIT * curPage);
+        query.setLimit(LIMIT_SIX);
+        query.setSkip(LIMIT_SIX * curPage);
 
         Museum museum=new Museum();
         museum.setObjectId(museumID);
@@ -113,7 +112,7 @@ public class BmobExhibitRoom  {
      */
     public void getBykeyWord(String keyWord) {
         BmobQuery<ExhibitRoom> query = new BmobQuery<ExhibitRoom>();
-        query.setLimit(LIMIT);
+        query.setLimit(LIMIT_SIX);
 
         query.order("-createdAt");//先按点赞数降序，再按时间降序
         query.include("toMuseum");

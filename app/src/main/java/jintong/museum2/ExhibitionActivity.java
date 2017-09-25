@@ -6,29 +6,26 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobColt;
-import BmobUtils.BmobExhibition;
-import BmobUtils.BmobMuseum;
-import MyView.ExpandableTextView;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobColt;
+import bmobUtils.BmobExhibition;
+import myView.ExpandableTextView;
+import adapter.BaseAdapter;
 import adapter.ColtListAdapter;
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
-import entity.Collection;
-import entity.Exhibition;
-import entity.User;
+import model.Collection;
+import model.Exhibition;
+import model.User;
 import interfaces.OnBmobReturnWithObj;
-import interfaces.OnItemClickListener;
 import util.ToastUtils;
 
 import static util.ParameterBase.COLT_ID;
@@ -39,10 +36,9 @@ import static util.ParameterBase.EXHIBITION_ID;
  * Created by wjc on 2017/3/23.
  */
 
-public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdapter.OnItemClickListener,
-        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
-        PullBaseView.OnRefreshListener {
-    private PullRecyclerView recyclerView;
+public class ExhibitionActivity extends BaseActivity implements BaseAdapter.OnItemClickListener,
+         XRecyclerView.LoadingListener {
+    private XRecyclerView recyclerView;
     private ImageView back;
     private TextView roomName;
     private List<Object> datas = new ArrayList<>();
@@ -52,17 +48,13 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
     private int currentPage = 0;
 
 
-
     private int watchNum;
     private boolean isWatched;
 
-    private TextView exhibitWatchNum,address,time,cost;//关注人数
+    private TextView exhibitWatchNum, address, time, cost;//关注人数
 
     private ExpandableTextView intro;
     private ImageView exhibitWatch;//关注图标，点击切换关注状态
-
-
-
 
 
     private String exhibitID;
@@ -73,18 +65,11 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
 
         setContentView(R.layout.activity_exhibition);
 
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
 
         initView();
         initData();
 
         initEvents();
-
-
-
 
 
     }
@@ -104,38 +89,37 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
     private void initView() {
 
 
-
         back = (ImageView) findViewById(R.id.museum_room_back);
         roomName = (TextView) findViewById(R.id.museum_room_name);
-        recyclerView = (PullRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
+        recyclerView = (XRecyclerView) findViewById(R.id.exhibitRoom_recyclerView);
 
-        exhibitWatchNum= (TextView) findViewById(R.id.exhibit_detail_watchNum);
+        exhibitWatchNum = (TextView) findViewById(R.id.exhibit_detail_watchNum);
 
-        exhibitWatch= (ImageView) findViewById(R.id.exhibit_detail_watch);
+        exhibitWatch = (ImageView) findViewById(R.id.exhibit_detail_watch);
 
-        address= (TextView) findViewById(R.id.exhibit_detail_address);
-        time= (TextView) findViewById(R.id.exhibit_detail_time);
-        cost= (TextView) findViewById(R.id.exhibit_detail_cost);
+        address = (TextView) findViewById(R.id.exhibit_detail_address);
+        time = (TextView) findViewById(R.id.exhibit_detail_time);
+        cost = (TextView) findViewById(R.id.exhibit_detail_cost);
         intro = (ExpandableTextView) findViewById(R.id.expand_text_view);
 
-        recyclerView.setFocusable(false);
-        manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
+//        recyclerView.setFocusable(false);
+//        manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
+//            @Override
+//            public boolean canScrollVertically() {
+//                return false;
+//            }
+//        };
+        manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 
-        recyclerView.setOnRefreshListener(this);
-
-        adapter = new ColtListAdapter(ExhibitionActivity.this, datas, this);
+        adapter = new ColtListAdapter(ExhibitionActivity.this, datas);
         adapter.setOnItemClickListener(this);
-        adapter.setOnItemLongClickListener(this);
 
-
-        recyclerView.setCanPullDown(false); //不用下拉
         recyclerView.setAdapter(adapter);
+        recyclerView.setLoadingListener(this);
+        recyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        recyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
+
 
     }
 
@@ -143,14 +127,13 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
     private void initData() {
 
         exhibitID = getIntent().getStringExtra(EXHIBITION_ID);
-         if(datas.size()!=0){
-             return;
-         }
+        if (datas.size() != 0) {
+            return;
+        }
 
         getExhibitionInfo(exhibitID);
-        pullMoreFromServer(exhibitID,0);
 
-        currentPage=1;
+        recyclerView.refresh();
 
 
     }
@@ -162,7 +145,7 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
             @Override
             public void onClick(View v) {
                 finish();
-                overridePendingTransition(R.anim.none,R.anim.out_to_right);
+                overridePendingTransition(R.anim.none, R.anim.out_to_right);
 
             }
         });
@@ -178,54 +161,44 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
     @Override
     public void onBackPressed() {
         finish();
-        overridePendingTransition(R.anim.none,R.anim.out_to_right);
+        overridePendingTransition(R.anim.none, R.anim.out_to_right);
 
     }
 
-    @Override
-    public void onHeaderRefresh(PullBaseView view) {
-
-    }
-
-    @Override
-    public void onFooterRefresh(PullBaseView view) {
-
-        pullMoreFromServer(exhibitID,currentPage);
-    }
 
     @Override
     public void onItemClick(int position) {
 
 
-
-
-    }
-
-    @Override
-    public void onItemLongClick(int position) {
-
-        Intent intent=new Intent(this,CollectionActivity.class);
-        Collection collection= (Collection) datas.get(position);
-        intent.putExtra(COLT_ID,collection.getObjectId());
+        Intent intent = new Intent(this, CollectionActivity.class);
+        Collection collection = (Collection) datas.get(position);
+        intent.putExtra(COLT_ID, collection.getObjectId());
         startActivity(intent);
-        overridePendingTransition(R.anim.in_from_right,R.anim.none);
+        overridePendingTransition(R.anim.in_from_right, R.anim.none);
 
 
+    }
+
+
+    @Override
+    public void onRefresh() {
+
+        refreshFromServer(exhibitID);
     }
 
     @Override
-    public void onViewClick(int position, int viewtype) {
+    public void onLoadMore() {
 
+        pullMoreFromServer(exhibitID, currentPage);
     }
 
-
-    public void getExhibitionInfo(String exhibitID){
-        BmobExhibition bmobExhibition=BmobExhibition.getInstance(this);
+    public void getExhibitionInfo(String exhibitID) {
+        BmobExhibition bmobExhibition = BmobExhibition.getInstance(this);
         bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
 
-                 exhibition= (Exhibition) Obj;
+                exhibition = (Exhibition) Obj;
                 setData();
 
             }
@@ -237,7 +210,6 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
         });
 
         bmobExhibition.getExhibitionByID(exhibitID);
-
 
 
     }
@@ -254,79 +226,104 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
                 List<Collection> collectionList = (List<Collection>) Obj;
 
                 if (collectionList == null || collectionList.size() == 0) {
-                    ToastUtils.toast(ExhibitionActivity.this, "没有更多内容啦");
+
+                    recyclerView.setNoMore(true);
 
                 } else {
-                    for (Collection collection : collectionList) {
-                        datas.add(collection);
-                    }
+                    datas.addAll(collectionList);
                     adapter.notifyDataSetChanged();
                     currentPage++;
                 }
-                recyclerView.onFooterRefreshComplete();
-
-
+                recyclerView.loadMoreComplete();
             }
 
             @Override
             public void onFail(Object Obj) {
-
+                recyclerView.loadMoreComplete();
             }
         });
         bmobColt.getByBelongID(exhibitionID, EXHIBITION_ID, curPage);
-
     }
-    //设置用户是否已经关注博物馆，以及关注的总人数
-    public void setWatchInfo(){
-        BmobExhibition bmobExhibition=BmobExhibition.getInstance(this);
-        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+
+    //刷新数据
+    public void refreshFromServer(String exhibitionID) {
+        BmobColt bmobColt = BmobColt.getInstance(this);
+        bmobColt.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
             @Override
             public void onSuccess(Object Obj) {
-                List<User> list= (List<User>) Obj;
-
-                isWatched=false;
-                watchNum=list.size();
-
-                for (User user:list
-                        ) {
-
-                    if(user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())){
-                        isWatched=true;
-                        break;
-                    }
+                List<Collection> collectionList = (List<Collection>) Obj;
+                if (collectionList == null || collectionList.size() == 0) {
+                    ToastUtils.toast(ExhibitionActivity.this, "暂无数据");
+                    recyclerView.setNoMore(true);
+                } else {
+                    datas.clear();
+                    datas.addAll(collectionList);
+                    adapter.notifyDataSetChanged();
+                    currentPage = 1;
                 }
-
-
-                exhibitWatch.setSelected(isWatched);
-                exhibitWatchNum.setText(watchNum+"");
+                recyclerView.reset();
             }
             @Override
             public void onFail(Object Obj) {
+                recyclerView.reset();
+            }
+        });
+        bmobColt.getByBelongID(exhibitionID, EXHIBITION_ID, 0);
+    }
+
+
+    //设置用户是否已经关注博物馆，以及关注的总人数
+    public void setWatchInfo() {
+        BmobExhibition bmobExhibition = BmobExhibition.getInstance(this);
+        bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
+            @Override
+            public void onSuccess(Object Obj) {
+                List<User> list = (List<User>) Obj;
+
+                isWatched = false;
+                watchNum = list.size();
+
+                for (User user : list
+                        ) {
+
+                    if (user.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
+                        isWatched = true;
+                        break;
+                    }
+                }
+                exhibitWatch.setSelected(isWatched);
+                exhibitWatchNum.setText(watchNum + "");
+            }
+
+            @Override
+            public void onFail(Object Obj) {
+
             }
         });
         bmobExhibition.getFansOfExhibition(exhibitID);
     }
 
     //关注或者取消关注 当前的博物馆
-    public void clickWatchExhibit(){
+    public void clickWatchExhibit() {
 
-        if(isWatched){ //已经关注  取消关注
+        if (isWatched) { //已经关注  取消关注
             new AlertDialog.Builder(this).setTitle("取消关注").setMessage("确定取消关注？")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, final int which) {
-                            BmobExhibition bmobExhibition=BmobExhibition.getInstance(ExhibitionActivity.this);
+                            BmobExhibition bmobExhibition = BmobExhibition.getInstance(ExhibitionActivity.this);
                             bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                                 @Override
                                 public void onSuccess(Object Obj) {
-                                    ToastUtils.toast(ExhibitionActivity.this,"已取消关注");
+                                    ToastUtils.toast(ExhibitionActivity.this, "已取消关注");
 
-                                    isWatched=false;
-                                    watchNum=watchNum-1;
+                                    isWatched = false;
+                                    watchNum = watchNum - 1;
                                     exhibitWatch.setSelected(isWatched);
-                                    exhibitWatchNum.setText(watchNum+"");
+                                    exhibitWatchNum.setText(watchNum + "");
 
                                 }
+
                                 @Override
                                 public void onFail(Object Obj) {
                                 }
@@ -341,20 +338,20 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
                         }
                     })
                     .show();
-        }else{//未关注  点击关注
-            BmobExhibition bmobExhibition=BmobExhibition.getInstance(this);
+        } else {//未关注  点击关注
+            BmobExhibition bmobExhibition = BmobExhibition.getInstance(this);
             bmobExhibition.setOnBmobReturnWithObj(new OnBmobReturnWithObj() {
                 @Override
                 public void onSuccess(Object Obj) {
 
-                    ToastUtils.toast(ExhibitionActivity.this,"已成功关注");
+                    ToastUtils.toast(ExhibitionActivity.this, "已成功关注");
 
                     exhibitWatch.setSelected(true);
 
-                    isWatched=true;
-                    watchNum=watchNum+1;
+                    isWatched = true;
+                    watchNum = watchNum + 1;
                     exhibitWatch.setSelected(isWatched);
-                    exhibitWatchNum.setText(watchNum+"");
+                    exhibitWatchNum.setText(watchNum + "");
 
                 }
 
@@ -366,5 +363,6 @@ public class ExhibitionActivity extends BaseActivity implements adapter.BaseAdap
             bmobExhibition.watchExhibit(exhibitID);
         }
     }
+
 
 }

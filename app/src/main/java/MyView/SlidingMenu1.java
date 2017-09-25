@@ -1,4 +1,4 @@
-package MyView;
+package myView;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.WindowManager;

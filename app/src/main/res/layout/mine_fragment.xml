@@ -1,74 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+
+    >
+
+    <android.support.v4.view.ViewPager
+    android:id="@+id/mine_viewPager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
 
-    <LinearLayout
 
+</android.support.v4.view.ViewPager>
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/main.appbar"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:background="#1893fb"
+        android:layout_height="wrap_content"
 
-        android:orientation="horizontal"
-        android:paddingBottom="3dp"
-        android:paddingTop="3dp">
-
-        <View
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="个人中心"
-            android:textColor="#ffffff"
-            android:textSize="18sp"
-
-            />
-
-        <ImageView
-
-            android:id="@+id/to_setup"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="10dp"
-            android:padding="6dp"
-            android:src="@drawable/selector_setup" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 
-    </LinearLayout>
-
-    <!--<ScrollView-->
-    <!--android:fillViewport="true"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:scrollbars="none">-->
-
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical">-->
-
-
-    <ScrollView
-        android:fillViewport="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/main.collapsing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+
+
+
+
 
             <LinearLayout
+                android:paddingBottom="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
+                android:gravity="center_horizontal"
 
                 android:background="@mipmap/minebg"
                 android:orientation="vertical">
@@ -77,207 +53,145 @@
                 <LinearLayout
 
                     android:layout_width="match_parent"
-                    android:layout_height="213dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_height="45dp"
+                    android:background="?attr/colorPrimary"
 
-                    <LinearLayout
-                        android:layout_width="66dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="3dp"
+                    android:paddingTop="3dp">
 
-                        android:layout_height="66dp"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/circle_stroke"
-                        android:gravity="center">
-
-                        <MyView.ImageViewInCircle
-
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:src="@drawable/hgportrait" />c
-                    </LinearLayout>
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="10dp" />
 
                     <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="个人中心"
+                        android:textColor="#ffffff"
+                        android:textSize="18sp"
+
+                        />
+
+                    <ImageView
+
+                        android:id="@+id/to_setup"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:padding="6dp"
+                        android:src="@drawable/selector_setup" />
+
+
+                </LinearLayout>
+
+                    <ImageView
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:src="@drawable/portrait"
+                        android:id="@+id/mine_portrait"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        />
+
+
+                <TextView
+                    android:gravity="center"
+                    android:id="@+id/mine_nick_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+
+
+                    android:textSize="15sp" />
+
+                <RelativeLayout
+                    android:id="@+id/mine_follower_following"
+                    android:layout_width="195dp"
+                    android:layout_height="34dp"
+
+
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/fans_and_watch_bg">
+
+                    <View
+
+                        android:id="@+id/middle"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/divider_gray" />
+
+                    <TextView
+                        android:id="@+id/left"
+
                         android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="10dp"
-                        android:text="阿喂真的帅"
-                        android:textSize="15sp" />
-
-                    <RelativeLayout
-                        android:id="@+id/mine_follower_following"
-                        android:layout_width="195dp"
-                        android:layout_height="34dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="6dp"
+                        android:layout_toLeftOf="@+id/middle"
+                        android:text="关注" />
 
 
-                        android:layout_marginTop="15dp"
-                        android:background="@drawable/fans_and_watch_bg">
+                    <TextView
+                        android:id="@+id/mine_following_num"
+                        android:layout_width="wrap_content"
 
-                        <View
-
-                            android:id="@+id/middle"
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginTop="5dp"
-                            android:background="@color/divider_gray" />
-
-                        <TextView
-                            android:id="@+id/left"
-
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="6dp"
-                            android:layout_toLeftOf="@+id/middle"
-                            android:text="关注" />
-
-
-                        <TextView
-                            android:id="@+id/mine_following_num"
-                            android:layout_width="wrap_content"
-
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="2dp"
-                            android:layout_toLeftOf="@+id/left"
-                            android:text="666" />
-
-                        <TextView
-                            android:id="@+id/mine_fans_num"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="6dp"
-
-                            android:layout_toRightOf="@+id/middle"
-                            android:text="666" />
-
-                        <TextView
-                            android:id="@+id/right"
-                            android:layout_width="wrap_content"
-
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="2dp"
-                            android:layout_toRightOf="@+id/mine_fans_num"
-                            android:text="粉丝" />
-
-                    </RelativeLayout>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/mine_indicator_1"
-                        android:layout_width="0dp"
-
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="2dp"
+                        android:text="0"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="2dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/mine_indicator_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_toLeftOf="@+id/left"
+                        />
 
+                    <TextView
+                        android:id="@+id/mine_fans_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="6dp"
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="展馆"
+                        android:text="0"
+                        android:layout_toRightOf="@+id/middle"
+                        />
 
-                            android:textSize="14sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/right"
+                        android:layout_width="wrap_content"
 
-
-                    <LinearLayout
-                        android:id="@+id/mine_indicator_2"
-                        android:layout_width="0dp"
-
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/mine_indicator_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:layout_toRightOf="@+id/mine_fans_num"
+                        android:text="粉丝" />
+
+                </RelativeLayout>
 
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="展览"
-
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/mine_indicator_3"
-                        android:layout_width="0dp"
-
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/mine_indicator_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="展品"
-
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/mine_indicator_4"
-                        android:layout_width="0dp"
-
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/mine_indicator_bg"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-
-                        <TextView
-
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="评论"
-
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-
-                </LinearLayout>
 
             </LinearLayout>
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/mine_viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        </android.support.design.widget.CollapsingToolbarLayout>
 
 
-            </android.support.v4.view.ViewPager>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            android:background="?attr/colorPrimary"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorHeight="3dp"
+            app:tabSelectedTextColor="#000"
+            app:tabTextColor="#fff" />
+    </android.support.design.widget.AppBarLayout>
 
-        </LinearLayout>
 
-    </ScrollView>
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

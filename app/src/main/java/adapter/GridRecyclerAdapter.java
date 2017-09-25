@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,9 +16,9 @@ import com.bumptech.glide.RequestManager;
 import java.util.List;
 
 
-import entity.Collection;
-import entity.Exhibition;
-import entity.Museum;
+import model.Collection;
+import model.Exhibition;
+import model.Museum;
 import jintong.museum2.CollectionActivity;
 import jintong.museum2.ExhibitionActivity;
 import jintong.museum2.MuseumActivity;

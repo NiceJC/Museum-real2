@@ -9,18 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import BmobUtils.BmobExhibition;
-import BmobUtils.BmobMuseum;
-import MyView.PullBaseView;
-import MyView.PullRecyclerView;
+import bmobUtils.BmobExhibition;
+import adapter.BaseAdapter;
 import adapter.ExhibitionListAdapter;
-import cn.bmob.v3.BmobUser;
-import entity.Exhibition;
-import entity.Museum;
+import model.Exhibition;
 import interfaces.OnBmobReturnWithObj;
 import jintong.museum2.ExhibitionActivity;
 import jintong.museum2.R;
@@ -32,24 +31,23 @@ import static util.ParameterBase.EXHIBITION_ID;
  * 热门展览
  * Created by wjc on 2017/2/14.
  */
-public class MainFragmentF1 extends Fragment implements adapter.BaseAdapter.OnItemClickListener,
-        adapter.BaseAdapter.OnItemLongClickListener, adapter.BaseAdapter.OnViewClickListener,
-        PullBaseView.OnRefreshListener{
+public class MainFragmentF1 extends Fragment implements BaseAdapter.OnItemClickListener, XRecyclerView.LoadingListener {
 
     private View view;
 
-    private PullRecyclerView recyclerView;
+
 
     private List<Object> datas = new ArrayList<Object>();
 
     private LinearLayoutManager manager;
 
-//    private SwipeRefreshLayout swipeRefreshLayout;
+    private XRecyclerView mRecyclerView;
 
 //    private int lastVisibleItem;
 
     private ExhibitionListAdapter adapter;
 //
+
     private int currentPage = 0;//当前的页数
 //
 //    private boolean isLoadingMore = false;
@@ -74,23 +72,22 @@ public class MainFragmentF1 extends Fragment implements adapter.BaseAdapter.OnIt
 
     private void initViews() {
 
-//        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh_main_f1);
-        recyclerView = (PullRecyclerView) view.findViewById(R.id.main_fragment_1_recy);
 
 
+        mRecyclerView = (XRecyclerView) view.findViewById(R.id.pullLoadMoreRecyclerView);
 
 
-
-        manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-
-        recyclerView.setOnRefreshListener(this);
-
-        adapter = new ExhibitionListAdapter(getActivity(), datas, this);
+        adapter = new ExhibitionListAdapter(getActivity(), datas);
         adapter.setOnItemClickListener(this);
-        adapter.setOnItemLongClickListener(this);
-        recyclerView.setAdapter(adapter);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLoadingListener(this);
+        mRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+        mRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.SquareSpin);
 
     }
 
@@ -103,9 +100,7 @@ public class MainFragmentF1 extends Fragment implements adapter.BaseAdapter.OnIt
 
 
         //检测data为空后，从服务端拉取数据并刷新
-        pullDataFromServer();
-
-
+       autoRefresh();
 
     }
 
@@ -129,7 +124,7 @@ public class MainFragmentF1 extends Fragment implements adapter.BaseAdapter.OnIt
                     datas.add(exhibition);
                 }
                 adapter.notifyDataSetChanged();
-                recyclerView.onHeaderRefreshComplete();
+                mRecyclerView.refreshComplete();
                 currentPage=1;
 
             }
@@ -164,9 +159,7 @@ public class MainFragmentF1 extends Fragment implements adapter.BaseAdapter.OnIt
                     adapter.notifyDataSetChanged();
                     currentPage++;
                 }
-                recyclerView.onFooterRefreshComplete();
-
-
+                mRecyclerView.loadMoreComplete();
             }
 
             @Override
@@ -193,43 +186,24 @@ public class MainFragmentF1 extends Fragment implements adapter.BaseAdapter.OnIt
 
     }
 
-    /**
-     *  RecyclerView   Item长按事件
-     * @param position
-     */
+
+
+
+    private void autoRefresh() {
+        mRecyclerView.refresh();
+
+
+}
+
     @Override
-    public void onItemLongClick(int position) {
-
-    }
-
-    /**
-     * 子View点击事件，switch区分各个子View
-     * @param position item position
-     * @param viewtype 点击的view的类型，调用时根据不同的view传入不同的值加以区分
-     */
-    @Override
-    public void onViewClick(int position, int viewtype) {
-
-        switch (viewtype){
-            default:
-                break;
-        }
-    }
-
-    //下拉刷新
-    @Override
-    public void onHeaderRefresh(PullBaseView view) {
+    public void onRefresh() {
 
         pullDataFromServer();
-
     }
 
-    //上拉加载
     @Override
-    public void onFooterRefresh(PullBaseView view) {
+    public void onLoadMore() {
+
         pullMoreFromServer(currentPage);
-
-
     }
-
 }

@@ -1,9 +1,4 @@
-package entity;
-
-import android.content.Intent;
-import android.content.res.ColorStateList;
-
-import java.util.List;
+package model;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
@@ -27,6 +22,7 @@ public class Exhibition extends BmobObject {
 
     private BmobFile image1; //展览的图片
 
+    private String image1Url; //图片的URL，主要用于数据库存取
 
     private Museum toMuseum; //所属的博物馆
 
@@ -54,6 +50,14 @@ public class Exhibition extends BmobObject {
 
 
     public Exhibition() {
+    }
+
+    public String getImage1Url() {
+        return image1Url;
+    }
+
+    public void setImage1Url(String image1Url) {
+        this.image1Url = image1Url;
     }
 
     public String getExhibitName() {

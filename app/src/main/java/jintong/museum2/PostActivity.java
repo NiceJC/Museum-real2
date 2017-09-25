@@ -1,37 +1,47 @@
 package jintong.museum2;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AppOpsManager;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import net.steamcrafted.loadtoast.LoadToast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import BmobUtils.BmobFileUtil;
-import BmobUtils.BmobSocialUtil;
+import bmobUtils.BmobFileUtil;
+import bmobUtils.BmobSocialUtil;
 import adapter.PostImageAdapter;
-import interfaces.OnBmobReturnSuccess;
+import cn.bmob.v3.BmobUser;
 import interfaces.OnBmobReturnWithObj;
 import interfaces.OnItemClickListener;
+import model.User;
+import util.ImageAbsolutePathUtil;
 import util.ToastUtils;
+
+import static jintong.museum2.MainActivity.REQUEST_CODE;
 
 /**
  * Created by wjc on 2017/4/25.
@@ -58,14 +68,12 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
     private boolean hasText = false; //是否有文字
     private boolean hasPic = false;  //是否有图片
 
+    private LoadToast loadToast;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        //配合状态浸入，这句一定在setContentView之后
-        //透明状态栏，API小于19时。。。。。
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
         initView();
         initData();
@@ -89,12 +97,16 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
 
         adapter = new PostImageAdapter(PostActivity.this, datas);
         adapter.setOnItemClickListener(new OnItemClickListener() {
+
+            //加号点击，添加图片，暂时职能从本地选取，先确认动态权限的获取
             @Override
             public void onItemClick(View view, int position) {
-                choosePortraitFromNative();
+
+                checkLocatePermission();
 
             }
 
+            //接口名没改，其实是选取图片右上角的删除点击
             @Override
             public void OnItemLongClick(View view, int position) {
 
@@ -167,31 +179,24 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
         }
 
         if (requestCode == 1 && intent != null) {
-            Uri seletedImage = intent.getData();
+            Uri selectedImage = intent.getData();
 
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            //获取选中图片的绝对路径
+            String picturePath= ImageAbsolutePathUtil.getImageAbsolutePath(this,selectedImage);
 
-            Cursor cursor = getContentResolver().query(seletedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            final String picturePath = cursor.getString(columnIndex);
+
             datas.add(picturePath);
-
             adapter.notifyDataSetChanged();
-
             hasPic = true;
             sendPost.setSelected(true);
             sendPost.setClickable(true); 
-
-            cursor.close();
 
         }
         super.onActivityResult(requestCode, resultCode, intent);
     }
 
-    //从本地相册选取头像照片
+    //从本地相册选取照片
     private void choosePortraitFromNative() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -205,16 +210,21 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
+
         switch (v.getId()) {
             case R.id.post_back:
                 finish();
                 overridePendingTransition(R.anim.none, R.anim.out_to_right);
                 break;
             case R.id.post_send:
+                loadToast=ToastUtils.getLoadingToast(this);
+                loadToast.show();
                 /**
                  * 提交文字与图片
                  * 先上传图片，上传成功后将返回的url连同文字一起上传
                  */
+
+
 
                 final String text = editText.getText().toString();
 
@@ -229,14 +239,17 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
                             ToastUtils.toast(PostActivity.this,"发表成功");
                             finish();
                             overridePendingTransition(R.anim.none,R.anim.out_to_right);
+
+                            loadToast.success();
                         }
 
                         @Override
                         public void onFail(Object Obj) {
 
+                            loadToast.error();
                         }
                     });
-                    bmobSocialUtil.postBlog(text,null);
+                    bmobSocialUtil.postBlog(BmobUser.getCurrentUser(User.class),text,null);
 
                 }else {
 
@@ -257,11 +270,14 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
 
                                     finish();
                                     overridePendingTransition(R.anim.none,R.anim.out_to_right);
+
+                                    loadToast.success();
                                 }
 
                                 @Override
                                 public void onFail(Object Obj) {
 
+                                    loadToast.error();
                                 }
                             });
 
@@ -269,7 +285,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
                             //上传图片成功，将返回的url和文字再次上传
                             List<String> urls = (List<String>) Obj;
 
-                            bmobSocialUtil.postBlog(text, urls);
+                            bmobSocialUtil.postBlog(BmobUser.getCurrentUser(User.class),text, urls);
 
 
                         }
@@ -282,12 +298,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
                     BmobFileUtil.getInstance(this).uploadBatch(paths);
 
                 }
-//                Log.e("TAG", text);
-//                for (int i = 0; i < datas.size(); i++) {
-//                    Log.e("TAG", datas.get(i));
-//                }
-
-
                 break;
             default:
                 break;
@@ -297,6 +307,43 @@ public class PostActivity extends BaseActivity implements View.OnClickListener {
 
 
     }
+
+
+    private void checkLocatePermission() {
+
+        boolean isGranted= ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED&&ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+        if(isGranted){
+
+            choosePortraitFromNative();
+        }else{
+
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE);
+        }
+
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode){
+            case REQUEST_CODE:
+                if(grantResults.length >0 &&grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    //用户同意授权
+                    choosePortraitFromNative();
+                }else{
+                    //用户拒绝授权
+                    ToastUtils.toast(this,"没有存储读写权限将导致读取照片失败，用户可以前往应用权限进行设置");
+                }
+                break;
+        }
+    }
+
+
 
 
 }
