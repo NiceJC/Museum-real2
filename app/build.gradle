@@ -68,16 +68,16 @@ android {
 
 
     productFlavors { //直接在每个渠道后替换友盟渠道号，或者只是写个空的渠道号，使用下方productFlavors.all自动替换
-//        xiaomi {
-//            manifestPlaceholders=[UMENG_CHANNEL_VALUE: "xiaomi"] --为小米渠道新建渠道号"xiaomi"
-
-//            resValue("string","app_name","xiaomi_app") --替换小米渠道的app_name的值
-//        }
+        xiaomi {
+//            manifestPlaceholders=[UMENG_CHANNEL_VALUE: "xiaomi"] //--为小米渠道新建渠道号"xiaomi"
+//
+//            resValue("string","app_name","xiaomi_app")  //--替换小米渠道的app_name的值
+        }
         wandoujia {}
-//        c360 {}
-//        baidu{}
-//        huawei {}
-//        yingyongbao {}
+        c360 {}
+        baidu{}
+        huawei {}
+        yingyongbao {}
 
 
 //        okhttp{

@@ -51,7 +51,7 @@
     <application
         android:allowBackup="true"
         android:name=".MyApplication"
-        android:icon="@mipmap/newnew"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -141,7 +141,7 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="ARQYmlf2AIjjY3Q8eDCKPY6nMz0ZcsCI" />       //key:百度地图AppKey
 
-        <meta-data android:value="595b36a1cae7e71b72001a63" android:name="UMENG_APPKEY"/> //友盟AppKey
+        <meta-data android:value="59c8a4018f4a9d3b0a000168" android:name="UMENG_APPKEY"/> //友盟AppKey
         <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>  //打包渠道号  使用占位符以便动态替换
 
 
